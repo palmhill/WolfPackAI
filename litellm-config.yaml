@@ -1,33 +1,13 @@
 model_list:
-  - model_name: gpt-4
-    litellm_params:
-      model: azure/gpt-4
-      api_base: https://your-resource.openai.azure.com/
-      api_key: os.environ/AZURE_API_KEY
-      api_version: 2024-02-15-preview
-  
-  - model_name: gpt-3.5-turbo
-    litellm_params:
-      model: azure/gpt-35-turbo
-      api_base: https://your-resource.openai.azure.com/
-      api_key: os.environ/AZURE_API_KEY
-      api_version: 2024-02-15-preview
 
 litellm_settings:
   drop_params: true
   set_verbose: true
 
 general_settings:
-  master_key: sk-1234  # Change this in production!
-  database_url: "postgresql://postgres:postgres@postgres:5432/litellm"
   
 router_settings:
   routing_strategy: "least-busy"
   num_retries: 3
   timeout: 600
   
-# Azure AD integration for LiteLLM (if using direct auth)
-environment_variables:
-  AZURE_AD_TENANT_ID: "your-tenant-id"
-  AZURE_AD_CLIENT_ID: "your-client-id"
-  AZURE_AD_CLIENT_SECRET: "your-client-secret"

@@ -22,6 +22,9 @@ public class LiteLLMConfiguration
     [Required]
     public AuthConfig Auth { get; set; } = new();
 
+    [Required]
+    public PostgresConfig Postgres { get; set; } = new();
+
     public void Validate()
     {
         // Validate each model config
@@ -53,6 +56,16 @@ public class LiteLLMConfiguration
             
         if (string.IsNullOrEmpty(Auth.AzureAd?.ClientId))
             throw new ValidationException("Azure AD Client ID cannot be empty");
+
+        // Validate Postgres configuration
+        if (string.IsNullOrEmpty(Postgres.Username))
+            throw new ValidationException("PostgreSQL username cannot be empty");
+        
+        if (string.IsNullOrEmpty(Postgres.Password))
+            throw new ValidationException("PostgreSQL password cannot be empty");
+
+        if (Postgres.Port <= 0)
+            throw new ValidationException("PostgreSQL port must be greater than 0");
     }
 
     public string GenerateYaml()
@@ -78,11 +91,11 @@ public class LiteLLMConfiguration
                 ["set_verbose"] = Settings.SetVerbose
             },
             
-            ["general_settings"] = new Dictionary<string, object>
-            {
-                ["master_key"] = GeneralSettings.MasterKey,
-                ["database_url"] = GeneralSettings.DatabaseUrl
-            },
+            //["general_settings"] = new Dictionary<string, object>
+            //{
+            //    ["master_key"] = GeneralSettings.MasterKey,
+            //    ["database_url"] = GeneralSettings.DatabaseUrl
+            //},
             
             ["router_settings"] = new Dictionary<string, object>
             {
@@ -91,12 +104,12 @@ public class LiteLLMConfiguration
                 ["timeout"] = RouterSettings.Timeout
             },
             
-            ["environment_variables"] = new Dictionary<string, object>
-            {
-                ["AZURE_AD_TENANT_ID"] = Auth.AzureAd?.TenantId ?? "",
-                ["AZURE_AD_CLIENT_ID"] = Auth.AzureAd?.ClientId ?? "",
-                ["AZURE_AD_CLIENT_SECRET"] = Auth.AzureAd?.ClientSecret ?? ""
-            }
+            //["environment_variables"] = new Dictionary<string, object>
+            //{
+            //    ["AZURE_AD_TENANT_ID"] = Auth.AzureAd?.TenantId ?? "",
+            //    ["AZURE_AD_CLIENT_ID"] = Auth.AzureAd?.ClientId ?? "",
+            //    ["AZURE_AD_CLIENT_SECRET"] = Auth.AzureAd?.ClientSecret ?? ""
+            //}
         };
         
         var serializer = new SerializerBuilder()
@@ -188,4 +201,17 @@ public class AzureAdConfig
     
     [JsonPropertyName("clientSecret")]
     public string ClientSecret { get; set; } = string.Empty;
+}
+
+public class PostgresConfig
+{
+    [JsonPropertyName("username")]
+    public string Username { get; set; } = "postgres";
+    
+    [JsonPropertyName("password")]
+    public string Password { get; set; } = "postgres";
+    
+    [JsonPropertyName("port")]
+    public int Port { get; set; } = 5432;
+    
 }

@@ -32,9 +32,23 @@ var azureAdTenantId = config.Auth.AzureAd.TenantId;
 var azureAdClientId = config.Auth.AzureAd.ClientId;
 var azureAdClientSecret = config.Auth.AzureAd.ClientSecret;
 
+// PostgreSQL settings from configuration
+var pgUsername = config.Postgres.Username;
+var pgPassword = config.Postgres.Password;
+var pgPort = config.Postgres.Port;
+
+// Create parameters for Postgres username and password
+// When using WithDataVolume(), credentials are persisted in the volume
+// It's important to always use the same credentials or PostgreSQL will reject connections
+var usernameParam = builder.AddParameter("postgres-username", pgUsername);
+var passwordParam = builder.AddParameter("postgres-password", pgPassword);
+
 // PostgreSQL database for Open-WebUI
-var postgres = builder.AddPostgres("postgres")
-    .WithDataVolume()
+var postgres = builder.AddPostgres("postgres", 
+    userName: usernameParam,
+    password: passwordParam,
+    port: pgPort)
+    .WithDataVolume() // This persists data across restarts - credentials must stay the same!
     .WithPgAdmin();
 
 var openWebUiDb = postgres.AddDatabase("openwebuidb");
@@ -44,8 +58,9 @@ var redis = builder.AddRedis("redis")
     .WithDataVolume();
 
 // LiteLLM Proxy Configuration
-var litellm = builder.AddContainer("litellm", "ghcr.io/berriai/litellm", "latest")
+var litellm = builder.AddContainer("litellm", "ghcr.io/berriai/litellm", "litellm_stable_release_branch-v1.74.3-stable.patch.3")
     .WithHttpEndpoint(port: 4000, targetPort: 4000, name: "http")
+    .WithEnvironment("STORE_MODEL_IN_DB", "True")
     .WithEnvironment("LITELLM_MASTER_KEY", config.GeneralSettings.MasterKey)
     .WithEnvironment("LITELLM_LOG", "DEBUG")
     .WithEnvironment("DATABASE_URL", config.GeneralSettings.DatabaseUrl)
@@ -70,7 +85,8 @@ var openWebUi = builder.AddContainer("openwebui", "ghcr.io/open-webui/open-webui
     .WithEnvironment("WEBUI_NAME", "Enterprise AI Portal")
     .WithEnvironment("OPENAI_API_BASE_URL", litellm.GetEndpoint("http"))
     .WithEnvironment("OPENAI_API_KEY", config.GeneralSettings.MasterKey)
-    .WithEnvironment("DATABASE_URL", () => $"{openWebUiDb.Resource.ConnectionStringExpression}")
+    .WithEnvironment("DATABASE_URL", $"postgresql://{pgUsername}:{pgPassword}@postgres:{pgPort.ToString()}/openwebuidb")
+    .WithReference(postgres)
     .WithReference(openWebUiDb)
     .WithReference(redis)
     .WaitFor(postgres)

@@ -328,3 +328,5 @@ MigrationBackup/
 # Aspire
 .env
 appsettings.Development.json
+
+packages-temp/
