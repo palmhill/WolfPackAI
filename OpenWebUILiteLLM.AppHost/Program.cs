@@ -37,7 +37,7 @@ var postgres = builder.AddPostgres("postgres")
     .WithDataVolume()
     .WithPgAdmin();
 
-var openWebUiDb = postgres.AddDatabase("openwebui");
+var openWebUiDb = postgres.AddDatabase("openwebuidb");
 
 // Redis for session storage
 var redis = builder.AddRedis("redis")
