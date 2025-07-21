@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  openwebui:
+    environment:
+      - WEBUI_SECRET_KEY=your-secret-key-here
+      - ENABLE_ADMIN_EXPORT=true
+      - ENABLE_COMMUNITY_SHARING=false
+    volumes:
+      - openwebui_data:/app/backend/data
+
+  litellm:
+    volumes:
+      - ./litellm-config.yaml:/app/config.yaml
+      - litellm_data:/app/data
+
+  postgres:
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    volumes:
+      - redis_data:/data
+
+volumes:
+  openwebui_data:
+  litellm_data:
+  postgres_data:
+  redis_data:
