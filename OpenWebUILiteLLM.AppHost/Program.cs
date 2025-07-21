@@ -7,7 +7,6 @@ var builder = DistributedApplication.CreateBuilder(args);
 var azureAdTenantId = builder.AddParameter("AzureAdTenantId", secret: true);
 var azureAdClientId = builder.AddParameter("AzureAdClientId", secret: true);
 var azureAdClientSecret = builder.AddParameter("AzureAdClientSecret", secret: true);
-var openAiApiKey = builder.AddParameter("OpenAiApiKey", secret: true);
 
 // PostgreSQL database for Open-WebUI
 var postgres = builder.AddPostgres("postgres")
@@ -24,9 +23,6 @@ var redis = builder.AddRedis("redis")
 var litellm = builder.AddContainer("litellm", "ghcr.io/berriai/litellm", "latest")
     .WithHttpEndpoint(port: 4000, targetPort: 4000, name: "http")
     .WithEnvironment("LITELLM_MASTER_KEY", "sk-1234")
-    .WithEnvironment("AZURE_API_KEY", openAiApiKey)
-    .WithEnvironment("AZURE_API_BASE", "https://your-resource.openai.azure.com/")
-    .WithEnvironment("AZURE_API_VERSION", "2024-02-15-preview")
     .WithEnvironment("LITELLM_LOG", "DEBUG")
     .WithEnvironment("DATABASE_URL", "postgresql://postgres:postgres@postgres:5432/litellm")
     .WithBindMount("./litellm-config.yaml", "/app/config.yaml")

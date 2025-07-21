@@ -1,7 +1,7 @@
 # .NET Aspire OpenWebUI + LiteLLM with Azure AD
 
 ## Prerequisites
-- .NET 8.0 SDK
+- .NET 9.0 SDK
 - Docker Desktop
 - Azure subscription with Azure OpenAI deployed
 - Azure AD tenant
