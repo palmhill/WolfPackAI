@@ -1,12 +1,36 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
+using System.IO;
+using Microsoft.Extensions.Configuration;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-// Configuration parameters
-var azureAdTenantId = builder.AddParameter("AzureAdTenantId", secret: true);
-var azureAdClientId = builder.AddParameter("AzureAdClientId", secret: true);
-var azureAdClientSecret = builder.AddParameter("AzureAdClientSecret", secret: true);
+// Load and validate LiteLLM configuration
+var config = builder.Configuration.GetSection("LiteLLM").Get<OpenWebUILiteLLM.AppHost.LiteLLMConfiguration>();
+if (config == null)
+{
+    throw new InvalidOperationException("LiteLLM configuration is missing in appsettings.json");
+}
+
+try
+{
+    config.Validate();
+    
+    // Generate the litellm-config.yaml file from configuration
+    var yamlContent = config.GenerateYaml();
+    File.WriteAllText("litellm-config.yaml", yamlContent);
+    Console.WriteLine("Successfully generated litellm-config.yaml from configuration");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Configuration validation failed: {ex.Message}");
+    throw;
+}
+
+// Configuration parameters from AppSettings
+var azureAdTenantId = config.Auth.AzureAd.TenantId;
+var azureAdClientId = config.Auth.AzureAd.ClientId;
+var azureAdClientSecret = config.Auth.AzureAd.ClientSecret;
 
 // PostgreSQL database for Open-WebUI
 var postgres = builder.AddPostgres("postgres")
@@ -22,9 +46,12 @@ var redis = builder.AddRedis("redis")
 // LiteLLM Proxy Configuration
 var litellm = builder.AddContainer("litellm", "ghcr.io/berriai/litellm", "latest")
     .WithHttpEndpoint(port: 4000, targetPort: 4000, name: "http")
-    .WithEnvironment("LITELLM_MASTER_KEY", "sk-1234")
+    .WithEnvironment("LITELLM_MASTER_KEY", config.GeneralSettings.MasterKey)
     .WithEnvironment("LITELLM_LOG", "DEBUG")
-    .WithEnvironment("DATABASE_URL", "postgresql://postgres:postgres@postgres:5432/litellm")
+    .WithEnvironment("DATABASE_URL", config.GeneralSettings.DatabaseUrl)
+    .WithEnvironment("AZURE_AD_TENANT_ID", azureAdTenantId)
+    .WithEnvironment("AZURE_AD_CLIENT_ID", azureAdClientId)
+    .WithEnvironment("AZURE_AD_CLIENT_SECRET", azureAdClientSecret)
     .WithBindMount("./litellm-config.yaml", "/app/config.yaml")
     .WithArgs("--config", "/app/config.yaml")
     .WithReference(postgres);
@@ -34,7 +61,7 @@ var openWebUi = builder.AddContainer("openwebui", "ghcr.io/open-webui/open-webui
     .WithHttpEndpoint(port: 8080, targetPort: 8080, name: "http")
     .WithEnvironment("ENABLE_OAUTH_SIGNUP", "true")
     .WithEnvironment("OAUTH_PROVIDER_NAME", "Azure AD")
-    .WithEnvironment("OPENID_PROVIDER_URL", () => $"https://login.microsoftonline.com/{azureAdTenantId.Resource.Value}/v2.0")
+    .WithEnvironment("OPENID_PROVIDER_URL", $"https://login.microsoftonline.com/{azureAdTenantId}/v2.0")
     .WithEnvironment("OAUTH_CLIENT_ID", azureAdClientId)
     .WithEnvironment("OAUTH_CLIENT_SECRET", azureAdClientSecret)
     .WithEnvironment("OAUTH_SCOPES", "openid profile email")
@@ -42,7 +69,7 @@ var openWebUi = builder.AddContainer("openwebui", "ghcr.io/open-webui/open-webui
     .WithEnvironment("WEBUI_AUTH", "true")
     .WithEnvironment("WEBUI_NAME", "Enterprise AI Portal")
     .WithEnvironment("OPENAI_API_BASE_URL", litellm.GetEndpoint("http"))
-    .WithEnvironment("OPENAI_API_KEY", "sk-1234")
+    .WithEnvironment("OPENAI_API_KEY", config.GeneralSettings.MasterKey)
     .WithEnvironment("DATABASE_URL", () => $"{openWebUiDb.Resource.ConnectionStringExpression}")
     .WithReference(openWebUiDb)
     .WithReference(redis)

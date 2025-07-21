@@ -1,68 +1,86 @@
-# .NET Aspire OpenWebUI + LiteLLM with Azure AD
+# OpenWebUILiteLLM
+
+An integrated solution for deploying [OpenWebUI](https://github.com/open-webui/open-webui) with [LiteLLM](https://github.com/berriai/litellm) backend, using .NET Aspire for orchestration.
+
+## Features
+
+- **Containerized Architecture**: Uses Docker containers for OpenWebUI, LiteLLM, PostgreSQL, and Redis
+- **Azure AD Integration**: Authentication using Azure Active Directory
+- **Centralized Configuration**: All settings managed through appsettings.json
+- **Dynamic YAML Generation**: Automatically generates litellm-config.yaml from configuration
+- **Validation**: Built-in configuration validation at startup
 
 ## Prerequisites
-- .NET 9.0 SDK
-- Docker Desktop
-- Azure subscription with Azure OpenAI deployed
-- Azure AD tenant
 
-## Setup Instructions
+- [.NET 9 SDK](https://dotnet.microsoft.com/download)
+- [Docker](https://www.docker.com/products/docker-desktop)
+- Azure AD tenant (for authentication)
+- Access to Azure OpenAI or other LLM APIs
 
-1. **Clone and Initialize**
-   ```bash
-   dotnet new aspire-starter -n OpenWebUILiteLLM
-   cd OpenWebUILiteLLM
-   ```
+## Configuration
 
-2. **Configure Azure AD**
-   - Register an application in Azure AD
-   - Note the Tenant ID, Client ID, and create a Client Secret
-   - Configure redirect URIs for your domain
+All configuration is managed through the `appsettings.json` file in the `OpenWebUILiteLLM.AppHost` project:
+{
+  "LiteLLM": {
+    "ModelList": [
+      {
+        "ModelName": "gpt-4",
+        "LiteLLMParams": {
+          "Model": "azure/gpt-4",
+          "ApiBase": "https://your-resource.openai.azure.com/",
+          "ApiKey": "AZURE_API_KEY",
+          "ApiVersion": "2024-02-15-preview"
+        }
+      }
+    ],
+    "Settings": {
+      "DropParams": true,
+      "SetVerbose": true
+    },
+    "GeneralSettings": {
+      "MasterKey": "sk-1234",
+      "DatabaseUrl": "postgresql://postgres:postgres@postgres:5432/litellm"
+    },
+    "RouterSettings": {
+      "RoutingStrategy": "least-busy",
+      "NumRetries": 3,
+      "Timeout": 600
+    },
+    "Auth": {
+      "AzureAd": {
+        "TenantId": "your-tenant-id",
+        "ClientId": "your-client-id",
+        "ClientSecret": "your-client-secret"
+      }
+    }
+  }
+}
+## Running the Application
 
-3. **Configure Environment**
-   Create `.env` file:
-   ```
-   AZURE_AD_TENANT_ID=your-tenant-id
-   AZURE_AD_CLIENT_ID=your-client-id
-   AZURE_AD_CLIENT_SECRET=your-client-secret
-   AZURE_OPENAI_API_KEY=your-api-key
-   AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
-   ```
+1. Configure the `appsettings.json` file with your Azure AD and LLM API settings
+2. Run the application using:
+dotnet run --project OpenWebUILiteLLM.AppHost
+3. The Aspire dashboard will open, showing the status of all services
+4. Access OpenWebUI through the reverse proxy at http://localhost:5000
 
-4. **Update Configuration**
-   - Update `litellm-config.yaml` with your Azure OpenAI endpoints
-   - Update model deployments to match your Azure OpenAI instance
+## Authentication
 
-5. **Run the Application**
-   ```bash
-   dotnet run --project OpenWebUILiteLLM.AppHost
-   ```
-
-6. **Access Services**
-   - Open-WebUI: http://localhost:8080
-   - LiteLLM API: http://localhost:4000
-   - Aspire Dashboard: http://localhost:15888
-
-## Architecture
-
-- **Open-WebUI**: Provides the user interface for interacting with LLMs
-- **LiteLLM**: Acts as a proxy to standardize access to various LLM providers
-- **PostgreSQL**: Stores user data, conversations, and configuration
-- **Redis**: Handles session management and caching
-- **Reverse Proxy**: (Optional) Provides unified authentication and routing
-
+The application uses Azure AD for authentication. Configure your Azure AD tenant and update the following settings:
+"Auth": {
+  "AzureAd": {
+    "TenantId": "your-tenant-id",
+    "ClientId": "your-client-id",
+    "ClientSecret": "your-client-secret"
+  }
+}
 ## Security Considerations
 
-1. Change default master keys in production
-2. Use Azure Key Vault for secrets management
-3. Enable HTTPS in production
-4. Configure proper CORS policies
-5. Implement rate limiting
-6. Regular security updates for containers
+- Change the default `MasterKey` in production
+- Secure your API keys and credentials
+- Use environment secrets for sensitive information
 
-## Troubleshooting
+## Customization
 
-- Check Aspire dashboard for service health
-- Verify Azure AD configuration in app registrations
-- Ensure Azure OpenAI endpoints are accessible
-- Check container logs for detailed error messages
+- Add additional models in the `ModelList` array
+- Adjust routing strategy and other LiteLLM settings
+- Modify the OpenWebUI environment variables in `Program.cs`

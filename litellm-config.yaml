@@ -1,17 +1,17 @@
 model_list:
-  # - model_name: gpt-4
-  #   litellm_params:
-  #     model: azure/gpt-4
-  #     api_base: https://your-resource.openai.azure.com/
-  #     api_key: os.environ/AZURE_API_KEY
-  #     api_version: 2024-02-15-preview
+  - model_name: gpt-4
+    litellm_params:
+      model: azure/gpt-4
+      api_base: https://your-resource.openai.azure.com/
+      api_key: os.environ/AZURE_API_KEY
+      api_version: 2024-02-15-preview
   
-  # - model_name: gpt-3.5-turbo
-  #   litellm_params:
-  #     model: azure/gpt-35-turbo
-  #     api_base: https://your-resource.openai.azure.com/
-  #     api_key: os.environ/AZURE_API_KEY
-  #     api_version: 2024-02-15-preview
+  - model_name: gpt-3.5-turbo
+    litellm_params:
+      model: azure/gpt-35-turbo
+      api_base: https://your-resource.openai.azure.com/
+      api_key: os.environ/AZURE_API_KEY
+      api_version: 2024-02-15-preview
 
 litellm_settings:
   drop_params: true

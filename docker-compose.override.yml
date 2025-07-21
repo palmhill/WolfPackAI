@@ -3,7 +3,7 @@ version: '3.8'
 services:
   openwebui:
     environment:
-      - WEBUI_SECRET_KEY=your-secret-key-here
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY:-your-secret-key-here}
       - ENABLE_ADMIN_EXPORT=true
       - ENABLE_COMMUNITY_SHARING=false
     volumes:
@@ -13,10 +13,13 @@ services:
     volumes:
       - ./litellm-config.yaml:/app/config.yaml
       - litellm_data:/app/data
+    environment:
+      # Environment variables will be set from appsettings.json at startup
+      - LITELLM_LOG=DEBUG
 
   postgres:
     environment:
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
