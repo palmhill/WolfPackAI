@@ -76,7 +76,7 @@ var openWebUi = builder.AddContainer("openwebui", "ghcr.io/open-webui/open-webui
     .WithHttpEndpoint(port: 8080, targetPort: 8080, name: "http")
     .WithEnvironment("ENABLE_OAUTH_SIGNUP", "true")
     .WithEnvironment("OAUTH_PROVIDER_NAME", "Azure AD")
-    .WithEnvironment("OPENID_PROVIDER_URL", $"https://login.microsoftonline.com/{azureAdTenantId}/v2.0")
+    .WithEnvironment("OPENID_PROVIDER_URL", $"https://login.microsoftonline.com/{azureAdTenantId}/v2.0/.well-known/openid-configuration")
     .WithEnvironment("OAUTH_CLIENT_ID", azureAdClientId)
     .WithEnvironment("OAUTH_CLIENT_SECRET", azureAdClientSecret)
     .WithEnvironment("OAUTH_SCOPES", "openid profile email")
@@ -93,6 +93,10 @@ var openWebUi = builder.AddContainer("openwebui", "ghcr.io/open-webui/open-webui
     .WaitFor(litellm);
 
 // Optional: Add a reverse proxy for better URL management
-var reverseProxy = builder.AddProject<Projects.ReverseProxy>("reverseproxy");
+var reverseProxy = builder.AddContainer("reverseproxy", "reverseproxy", "latest")
+    .WithHttpEndpoint(port: 80, targetPort: 80, name: "http")
+    .WithBindMount("../ReverseProxy/appsettings.json", "/app/appsettings.json")
+    .WaitFor(openWebUi)
+    .WaitFor(litellm);
 
 builder.Build().Run();
