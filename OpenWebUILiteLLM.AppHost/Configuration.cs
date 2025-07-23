@@ -18,12 +18,10 @@ public class LiteLLMConfiguration
     
     [Required]
     public RouterSettings RouterSettings { get; set; } = new();
-    
-    [Required]
-    public AuthConfig Auth { get; set; } = new();
 
     [Required]
-    public PostgresConfig Postgres { get; set; } = new();
+    public NetworkSettings PublicNetwork { get; set; }
+
 
     public void Validate()
     {
@@ -46,26 +44,7 @@ public class LiteLLMConfiguration
         // Validate general settings
         if (string.IsNullOrEmpty(GeneralSettings.MasterKey))
             throw new ValidationException("Master key cannot be empty");
-            
-        if (string.IsNullOrEmpty(GeneralSettings.DatabaseUrl))
-            throw new ValidationException("Database URL cannot be empty");
-            
-        // Validate Auth
-        if (string.IsNullOrEmpty(Auth.AzureAd?.TenantId))
-            throw new ValidationException("Azure AD Tenant ID cannot be empty");
-            
-        if (string.IsNullOrEmpty(Auth.AzureAd?.ClientId))
-            throw new ValidationException("Azure AD Client ID cannot be empty");
 
-        // Validate Postgres configuration
-        if (string.IsNullOrEmpty(Postgres.Username))
-            throw new ValidationException("PostgreSQL username cannot be empty");
-        
-        if (string.IsNullOrEmpty(Postgres.Password))
-            throw new ValidationException("PostgreSQL password cannot be empty");
-
-        if (Postgres.Port <= 0)
-            throw new ValidationException("PostgreSQL port must be greater than 0");
     }
 
     public string GenerateYaml()
@@ -120,6 +99,17 @@ public class LiteLLMConfiguration
     }
 }
 
+public class NetworkSettings
+{
+   public int HttpPort { get; set; } = 80;
+   public int HttpsPort { get; set; } = 443;
+}
+
+public class OpenWebUiConfig
+{
+    public string PublicUrl { get; set; } = string.Empty;
+}
+
 public class ModelConfig
 {
     [JsonPropertyName("modelName")]
@@ -165,10 +155,6 @@ public class GeneralSettings
     [JsonPropertyName("masterKey")]
     [YamlMember(Alias = "master_key")]
     public string MasterKey { get; set; } = string.Empty;
-    
-    [JsonPropertyName("databaseUrl")]
-    [YamlMember(Alias = "database_url")]
-    public string DatabaseUrl { get; set; } = string.Empty;
 }
 
 public class RouterSettings
