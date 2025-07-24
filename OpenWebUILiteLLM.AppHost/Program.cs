@@ -61,51 +61,49 @@ var openWebUiDb = postgres.AddDatabase("openwebuidb");
 
 
 // LiteLLM Proxy Configuration
-var litellm = builder.AddContainer("litellm", "ghcr.io/berriai/litellm-database", "main-v1.74.3-stable.patch.4")
+var litellm = builder.AddContainer("litellm", "ghcr.io/berriai/litellm-database", "main-v1.74.8-nightly")
     .WithHttpEndpoint(port: 4000, targetPort: 4000, name: "http")
     .WithEnvironment("STORE_MODEL_IN_DB", "True")
     .WithEnvironment("LITELLM_MASTER_KEY", liteLlmConfig.GeneralSettings.MasterKey)
     .WithEnvironment("LITELLM_LOG", "DEBUG")
     .WithEnvironment("DATABASE_URL", $"postgresql://{pgUsername}:{pgPassword}@postgres:{pgPort.ToString()}/litellm")
-    //.WithEnvironment("AZURE_AD_TENANT_ID", azureAdTenantId)
-    //.WithEnvironment("AZURE_AD_CLIENT_ID", azureAdClientId)
-    //.WithEnvironment("AZURE_AD_CLIENT_SECRET", azureAdClientSecret)
     .WithEnvironment("SERVER_ROOT_PATH", "/litellm")
-    .WithEnvironment("PROXY_BASE_URL ", "/litellm")
+    //.WithEnvironment("PROXY_BASE_URL ", "/litellm")
+    .WithEnvironment("PROXY_HOST", "localhost:8181")
     .WithEnvironment("UI_USERNAME", "test")
     .WithEnvironment("UI_PASSWORD", "test")
     .WithBindMount("./litellm-config.yaml", "/app/config.yaml")
     .WithArgs("--config", "/app/config.yaml")
     .WithReference(postgres);
 
-// Open-WebUI with Azure AD Authentication
-var openWebUi = builder.AddContainer("openwebui", "ghcr.io/open-webui/open-webui", "latest")
-    .WithHttpEndpoint(port: 8080, targetPort: 8080, name: "http")
-    .WithEnvironment("ENABLE_PERSISTENT_CONFIG", "false")
-    .WithEnvironment("WEBUI_URL", openWebUiConfig.PublicUrl)
-    .WithEnvironment("ENABLE_OAUTH_SIGNUP", "true")
-    .WithEnvironment("OAUTH_PROVIDER_NAME", "Azure AD")
-    .WithEnvironment("OPENID_PROVIDER_URL", $"https://login.microsoftonline.com/{azureAdTenantId}/v2.0/.well-known/openid-configuration")
-    .WithEnvironment("OAUTH_CLIENT_ID", azureAdClientId)
-    .WithEnvironment("OAUTH_CLIENT_SECRET", azureAdClientSecret)
-    .WithEnvironment("OAUTH_SCOPES", "openid profile email")
-    .WithEnvironment("OAUTH_MERGE_ACCOUNTS_BY_EMAIL", "true")
-    .WithEnvironment("WEBUI_AUTH", "true")
-    .WithEnvironment("OPENID_REDIRECT_URI", "http://localhost/oauth/oidc/callback")
-    .WithEnvironment("WEBUI_NAME", "AI Portal")
-    .WithEnvironment("OPENAI_API_BASE_URL", litellm.GetEndpoint("http"))
-    .WithEnvironment("OPENAI_API_KEY", liteLlmConfig.GeneralSettings.MasterKey)
-    .WithEnvironment("DATABASE_URL", $"postgresql://{pgUsername}:{pgPassword}@postgres:{pgPort.ToString()}/openwebuidb")
-    .WithReference(postgres)
-    .WithReference(openWebUiDb)
-    .WaitFor(postgres)
-    .WaitFor(litellm);
+//// Open-WebUI with Azure AD Authentication
+//var openWebUi = builder.AddContainer("openwebui", "ghcr.io/open-webui/open-webui", "latest")
+//    .WithHttpEndpoint(port: 8080, targetPort: 8080, name: "http")
+//    .WithEnvironment("ENABLE_PERSISTENT_CONFIG", "false")
+//    .WithEnvironment("WEBUI_URL", openWebUiConfig.PublicUrl)
+//    .WithEnvironment("ENABLE_OAUTH_SIGNUP", "true")
+//    .WithEnvironment("OAUTH_PROVIDER_NAME", "Azure AD")
+//    .WithEnvironment("OPENID_PROVIDER_URL", $"https://login.microsoftonline.com/{azureAdTenantId}/v2.0/.well-known/openid-configuration")
+//    .WithEnvironment("OAUTH_CLIENT_ID", azureAdClientId)
+//    .WithEnvironment("OAUTH_CLIENT_SECRET", azureAdClientSecret)
+//    .WithEnvironment("OAUTH_SCOPES", "openid profile email")
+//    .WithEnvironment("OAUTH_MERGE_ACCOUNTS_BY_EMAIL", "true")
+//    .WithEnvironment("WEBUI_AUTH", "true")
+//    .WithEnvironment("OPENID_REDIRECT_URI", "http://localhost/oauth/oidc/callback")
+//    .WithEnvironment("WEBUI_NAME", "AI Portal")
+//    .WithEnvironment("OPENAI_API_BASE_URL", litellm.GetEndpoint("http"))
+//    .WithEnvironment("OPENAI_API_KEY", liteLlmConfig.GeneralSettings.MasterKey)
+//    .WithEnvironment("DATABASE_URL", $"postgresql://{pgUsername}:{pgPassword}@postgres:{pgPort.ToString()}/openwebuidb")
+//    .WithReference(postgres)
+//    .WithReference(openWebUiDb)
+//    .WaitFor(postgres)
+//    .WaitFor(litellm);
 
-// Optional: Add a reverse proxy for better URL management
-var reverseProxy = builder.AddContainer("reverseproxy", "reverseproxy", "latest")
-    .WithHttpEndpoint(port: networkConfig.HttpPort, targetPort: 8181, name: "http")
-    .WithBindMount("../ReverseProxy/appsettings.json", "/app/appsettings.json")
-    .WaitFor(openWebUi)
-    .WaitFor(litellm);
+////// Optional: Add a reverse proxy for better URL management
+//var reverseProxy = builder.AddContainer("reverseproxy", "reverseproxy", "latest")
+//    .WithHttpEndpoint(port: networkConfig.HttpPort, targetPort: 8181, name: "http")
+//    .WithBindMount("../ReverseProxy/appsettings.json", "/app/appsettings.json")
+//    //.WaitFor(openWebUi)
+//    .WaitFor(litellm);
 
 builder.Build().Run();
