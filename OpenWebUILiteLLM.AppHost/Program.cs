@@ -68,13 +68,13 @@ var litellm = builder.AddContainer("litellm", "ghcr.io/berriai/litellm-database"
     .WithEnvironment("LITELLM_LOG", "DEBUG")
     .WithEnvironment("DATABASE_URL", $"postgresql://{pgUsername}:{pgPassword}@postgres:{pgPort.ToString()}/litellm")
     .WithEnvironment("SERVER_ROOT_PATH", "/litellm")
-    //.WithEnvironment("PROXY_BASE_URL ", "/litellm")
     .WithEnvironment("PROXY_HOST", "localhost:8181")
     .WithEnvironment("UI_USERNAME", "test")
     .WithEnvironment("UI_PASSWORD", "test")
     .WithBindMount("./litellm-config.yaml", "/app/config.yaml")
     .WithArgs("--config", "/app/config.yaml")
-    .WithReference(postgres);
+    .WithReference(postgres)
+    .WaitFor(postgres);
 
 //// Open-WebUI with Azure AD Authentication
 //var openWebUi = builder.AddContainer("openwebui", "ghcr.io/open-webui/open-webui", "latest")
