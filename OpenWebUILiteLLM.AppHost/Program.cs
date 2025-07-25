@@ -1,7 +1,10 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
-using System.IO;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
+using System.IO;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -10,8 +13,7 @@ var liteLlmConfig = builder.Configuration.GetSection("LiteLLM").Get<OpenWebUILit
 var authConfig = builder.Configuration.GetSection("Auth").Get<OpenWebUILiteLLM.AppHost.AuthConfig>();
 var postgresConfig = builder.Configuration.GetSection("Postgres").Get<OpenWebUILiteLLM.AppHost.PostgresConfig>();
 var openWebUiConfig = builder.Configuration.GetSection("OpenWebUI").Get<OpenWebUILiteLLM.AppHost.OpenWebUiConfig>();
-var networkConfig = builder.Configuration.GetSection("PublicNetwork").Get<OpenWebUILiteLLM.AppHost.NetworkSettings >();
-
+var networkConfig = builder.Configuration.GetSection("PublicNetwork").Get<OpenWebUILiteLLM.AppHost.NetworkSettings>();
 
 if (liteLlmConfig == null || authConfig == null || postgresConfig == null || openWebUiConfig == null || networkConfig == null)
 {
@@ -21,7 +23,7 @@ if (liteLlmConfig == null || authConfig == null || postgresConfig == null || ope
 try
 {
     liteLlmConfig.Validate();
-    
+
     // Generate the litellm-config.yaml file from configuration
     var yamlContent = liteLlmConfig.GenerateYaml();
     File.WriteAllText("litellm-config.yaml", yamlContent);
@@ -44,23 +46,20 @@ var pgPassword = postgresConfig.Password;
 var pgPort = postgresConfig.Port;
 
 // Create parameters for Postgres username and password
-// When using WithDataVolume(), credentials are persisted in the volume
-// It's important to always use the same credentials or PostgreSQL will reject connections
 var usernameParam = builder.AddParameter("postgres-username", pgUsername);
 var passwordParam = builder.AddParameter("postgres-password", pgPassword);
 
-// PostgreSQL database for Open-WebUI
-var postgres = builder.AddPostgres("postgres", 
+// PostgreSQL database for Open-WebUI with health check
+var postgres = builder.AddPostgres("postgres",
     userName: usernameParam,
     password: passwordParam,
     port: pgPort)
-    .WithDataVolume() // This persists data across restarts - credentials must stay the same!
+    .WithDataVolume()
     .WithPgAdmin();
 
 var openWebUiDb = postgres.AddDatabase("openwebuidb");
 
-
-// LiteLLM Proxy Configuration
+// LiteLLM Proxy Configuration with health check
 var litellm = builder.AddContainer("litellm", "ghcr.io/berriai/litellm-database", "main-v1.74.8-nightly")
     .WithHttpEndpoint(port: 4000, targetPort: 4000, name: "http")
     .WithEnvironment("STORE_MODEL_IN_DB", "True")
@@ -74,36 +73,44 @@ var litellm = builder.AddContainer("litellm", "ghcr.io/berriai/litellm-database"
     .WithBindMount("./litellm-config.yaml", "/app/config.yaml")
     .WithArgs("--config", "/app/config.yaml")
     .WithReference(postgres)
-    .WaitFor(postgres);
+    .WaitFor(postgres)
+    .WithHttpHealthCheck("/health", 401); // LiteLLM health check endpoint
 
-//// Open-WebUI with Azure AD Authentication
-//var openWebUi = builder.AddContainer("openwebui", "ghcr.io/open-webui/open-webui", "latest")
-//    .WithHttpEndpoint(port: 8080, targetPort: 8080, name: "http")
-//    .WithEnvironment("ENABLE_PERSISTENT_CONFIG", "false")
-//    .WithEnvironment("WEBUI_URL", openWebUiConfig.PublicUrl)
-//    .WithEnvironment("ENABLE_OAUTH_SIGNUP", "true")
-//    .WithEnvironment("OAUTH_PROVIDER_NAME", "Azure AD")
-//    .WithEnvironment("OPENID_PROVIDER_URL", $"https://login.microsoftonline.com/{azureAdTenantId}/v2.0/.well-known/openid-configuration")
-//    .WithEnvironment("OAUTH_CLIENT_ID", azureAdClientId)
-//    .WithEnvironment("OAUTH_CLIENT_SECRET", azureAdClientSecret)
-//    .WithEnvironment("OAUTH_SCOPES", "openid profile email")
-//    .WithEnvironment("OAUTH_MERGE_ACCOUNTS_BY_EMAIL", "true")
-//    .WithEnvironment("WEBUI_AUTH", "true")
-//    .WithEnvironment("OPENID_REDIRECT_URI", "http://localhost/oauth/oidc/callback")
-//    .WithEnvironment("WEBUI_NAME", "AI Portal")
-//    .WithEnvironment("OPENAI_API_BASE_URL", litellm.GetEndpoint("http"))
-//    .WithEnvironment("OPENAI_API_KEY", liteLlmConfig.GeneralSettings.MasterKey)
-//    .WithEnvironment("DATABASE_URL", $"postgresql://{pgUsername}:{pgPassword}@postgres:{pgPort.ToString()}/openwebuidb")
-//    .WithReference(postgres)
-//    .WithReference(openWebUiDb)
-//    .WaitFor(postgres)
-//    .WaitFor(litellm);
+// Open-WebUI with Azure AD Authentication and health check
+var openWebUi = builder.AddContainer("openwebui", "ghcr.io/open-webui/open-webui", "latest")
+    .WithHttpEndpoint(port: 8080, targetPort: 8080, name: "http")
+    .WithEnvironment("ENABLE_PERSISTENT_CONFIG", "false")
+    .WithEnvironment("WEBUI_URL", openWebUiConfig.PublicUrl)
+    .WithEnvironment("ENABLE_OAUTH_SIGNUP", "true")
+    .WithEnvironment("OAUTH_PROVIDER_NAME", "Azure AD")
+    .WithEnvironment("OPENID_PROVIDER_URL", $"https://login.microsoftonline.com/{azureAdTenantId}/v2.0/.well-known/openid-configuration")
+    .WithEnvironment("OAUTH_CLIENT_ID", azureAdClientId)
+    .WithEnvironment("OAUTH_CLIENT_SECRET", azureAdClientSecret)
+    .WithEnvironment("OAUTH_SCOPES", "openid profile email")
+    .WithEnvironment("OAUTH_MERGE_ACCOUNTS_BY_EMAIL", "true")
+    .WithEnvironment("WEBUI_AUTH", "true")
+    .WithEnvironment("OPENID_REDIRECT_URI", "http://localhost/oauth/oidc/callback")
+    .WithEnvironment("WEBUI_NAME", "AI Portal")
+    .WithEnvironment("OPENAI_API_BASE_URL", litellm.GetEndpoint("http"))
+    .WithEnvironment("OPENAI_API_KEY", liteLlmConfig.GeneralSettings.MasterKey)
+    .WithEnvironment("DATABASE_URL", $"postgresql://{pgUsername}:{pgPassword}@postgres:{pgPort.ToString()}/openwebuidb")
+    .WithReference(postgres)
+    .WithReference(openWebUiDb)
+    .WaitFor(postgres)
+    .WaitFor(litellm)
+    .WithHttpHealthCheck(path: "/health");
 
-////// Optional: Add a reverse proxy for better URL management
-//var reverseProxy = builder.AddContainer("reverseproxy", "reverseproxy", "latest")
-//    .WithHttpEndpoint(port: networkConfig.HttpPort, targetPort: 8181, name: "http")
-//    .WithBindMount("../ReverseProxy/appsettings.json", "/app/appsettings.json")
-//    //.WaitFor(openWebUi)
-//    .WaitFor(litellm);
+// Add a reverse proxy with health check
+var reverseProxy = builder.AddContainer("reverseproxy", "reverseproxy", "latest")
+    .WithHttpEndpoint(port: networkConfig.HttpPort, targetPort: 8181, name: "http")
+    .WithBindMount("../ReverseProxy/appsettings.json", "/app/appsettings.json")
+    .WaitFor(openWebUi)
+    .WaitFor(litellm);
 
-builder.Build().Run();
+// Build and run the application
+var app = builder.Build();
+
+// Optional: Add global health check monitoring
+app.Services.GetRequiredService<ILogger<Program>>().LogInformation("Starting application with health checks enabled");
+
+app.Run();
