@@ -60,7 +60,8 @@ public class LiteLLMConfiguration
                     ["model"] = m.LiteLLMParams.Model,
                     ["api_base"] = m.LiteLLMParams.ApiBase,
                     ["api_key"] = $"os.environ/{m.LiteLLMParams.ApiKey}",
-                    ["api_version"] = m.LiteLLMParams.ApiVersion
+                    ["api_version"] = m.LiteLLMParams.ApiVersion,
+                    ["provider"] = m.LiteLLMParams.Provider
                 }
             }).ToList(),
             
@@ -119,6 +120,21 @@ public class ModelConfig
     [JsonPropertyName("liteLLMParams")]
     [YamlMember(Alias = "litellm_params")]
     public LiteLLMParams LiteLLMParams { get; set; } = new();
+
+
+    [YamlMember(Alias = "model_name")]
+    [JsonPropertyName("provider")]
+    public string Provider { get; set; } = "ollama";
+
+    [JsonPropertyName("modelType")]
+    [YamlMember(Alias = "model_type")]
+    public string ModelType { get; set; } = string.Empty;
+
+    [JsonPropertyName("apiBase")]
+    [YamlMember(Alias = "api_base")]
+    public string ApiBase { get; set; } = string.Empty;
+
+
 }
 
 public class LiteLLMParams
@@ -137,6 +153,10 @@ public class LiteLLMParams
     [JsonPropertyName("apiVersion")]
     [YamlMember(Alias = "api_version")]
     public string ApiVersion { get; set; } = string.Empty;
+
+    [JsonPropertyName("provider")]
+    [YamlMember(Alias = "provider")]
+    public string Provider { get; set; } = "ollama";
 }
 
 public class LiteLLMSettings

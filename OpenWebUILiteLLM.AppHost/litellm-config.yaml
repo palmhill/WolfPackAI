@@ -1,4 +1,11 @@
-model_list: []
+model_list:
+- model_name: q
+  litellm_params:
+    model: qwen3:0.6b
+    api_base: http://localhost:1143
+    api_key: os.environ/
+    api_version: ''
+    provider: ollama
 litellm_settings:
   drop_params: true
   set_verbose: true
