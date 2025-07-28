@@ -4,9 +4,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
+using Projects;
 using System.IO;
 
 var builder = DistributedApplication.CreateBuilder(args);
+
 
 // Load and validate LiteLLM configuration
 var liteLlmConfig = builder.Configuration.GetSection("LiteLLM").Get<OpenWebUILiteLLM.AppHost.LiteLLMConfiguration>();
@@ -58,6 +60,7 @@ var postgres = builder.AddPostgres("postgres",
     .WithPgAdmin();
 
 var openWebUiDb = postgres.AddDatabase("openwebuidb");
+var litellmDb = postgres.AddDatabase("litellmdb");
 
 // LiteLLM Proxy Configuration with health check
 var litellm = builder.AddContainer("litellm", "ghcr.io/berriai/litellm-database", "main-v1.74.8-nightly")
@@ -65,7 +68,7 @@ var litellm = builder.AddContainer("litellm", "ghcr.io/berriai/litellm-database"
     .WithEnvironment("STORE_MODEL_IN_DB", "True")
     .WithEnvironment("LITELLM_MASTER_KEY", liteLlmConfig.GeneralSettings.MasterKey)
     .WithEnvironment("LITELLM_LOG", "DEBUG")
-    .WithEnvironment("DATABASE_URL", $"postgresql://{pgUsername}:{pgPassword}@postgres:{pgPort.ToString()}/litellm")
+    .WithEnvironment("DATABASE_URL", $"postgresql://{pgUsername}:{pgPassword}@postgres:{pgPort.ToString()}/litellmdb")
     .WithEnvironment("SERVER_ROOT_PATH", "/litellm")
     .WithEnvironment("PROXY_HOST", "localhost:8181")
     .WithEnvironment("UI_USERNAME", "test")
@@ -73,10 +76,12 @@ var litellm = builder.AddContainer("litellm", "ghcr.io/berriai/litellm-database"
     .WithBindMount("./litellm-config.yaml", "/app/config.yaml")
     .WithArgs("--config", "/app/config.yaml")
     .WithReference(postgres)
+    .WithReference(litellmDb)
     .WaitFor(postgres)
     .WithHttpHealthCheck("/health", 401); // LiteLLM health check endpoint
 
 // Open-WebUI with Azure AD Authentication and health check
+var authRedirectUri = new Uri(new Uri(openWebUiConfig.PublicUrl), "/oauth/oidc/callback").ToString();
 var openWebUi = builder.AddContainer("openwebui", "ghcr.io/open-webui/open-webui", "latest")
     .WithHttpEndpoint(port: 8080, targetPort: 8080, name: "http")
     .WithEnvironment("ENABLE_PERSISTENT_CONFIG", "false")
@@ -89,7 +94,7 @@ var openWebUi = builder.AddContainer("openwebui", "ghcr.io/open-webui/open-webui
     .WithEnvironment("OAUTH_SCOPES", "openid profile email")
     .WithEnvironment("OAUTH_MERGE_ACCOUNTS_BY_EMAIL", "true")
     .WithEnvironment("WEBUI_AUTH", "true")
-    .WithEnvironment("OPENID_REDIRECT_URI", "http://localhost/oauth/oidc/callback")
+    .WithEnvironment("OPENID_REDIRECT_URI", authRedirectUri)
     .WithEnvironment("WEBUI_NAME", "AI Portal")
     .WithEnvironment("OPENAI_API_BASE_URL", litellm.GetEndpoint("http"))
     .WithEnvironment("OPENAI_API_KEY", liteLlmConfig.GeneralSettings.MasterKey)
@@ -101,9 +106,8 @@ var openWebUi = builder.AddContainer("openwebui", "ghcr.io/open-webui/open-webui
     .WithHttpHealthCheck(path: "/health");
 
 // Add a reverse proxy with health check
-var reverseProxy = builder.AddContainer("reverseproxy", "reverseproxy", "latest")
-    .WithHttpEndpoint(port: networkConfig.HttpPort, targetPort: 8181, name: "http")
-    .WithBindMount("../ReverseProxy/appsettings.json", "/app/appsettings.json")
+var reverseProxy = builder.AddProject<ReverseProxy>("reverseproxy")
+    .WithExternalHttpEndpoints()
     .WaitFor(openWebUi)
     .WaitFor(litellm);
 

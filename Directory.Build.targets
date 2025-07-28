@@ -1,5 +1,0 @@
-<Project>
-  <Target Name="PreBuildReverseProxyDocker" BeforeTargets="BeforeBuild">
-    <Exec Command="docker build -t reverseproxy:latest -f $(MSBuildThisFileDirectory)ReverseProxy/Dockerfile $(MSBuildThisFileDirectory)" />
-  </Target>
-</Project>
