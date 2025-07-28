@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
+using OpenWebUILiteLLM.AppHost;
 using Projects;
 using System.IO;
 
@@ -104,6 +105,10 @@ var openWebUi = builder.AddContainer("openwebui", "ghcr.io/open-webui/open-webui
     .WaitFor(postgres)
     .WaitFor(litellm)
     .WithHttpHealthCheck(path: "/health");
+
+
+builder.AddOllama("qwen3:0.6b", useGpu: true, hostPort: 1143);
+
 
 // Add a reverse proxy with health check
 var reverseProxy = builder.AddProject<ReverseProxy>("reverseproxy")
