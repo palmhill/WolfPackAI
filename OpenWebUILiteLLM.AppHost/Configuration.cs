@@ -102,8 +102,12 @@ public class LiteLLMConfiguration
 
 public class NetworkSettings
 {
-   public int HttpPort { get; set; } = 80;
-   public int HttpsPort { get; set; } = 443;
+    [JsonPropertyName("httpPort")]
+    public int HttpPort { get; set; } = 80;
+    [JsonPropertyName("httpsPort")]
+    public int HttpsPort { get; set; } = 443;
+    [JsonPropertyName("publicUrl")]
+    public string PublicUrl { get; set; } = string.Empty;
 }
 
 public class OpenWebUiConfig

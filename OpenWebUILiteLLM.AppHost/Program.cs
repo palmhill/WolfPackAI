@@ -116,25 +116,36 @@ var n8n = builder.AddContainer("n8n", "docker.n8n.io/n8nio/n8n")
     .WithHttpEndpoint(port: 5678, targetPort: 5678, name: "http")
     .WithVolume("n8n_data", "/home/node/.n8n")
     .WithEnvironment("DB_TYPE", "postgresdb")
+    .WithEnvironment("N8N_PROTOCOL", networkConfig.PublicUrl != null ? "https" : "http")
+    .WithEnvironment("N8N_HOST", networkConfig.PublicUrl ?? "localhost")
+    .WithEnvironment("N8N_PORT", "5678")
+    .WithEnvironment("N8N_PATH", "/n8n")
+    .WithEnvironment("WEBHOOK_URL", $"{(networkConfig.PublicUrl != null ? "https" : "http")}://{networkConfig.PublicUrl ?? "localhost"}/n8n/")
+    .WithEnvironment("VUE_APP_URL_BASE_API", $"{(networkConfig.PublicUrl != null ? "https" : "http")}://{networkConfig.PublicUrl ?? "localhost"}/n8n/")
+    .WithEnvironment("N8N_EDITOR_BASE_URL", $"{(networkConfig.PublicUrl != null ? "https" : "http")}://{networkConfig.PublicUrl ?? "localhost"}/n8n/")
     .WithEnvironment("DB_POSTGRESDB_DATABASE", "n8ndb")
     .WithEnvironment("DB_POSTGRESDB_HOST", "postgres")
     .WithEnvironment("DB_POSTGRESDB_PORT", pgPort.ToString())
     .WithEnvironment("DB_POSTGRESDB_USER", pgUsername)
     .WithEnvironment("DB_POSTGRESDB_PASSWORD", pgPassword)
-    .WithEnvironment("DB_POSTGRESDB_SCHEMA", "public") // optional but recommended
+    .WithEnvironment("DB_POSTGRESDB_SCHEMA", "public")
+    .WithEnvironment("DB_POSTGRESDB_SSL", "false") // Set to "true" for production with SSL
+    .WithEnvironment("GENERIC_TIMEZONE", "Europe/London")
+    .WithEnvironment("TZ", "Europe/London")
+    .WithEnvironment("N8N_BASIC_AUTH_ACTIVE", "true")
+    .WithEnvironment("N8N_BASIC_AUTH_USER", "admin")
+    .WithEnvironment("N8N_BASIC_AUTH_PASSWORD", "your_secure_password")
     .WithReference(postgres)
     .WithReference(n8nDb)
     .WaitFor(postgres)
-    .WithHttpHealthCheck("/", 200); // Root UI path shows readiness
+    .WithHttpHealthCheck("/healthz", 200);
 
-
-
-// Add a reverse proxy with health check
+// Reverse Proxy
 var reverseProxy = builder.AddProject<ReverseProxy>("reverseproxy")
     .WithExternalHttpEndpoints()
     .WaitFor(openWebUi)
     .WaitFor(litellm)
-    .WaitFor(n8n); 
+    .WaitFor(n8n);
 
 
 // Build and run the application

@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Yarp.ReverseProxy.Transforms;
-using System.Text.RegularExpressions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,40 +10,42 @@ builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
     .AddTransforms(builderContext =>
     {
-        builderContext.AddResponseTransform(transformContext =>
+        builderContext.AddResponseTransform(async transformContext =>
         {
             var response = transformContext.HttpContext.Response;
+            var requestPath = transformContext.HttpContext.Request.Path;
+            var requestHost = transformContext.HttpContext.Request.Host.Host;
 
-            if (response.StatusCode >= 300 && response.StatusCode < 400)
+            // Skip transform for WebSocket responses
+            if (transformContext.HttpContext.Request.Headers.Upgrade == "websocket")
             {
-                if (response.Headers.Location.Any())
-                {
-                    var location = response.Headers.Location.FirstOrDefault();
-                    if (!string.IsNullOrEmpty(location))
-                    {
-                        // If it's an absolute URL to the backend, rewrite it
-                        var backendHost = "localhost:4000"; // Adjust to your LiteLLM host
-                        if (location.StartsWith($"http://localhost:4000/") ||
-                            location.StartsWith($"https://localhost:4000/"))
-                        {
-                            var path = location.Substring(location.IndexOf('/', 8)); // Skip protocol and host
-                            if (path.StartsWith("/litellm/litellm"))
-                            {
-                                path = path.Substring(8);
-                            }
-
-                            response.Headers.Location = $"{path}";
-                        }
-                        // If it's a relative URL, prefix it
-                        else if (location.StartsWith("/"))
-                        {
-                            response.Headers.Location = $"{location}";
-                        }
-                    }
-                }
+                return;
             }
 
-            return ValueTask.CompletedTask;
+            if (response.StatusCode is >= 300 and < 400 &&
+                response.Headers.Location.Count > 0)
+            {
+                var originalLocation = response.Headers.Location.First();
+                if (string.IsNullOrEmpty(originalLocation))
+                    return;
+
+                string targetBasePath = requestPath.StartsWithSegments("/litellm") ? "/litellm" :
+                                        requestPath.StartsWithSegments("/n8n") ? "/n8n" :
+                                        "";
+
+                if (Uri.TryCreate(originalLocation, UriKind.Absolute, out var uri))
+                {
+                    if (uri.Host == "localhost" || uri.Host == requestHost)
+                    {
+                        var rewritten = $"{targetBasePath}{uri.PathAndQuery}";
+                        response.Headers.Location = rewritten;
+                    }
+                }
+                else if (originalLocation.StartsWith("/"))
+                {
+                    response.Headers.Location = $"{targetBasePath}{originalLocation}";
+                }
+            }
         });
     });
 
@@ -56,7 +57,11 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-// Map the reverse proxy
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.MapReverseProxy();
 
 app.Run();
