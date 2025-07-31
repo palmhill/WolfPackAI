@@ -62,6 +62,7 @@ var postgres = builder.AddPostgres("postgres",
 
 var openWebUiDb = postgres.AddDatabase("openwebuidb");
 var litellmDb = postgres.AddDatabase("litellmdb");
+var n8nDb = postgres.AddDatabase("n8ndb");
 
 // LiteLLM Proxy Configuration with health check
 var litellm = builder.AddContainer("litellm", "ghcr.io/berriai/litellm-database", "main-v1.74.8-nightly")
@@ -109,12 +110,32 @@ var openWebUi = builder.AddContainer("openwebui", "ghcr.io/open-webui/open-webui
 
 builder.AddOllama("qwen3:0.6b", useGpu: true, hostPort: 1143);
 
+// n8n workflow automation container
+// Add n8n workflow automation container with Postgres connection and persistent volume
+var n8n = builder.AddContainer("n8n", "docker.n8n.io/n8nio/n8n")
+    .WithHttpEndpoint(port: 5678, targetPort: 5678, name: "http")
+    .WithVolume("n8n_data", "/home/node/.n8n")
+    .WithEnvironment("DB_TYPE", "postgresdb")
+    .WithEnvironment("DB_POSTGRESDB_DATABASE", "n8ndb")
+    .WithEnvironment("DB_POSTGRESDB_HOST", "postgres")
+    .WithEnvironment("DB_POSTGRESDB_PORT", pgPort.ToString())
+    .WithEnvironment("DB_POSTGRESDB_USER", pgUsername)
+    .WithEnvironment("DB_POSTGRESDB_PASSWORD", pgPassword)
+    .WithEnvironment("DB_POSTGRESDB_SCHEMA", "public") // optional but recommended
+    .WithReference(postgres)
+    .WithReference(n8nDb)
+    .WaitFor(postgres)
+    .WithHttpHealthCheck("/", 200); // Root UI path shows readiness
+
+
 
 // Add a reverse proxy with health check
 var reverseProxy = builder.AddProject<ReverseProxy>("reverseproxy")
     .WithExternalHttpEndpoints()
     .WaitFor(openWebUi)
-    .WaitFor(litellm);
+    .WaitFor(litellm)
+    .WaitFor(n8n); 
+
 
 // Build and run the application
 var app = builder.Build();
