@@ -61,6 +61,7 @@ var litellm = builder.AddContainer("litellm", "ghcr.io/berriai/litellm-database"
 .WithEnvironment("LITELLM_LOG", "DEBUG")
 .WithEnvironment("DATABASE_URL", $"postgresql://{pgUsername}:{pgPassword}@postgres:{pgPort.ToString()}/litellmdb")
 .WithEnvironment("SERVER_ROOT_PATH", "/litellm")
+.WithEnvironment("PROXY_HOST", "localhost")
 .WithEnvironment("UI_USERNAME", "test")
 .WithEnvironment("UI_PASSWORD", "test")
 .WithBindMount("./litellm-config.yaml", "/app/config.yaml")
