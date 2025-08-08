@@ -10,7 +10,11 @@
       "Bash(chmod:*)",
       "Bash(docker system:*)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(dotnet run:*)",
+      "Bash(docker:*)",
+      "Bash(start \"\" \"C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe\")",
+      "Bash(timeout:*)"
     ],
     "deny": []
   }
