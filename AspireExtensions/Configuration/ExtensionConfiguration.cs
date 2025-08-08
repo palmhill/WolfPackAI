@@ -3,7 +3,43 @@ using System.ComponentModel.DataAnnotations;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace OpenWebUILiteLLM.AppHost;
+namespace AspireExtensions.Configuration;
+
+public class NetworkSettings
+{
+    [JsonPropertyName("httpPort")]
+    public int HttpPort { get; set; } = 80;
+    [JsonPropertyName("httpsPort")]
+    public int HttpsPort { get; set; } = 443;
+    [JsonPropertyName("publicUrl")]
+    public string PublicUrl { get; set; } = string.Empty;
+}
+
+public class OpenWebUiConfig
+{
+    public string PublicUrl { get; set; } = string.Empty;
+}
+
+public class AzureAdConfig
+{
+    [JsonPropertyName("tenantId")]
+    public string TenantId { get; set; } = string.Empty;
+    [JsonPropertyName("clientId")]
+    public string ClientId { get; set; } = string.Empty;
+    [JsonPropertyName("clientSecret")]
+    public string ClientSecret { get; set; } = string.Empty;
+}
+
+public class PostgresConfig
+{
+    [JsonPropertyName("username")]
+    public string Username { get; set; } = "postgres";
+    [JsonPropertyName("password")]
+    public string Password { get; set; } = "postgres";
+    [JsonPropertyName("port")]
+    public int Port { get; set; } = 5432;
+}
+
 public class LiteLLMConfiguration
 {
     [Required]
@@ -15,7 +51,8 @@ public class LiteLLMConfiguration
     [Required]
     public RouterSettings RouterSettings { get; set; } = new();
     [Required]
-    public NetworkSettings PublicNetwork { get; set; }
+    public NetworkSettings PublicNetwork { get; set; } = new();
+
     public void Validate()
     {
         // Validate each model config
@@ -34,6 +71,7 @@ public class LiteLLMConfiguration
         if (string.IsNullOrEmpty(GeneralSettings.MasterKey))
             throw new ValidationException("Master key cannot be empty");
     }
+
     public string GenerateYaml()
     {
         // Convert the C# configuration to the expected YAML format for LiteLLM
@@ -53,24 +91,14 @@ public class LiteLLMConfiguration
                 ["drop_params"] = Settings.DropParams,
                 ["set_verbose"] = Settings.SetVerbose
             },
-            //["general_settings"] = new Dictionary<string, object>
-            //{
-            //    ["master_key"] = GeneralSettings.MasterKey,
-            //    ["database_url"] = GeneralSettings.DatabaseUrl
-            //},
             ["router_settings"] = new Dictionary<string, object>
             {
                 ["routing_strategy"] = RouterSettings.RoutingStrategy,
                 ["num_retries"] = RouterSettings.NumRetries,
                 ["timeout"] = RouterSettings.Timeout
             },
-            //["environment_variables"] = new Dictionary<string, object>
-            //{
-            //    ["AZURE_AD_TENANT_ID"] = Auth.AzureAd?.TenantId ?? "",
-            //    ["AZURE_AD_CLIENT_ID"] = Auth.AzureAd?.ClientId ?? "",
-            //    ["AZURE_AD_CLIENT_SECRET"] = Auth.AzureAd?.ClientSecret ?? ""
-            //}
         };
+        
         // Conditionally add optional parameters to litellm_params
         foreach (var modelDict in (List<Dictionary<string, object>>)yamlObject["model_list"])
         {
@@ -85,25 +113,14 @@ public class LiteLLMConfiguration
                 paramsDict["api_version"] = modelConfig.LiteLLMParams.ApiVersion;
             }
         }
+        
         var serializer = new SerializerBuilder()
         .WithNamingConvention(UnderscoredNamingConvention.Instance)
         .Build();
         return serializer.Serialize(yamlObject);
     }
 }
-public class NetworkSettings
-{
-    [JsonPropertyName("httpPort")]
-    public int HttpPort { get; set; } = 80;
-    [JsonPropertyName("httpsPort")]
-    public int HttpsPort { get; set; } = 443;
-    [JsonPropertyName("publicUrl")]
-    public string PublicUrl { get; set; } = string.Empty;
-}
-public class OpenWebUiConfig
-{
-    public string PublicUrl { get; set; } = string.Empty;
-}
+
 public class ModelConfig
 {
     [JsonPropertyName("modelName")]
@@ -116,6 +133,7 @@ public class ModelConfig
     [YamlMember(Alias = "model_type")]
     public string ModelType { get; set; } = string.Empty;
 }
+
 public class LiteLLMParams
 {
     [JsonPropertyName("model")]
@@ -130,6 +148,7 @@ public class LiteLLMParams
     [YamlMember(Alias = "api_version")]
     public string ApiVersion { get; set; } = string.Empty;
 }
+
 public class LiteLLMSettings
 {
     [JsonPropertyName("dropParams")]
@@ -139,12 +158,14 @@ public class LiteLLMSettings
     [YamlMember(Alias = "set_verbose")]
     public bool SetVerbose { get; set; } = true;
 }
+
 public class GeneralSettings
 {
     [JsonPropertyName("masterKey")]
     [YamlMember(Alias = "master_key")]
     public string MasterKey { get; set; } = string.Empty;
 }
+
 public class RouterSettings
 {
     [JsonPropertyName("routingStrategy")]
@@ -155,23 +176,4 @@ public class RouterSettings
     public int NumRetries { get; set; } = 3;
     [JsonPropertyName("timeout")]
     public int Timeout { get; set; } = 600;
-}
-
-public class AzureAdConfig
-{
-    [JsonPropertyName("tenantId")]
-    public string TenantId { get; set; } = string.Empty;
-    [JsonPropertyName("clientId")]
-    public string ClientId { get; set; } = string.Empty;
-    [JsonPropertyName("clientSecret")]
-    public string ClientSecret { get; set; } = string.Empty;
-}
-public class PostgresConfig
-{
-    [JsonPropertyName("username")]
-    public string Username { get; set; } = "postgres";
-    [JsonPropertyName("password")]
-    public string Password { get; set; } = "postgres";
-    [JsonPropertyName("port")]
-    public int Port { get; set; } = 5432;
 }

@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ReverseProxy\ReverseProxy.csproj" />
+    <ProjectReference Include="..\AspireExtensions\AspireExtensions.csproj" IsAspireProjectResource="false" />
   </ItemGroup>
 
   <ItemGroup>

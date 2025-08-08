@@ -14,7 +14,8 @@
       "Bash(dotnet run:*)",
       "Bash(docker:*)",
       "Bash(start \"\" \"C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe\")",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(dotnet sln add:*)"
     ],
     "deny": []
   }
