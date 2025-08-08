@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenWebUI LiteLLM Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #718096;
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        .services-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .service-card {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 2rem 1.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .service-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .service-description {
+            font-size: 0.95rem;
+            color: #718096;
+            line-height: 1.5;
+        }
+
+        .service-card.openwebui {
+            border-color: #48bb78;
+        }
+
+        .service-card.openwebui:hover {
+            border-color: #38a169;
+        }
+
+        .service-card.litellm {
+            border-color: #ed8936;
+        }
+
+        .service-card.litellm:hover {
+            border-color: #dd6b20;
+        }
+
+        .service-card.n8n {
+            border-color: #9f7aea;
+        }
+
+        .service-card.n8n:hover {
+            border-color: #805ad5;
+        }
+
+        .footer {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1.5rem;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .service-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .service-icon {
+                font-size: 2.5rem;
+            }
+
+            .service-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="logo">🚀 AI Portal</h1>
+        <p class="subtitle">OpenWebUI LiteLLM Integration Platform</p>
+        
+        <div class="services-grid">
+            <a href="/chat" class="service-card openwebui">
+                <div class="service-icon">💬</div>
+                <h2 class="service-title">OpenWebUI</h2>
+                <p class="service-description">
+                    Interactive AI chat interface with support for multiple language models and conversation management
+                </p>
+            </a>
+
+            <a href="/litellm/" class="service-card litellm">
+                <div class="service-icon">🔗</div>
+                <h2 class="service-title">LiteLLM</h2>
+                <p class="service-description">
+                    Unified API gateway for multiple LLM providers with load balancing, caching, and monitoring
+                </p>
+            </a>
+
+            <a href="/n8n/" class="service-card n8n">
+                <div class="service-icon">⚙️</div>
+                <h2 class="service-title">n8n</h2>
+                <p class="service-description">
+                    Workflow automation platform for building complex integrations and automating processes
+                </p>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>Powered by .NET Aspire • Azure AD Authentication Enabled</p>
+        </div>
+    </div>
+</body>
+</html>

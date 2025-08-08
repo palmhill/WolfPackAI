@@ -6,6 +6,9 @@ using System.Text.RegularExpressions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services
+builder.Services.AddHttpClient();
+
 // Add YARP services
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
@@ -23,7 +26,6 @@ builder.Services.AddReverseProxy()
                     if (!string.IsNullOrEmpty(location))
                     {
                         // If it's an absolute URL to the backend, rewrite it
-                        var backendHost = "localhost:4000"; // Adjust to your LiteLLM host
                         if (location.StartsWith($"http://localhost:4000/") ||
                             location.StartsWith($"https://localhost:4000/"))
                         {
@@ -55,6 +57,16 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
+
+// Serve static files from wwwroot
+app.UseStaticFiles();
+
+// Add landing page route
+app.MapGet("/", async context =>
+{
+    context.Response.ContentType = "text/html";
+    await context.Response.WriteAsync(await File.ReadAllTextAsync("wwwroot/index.html"));
+});
 
 // Map the reverse proxy
 app.MapReverseProxy();
