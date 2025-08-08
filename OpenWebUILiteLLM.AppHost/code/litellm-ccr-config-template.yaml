@@ -1,0 +1,110 @@
+# LiteLLM Configuration Template for CCR Integration
+# This extends your existing LiteLLM configuration to work with Claude Code Router
+
+# Add these entries to your existing model_list in litellm-config.yaml
+model_list:
+  # CCR Integration Models
+  - model_name: ccr-claude-sonnet
+    litellm_params:
+      model: claude-3-5-sonnet-20241022
+      api_base: http://devcontainer:3456/v1
+      api_key: ccr-dev-key-2024
+      custom_headers:
+        User-Agent: "LiteLLM-CCR-Bridge/1.0"
+    model_info:
+      mode: chat
+      supports_function_calling: true
+      max_tokens: 200000
+      input_cost_per_token: 0.000003
+      output_cost_per_token: 0.000015
+      litellm_provider: custom
+      base_model: claude-3-5-sonnet-20241022
+
+  - model_name: ccr-deepseek-coder
+    litellm_params:
+      model: deepseek-coder
+      api_base: http://devcontainer:3456/v1
+      api_key: ccr-dev-key-2024
+    model_info:
+      mode: chat
+      supports_function_calling: true
+      max_tokens: 8192
+      input_cost_per_token: 0.000001
+      output_cost_per_token: 0.000002
+      litellm_provider: custom
+      base_model: deepseek-coder
+
+  - model_name: ccr-qwen-coder
+    litellm_params:
+      model: qwen2.5-coder:latest
+      api_base: http://devcontainer:3456/v1
+      api_key: ccr-dev-key-2024
+    model_info:
+      mode: chat
+      supports_function_calling: false
+      max_tokens: 4096
+      input_cost_per_token: 0.0
+      output_cost_per_token: 0.0
+      litellm_provider: custom
+      base_model: qwen2.5-coder
+
+# Router Settings
+router_settings:
+  model_group_alias:
+    claude-code: ["ccr-claude-sonnet", "claude-3-5-sonnet-20241022"]
+    coding: ["ccr-deepseek-coder", "ccr-qwen-coder", "deepseek-coder"]
+    local: ["ccr-qwen-coder", "qwen2.5-coder:latest"]
+  
+  fallback_models:
+    - ccr-claude-sonnet
+    - claude-3-5-sonnet-20241022
+    - ccr-deepseek-coder
+  
+  routing_strategy: usage-based-routing
+  retry_policy:
+    max_retries: 3
+    exponential_backoff: true
+    initial_interval: 1
+    max_interval: 10
+    
+# Custom routing logic for Claude Code requests
+custom_callbacks:
+  - callback_name: "ccr_router" 
+    callback_type: "pre_call"
+    callback_vars:
+      CCR_ENDPOINT: "http://devcontainer:3456/v1/messages"
+      ROUTE_CLAUDE_CODE: true
+
+# Environment variable mappings for CCR integration  
+environment:
+  CCR_API_KEY: ccr-dev-key-2024
+  CCR_BASE_URL: http://devcontainer:3456
+  LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY}
+  
+# Health checks
+health_check:
+  ccr_health_check:
+    endpoint: http://devcontainer:3456/health
+    timeout: 10
+    healthy_responses: [200]
+
+# Logging for CCR integration
+litellm_settings:
+  success_callback: ["langfuse", "ccr_logger"]
+  failure_callback: ["langfuse", "ccr_logger"] 
+  set_verbose: true
+  json_logs: true
+
+# Cost tracking
+cost_tracking:
+  track_ccr_usage: true
+  cost_per_token:
+    ccr-claude-sonnet: 
+      input: 0.000003
+      output: 0.000015
+    ccr-deepseek-coder:
+      input: 0.000001  
+      output: 0.000002
+    ccr-qwen-coder:
+      input: 0.0
+      output: 0.0

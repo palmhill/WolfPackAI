@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Aspire.Hosting;
+using Aspire.Hosting.ApplicationModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenWebUILiteLLM.AppHost
+namespace AspireExtensions.Resources
 {
     public class OllamaResource : ContainerResource, IResourceWithConnectionString
     {

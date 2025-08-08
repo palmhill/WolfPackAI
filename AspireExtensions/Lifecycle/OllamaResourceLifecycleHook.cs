@@ -1,13 +1,15 @@
-﻿using Aspire.Hosting.Lifecycle;
+﻿using Aspire.Hosting;
+using Aspire.Hosting.ApplicationModel;
+using Aspire.Hosting.Lifecycle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OllamaSharp;
+using AspireExtensions.Resources;
 
-
-namespace OpenWebUILiteLLM.AppHost
+namespace AspireExtensions.Lifecycle
 {
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class OllamaResourceLifecycleHook(ResourceNotificationService notificationService)
@@ -119,7 +121,7 @@ namespace OpenWebUILiteLLM.AppHost
 
             await foreach (var status in ollamaClient.PullModelAsync(model, cancellationToken))
             {
-                if (status.Total != 0)
+                if (status.Total != null && status.Total != 0)
                 {
                     var newPercentage = (long)(status.Completed / (double)status.Total * 100);
                     if (newPercentage != percentage)

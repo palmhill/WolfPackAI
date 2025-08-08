@@ -25,6 +25,9 @@ builder.Services.AddReverseProxy()
                     var location = response.Headers.Location.FirstOrDefault();
                     if (!string.IsNullOrEmpty(location))
                     {
+                        // Get the request path to determine the service
+                        var requestPath = transformContext.HttpContext.Request.Path.Value ?? "";
+                        
                         // If it's an absolute URL to the backend, rewrite it
                         if (location.StartsWith($"http://localhost:4000/") ||
                             location.StartsWith($"https://localhost:4000/"))
@@ -34,13 +37,30 @@ builder.Services.AddReverseProxy()
                             {
                                 path = path.Substring(8);
                             }
-
                             response.Headers.Location = $"{path}";
                         }
-                        // If it's a relative URL, prefix it
+                        // Handle CCR redirects from localhost:3456
+                        else if (location.StartsWith($"http://localhost:3456/") ||
+                                location.StartsWith($"https://localhost:3456/"))
+                        {
+                            var path = location.Substring(location.IndexOf('/', 8)); // Skip protocol and host
+                            response.Headers.Location = $"/ccr{path}";
+                        }
+                        // If it's a relative URL, prefix it based on the request path
                         else if (location.StartsWith("/"))
                         {
-                            response.Headers.Location = $"{location}";
+                            if (requestPath.StartsWith("/ccr"))
+                            {
+                                response.Headers.Location = $"/ccr{location}";
+                            }
+                            else if (requestPath.StartsWith("/claude-code"))
+                            {
+                                response.Headers.Location = $"/claude-code{location}";
+                            }
+                            else
+                            {
+                                response.Headers.Location = location;
+                            }
                         }
                     }
                 }

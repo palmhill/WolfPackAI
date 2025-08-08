@@ -1,13 +1,18 @@
-﻿using Aspire.Hosting.Lifecycle;
+﻿using Aspire.Hosting;
+using Aspire.Hosting.ApplicationModel;
+using Aspire.Hosting.Lifecycle;
+using Microsoft.Extensions.DependencyInjection;
+using AspireExtensions.Resources;
+using AspireExtensions.Lifecycle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenWebUILiteLLM.AppHost
+namespace AspireExtensions.Extensions
 {
-    public static class ResourceExtensions
+    public static class OllamaExtensions
     {
         private const int OllamaContainerPort = 11434;
 
