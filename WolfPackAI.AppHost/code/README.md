@@ -4,7 +4,7 @@ This directory is synchronized with the development container's `/app/code` dire
 
 ## Usage
 
-1. Start the Aspire application: `dotnet run --project OpenWebUILiteLLM.AppHost`
+1. Start the Aspire application: `dotnet run --project WolfPackAI.AppHost`
 2. SSH into the development container: `ssh root@localhost -p 2222` (password: supersecurepassword)
    - Or use the developer account: `ssh developer@localhost -p 2222` (password: devpassword)
 3. Navigate to `/app/code` in the container to work with synced files

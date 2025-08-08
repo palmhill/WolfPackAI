@@ -6,7 +6,7 @@ Due to line ending issues with embedded scripts, CCR setup needs to be done afte
 
 ### 1. Start the Aspire Application
 ```bash
-dotnet run --project OpenWebUILiteLLM.AppHost
+dotnet run --project WolfPackAI.AppHost
 ```
 
 ### 2. Wait for Container to Start

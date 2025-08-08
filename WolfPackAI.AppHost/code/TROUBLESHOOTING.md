@@ -31,7 +31,7 @@ var devContainer = builder.AddContainer("devcontainer", "ubuntu", "24.04")
 
 Build the image separately:
 ```bash
-cd OpenWebUILiteLLM.AppHost
+cd WolfPackAI.AppHost
 docker build -f Dockerfile.devcontainer.multistage -t aspire-devcontainer:latest .
 ```
 
@@ -52,7 +52,7 @@ If you need to use Dockerfile approach:
 - **OS**: WSL2 Ubuntu on Windows
 - **Docker**: overlayfs storage driver
 - **Aspire**: .NET 9.0
-- **Build Context**: /mnt/c/Users/localadmin/source/repos/AspireOpenWebUILiteLLM/OpenWebUILiteLLM.AppHost
+- **Build Context**: /mnt/c/Users/localadmin/source/repos/AspireWolfPackAI/WolfPackAI.AppHost
 
 ### Connection Info
 Once running:

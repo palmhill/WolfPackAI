@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.0.0
 MinimumVisualStudioVersion = 17.8.0.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenWebUILiteLLM.AppHost", "OpenWebUILiteLLM.AppHost\OpenWebUILiteLLM.AppHost.csproj", "{04584FF7-28F2-4378-AB71-B2C31D3F5BB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WolfPackAI.AppHost", "WolfPackAI.AppHost\WolfPackAI.AppHost.csproj", "{04584FF7-28F2-4378-AB71-B2C31D3F5BB4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenWebUILiteLLM.ServiceDefaults", "OpenWebUILiteLLM.ServiceDefaults\OpenWebUILiteLLM.ServiceDefaults.csproj", "{CD8D462D-4435-4134-9EAB-61B016D06295}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WolfPackAI.ServiceDefaults", "WolfPackAI.ServiceDefaults\WolfPackAI.ServiceDefaults.csproj", "{CD8D462D-4435-4134-9EAB-61B016D06295}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReverseProxy", "ReverseProxy\ReverseProxy.csproj", "{5D6AC422-68D4-4263-B9D1-BC9F109480D2}"
 EndProject

@@ -8,12 +8,12 @@
     <!-- NuGet Package Configuration -->
     <PackageId>AspireExtensions</PackageId>
     <Version>1.0.0</Version>
-    <Authors>OpenWebUILiteLLM</Authors>
+    <Authors>WolfPackAI</Authors>
     <Description>Aspire extensions for containerized services including OpenWebUI, LiteLLM, n8n, Ollama, and development containers</Description>
     <PackageTags>aspire;containers;openwebui;litellm;n8n;ollama;devcontainer</PackageTags>
     <RepositoryType>git</RepositoryType>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageProjectUrl>https://github.com/palmhill/AspireOpenWebUILiteLLM</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/palmhill/WolfPackAI</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
