@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using OpenWebUILiteLLM.AppHost;
+using WolfPackAI.AppHost;
 using Projects;
 using AspireExtensions.Extensions;
 using AspireExtensions.Configuration;

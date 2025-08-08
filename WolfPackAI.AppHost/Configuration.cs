@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace OpenWebUILiteLLM.AppHost;
+namespace WolfPackAI.AppHost;
 public class LiteLLMConfiguration
 {
     [Required]

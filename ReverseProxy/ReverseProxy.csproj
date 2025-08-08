@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OpenWebUILiteLLM.ServiceDefaults\OpenWebUILiteLLM.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\WolfPackAI.ServiceDefaults\WolfPackAI.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

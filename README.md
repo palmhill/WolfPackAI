@@ -1,4 +1,4 @@
-# OpenWebUILiteLLM
+# WolfPackAI
 
 An integrated solution for deploying [OpenWebUI](https://github.com/open-webui/open-webui) with [LiteLLM](https://github.com/berriai/litellm) backend, using .NET Aspire for orchestration.
 
@@ -19,7 +19,7 @@ An integrated solution for deploying [OpenWebUI](https://github.com/open-webui/o
 
 ## Configuration
 
-All configuration is managed through the `appsettings.json` file in the `OpenWebUILiteLLM.AppHost` project:
+All configuration is managed through the `appsettings.json` file in the `WolfPackAI.AppHost` project:
 {
   "LiteLLM": {
     "ModelList": [
@@ -59,7 +59,7 @@ All configuration is managed through the `appsettings.json` file in the `OpenWeb
 
 1. Configure the `appsettings.json` file with your Azure AD and LLM API settings
 2. Run the application using:
-dotnet run --project OpenWebUILiteLLM.AppHost
+dotnet run --project WolfPackAI.AppHost
 3. The Aspire dashboard will open, showing the status of all services
 4. Access OpenWebUI through the reverse proxy at http://localhost:5000
 

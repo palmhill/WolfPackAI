@@ -6,7 +6,7 @@ This file provides comprehensive guidance to Claude Code (claude.ai/code) when w
 
 ### Build and Run
 - **Build the solution**: `dotnet build`
-- **Run the main application**: `dotnet run --project OpenWebUILiteLLM.AppHost`
+- **Run the main application**: `dotnet run --project WolfPackAI.AppHost`
 - **Run specific project**: `dotnet run --project <ProjectName>`
 - **Clean build artifacts**: `dotnet clean`
 
@@ -19,9 +19,9 @@ This file provides comprehensive guidance to Claude Code (claude.ai/code) when w
 This is a sophisticated .NET Aspire-orchestrated solution that integrates multiple AI services including OpenWebUI, LiteLLM, Claude Code Router (CCR), and n8n workflow automation. The architecture provides a comprehensive AI development and deployment platform.
 
 ### Core Projects
-1. **OpenWebUILiteLLM.AppHost** - The main Aspire orchestration host that configures and manages all containerized services
+1. **WolfPackAI.AppHost** - The main Aspire orchestration host that configures and manages all containerized services
 2. **ReverseProxy** - YARP-based reverse proxy that routes requests between services with advanced path rewriting
-3. **OpenWebUILiteLLM.ServiceDefaults** - Shared service configuration and extensions for OpenTelemetry, health checks, and resilience
+3. **WolfPackAI.ServiceDefaults** - Shared service configuration and extensions for OpenTelemetry, health checks, and resilience
 
 ### Service Architecture
 
@@ -38,7 +38,7 @@ The application orchestrates multiple Docker containers in a microservices archi
 
 ### Configuration System
 
-All configuration is centralized in `OpenWebUILiteLLM.AppHost/appsettings.json` with strongly-typed configuration classes:
+All configuration is centralized in `WolfPackAI.AppHost/appsettings.json` with strongly-typed configuration classes:
 
 #### Configuration Sections:
 - **LiteLLM**: Model configurations, routing settings, and master key
@@ -51,14 +51,14 @@ The system features dynamic YAML generation that converts JSON configuration to 
 
 ### Key Components
 
-#### Program.cs (AppHost) - `OpenWebUILiteLLM.AppHost/Program.cs`
+#### Program.cs (AppHost) - `WolfPackAI.AppHost/Program.cs`
 - **Configuration Loading & Validation**: Validates all service configurations at startup
 - **Service Dependency Management**: Sets up proper startup ordering with health checks
 - **Container Orchestration**: Configures all Docker containers with environment variables, volumes, and networking
 - **Dynamic YAML Generation**: Creates LiteLLM configuration file from appsettings.json
 - **Multi-Service Integration**: Manages dependencies between OpenWebUI, LiteLLM, Ollama, PostgreSQL, n8n, and CCR
 
-#### Configuration.cs - `OpenWebUILiteLLM.AppHost/Configuration.cs`
+#### Configuration.cs - `WolfPackAI.AppHost/Configuration.cs`
 - **Strongly-Typed Models**: Configuration classes with JSON and YAML serialization attributes
 - **Validation Logic**: Ensures all required configuration values are present with detailed error messages
 - **YAML Serialization**: Converts C# configuration objects to LiteLLM-compatible YAML format using YamlDotNet
@@ -71,13 +71,13 @@ The system features dynamic YAML generation that converts JSON configuration to 
 - **Service Path Management**: Routes to /chat, /litellm/, /ccr/, /n8n/, and /claude-code/ endpoints
 - **Static File Serving**: Serves static assets from wwwroot directory
 
-#### Ollama Integration - `OpenWebUILiteLLM.AppHost/OllamaResource.cs`
+#### Ollama Integration - `WolfPackAI.AppHost/OllamaResource.cs`
 - **Custom Resource Definition**: Extends ContainerResource for Ollama-specific functionality
 - **Connection String Generation**: Provides connection strings for other services
 - **GPU Support**: Configurable GPU acceleration for model inference
 - **Model Management**: Handles model downloading and lifecycle management
 
-#### Service Extensions - `OpenWebUILiteLLM.AppHost/ResourceExtensions.cs`
+#### Service Extensions - `WolfPackAI.AppHost/ResourceExtensions.cs`
 - **Ollama Resource Builder**: Extension methods for configuring Ollama containers
 - **GPU Configuration**: Support for GPU acceleration with runtime arguments
 - **Port Management**: Flexible host port configuration
@@ -158,7 +158,7 @@ The system implements a sophisticated routing strategy that leverages both LiteL
 
 #### Getting Started:
 1. **Configure `appsettings.json`** with your Azure AD tenant and API settings
-2. **Run the application**: `dotnet run --project OpenWebUILiteLLM.AppHost`
+2. **Run the application**: `dotnet run --project WolfPackAI.AppHost`
 3. **Access Aspire Dashboard** to monitor service health and logs
 4. **Navigate to landing page** at `http://localhost:5000/` for service access
 5. **Use SSH for development**: `ssh developer@localhost -p 2222` (password: `devpassword`)
