@@ -51,23 +51,14 @@ var n8nDb = postgres.AddDatabase("n8ndb");
 // Ollama container
 var ollama = builder.AddOllama("qwen3:0.6b", useGpu: true, hostPort: 1143);
 // LiteLLM Proxy Configuration with health check
-var litellm = builder.AddContainer("litellm", "ghcr.io/berriai/litellm-database", "main-v1.74.8-nightly")
-.WithHttpEndpoint(port: 4000, targetPort: 4000, name: "http")
-.WithEnvironment("STORE_MODEL_IN_DB", "True")
-.WithEnvironment("LITELLM_MASTER_KEY", liteLlmConfig.GeneralSettings.MasterKey)
-.WithEnvironment("LITELLM_LOG", "DEBUG")
-.WithEnvironment("DATABASE_URL", $"postgresql://{pgUsername}:{pgPassword}@postgres:{pgPort.ToString()}/litellmdb")
-.WithEnvironment("SERVER_ROOT_PATH", "/litellm")
-.WithEnvironment("PROXY_HOST", "localhost")
-.WithEnvironment("UI_USERNAME", "test")
-.WithEnvironment("UI_PASSWORD", "test")
-.WithBindMount("./litellm-config.yaml", "/app/config.yaml")
-.WithArgs("--config", "/app/config.yaml")
-.WithReference(postgres)
-.WithReference(litellmDb)
-.WithReference(ollama)
-.WaitFor(postgres)
-.WaitFor(ollama); 
+var litellm = builder.AddLiteLLM(
+    liteLlmConfig,
+    postgres,
+    litellmDb,
+    ollama,
+    pgUsername,
+    pgPassword,
+    pgPort);
 // Note: LiteLLM health check disabled due to authentication requirements
 // Open-WebUI with Azure AD Authentication and health check
 var openWebUi = builder.AddOpenWebUI(
