@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(dotnet build)",
-      "Bash(dotnet build:*)"
+      "Bash(dotnet build:*)",
+      "Bash(mkdir:*)",
+      "Bash(docker build:*)",
+      "Bash(cp:*)",
+      "Bash(rm:*)",
+      "Bash(chmod:*)",
+      "Bash(docker system:*)"
     ],
     "deny": []
   }

@@ -1,0 +1,83 @@
+# Multi-stage Dockerfile for faster builds and better caching
+FROM ubuntu:24.04 AS base
+
+# Set environment variables for non-interactive installation
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+
+# Install basic system dependencies
+RUN apt-get update && \
+    apt-get install -y \
+        software-properties-common \
+        ca-certificates \
+        curl \
+        gnupg \
+        wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Development tools stage
+FROM base AS dev-tools
+
+# Install development tools
+RUN apt-get update && \
+    apt-get install -y \
+        openssh-server \
+        git \
+        vim \
+        nano \
+        make \
+        gcc \
+        g++ \
+        cmake \
+        libtool \
+        autoconf \
+        automake \
+        libc6-dev \
+        libstdc++6 \
+        python3-pip \
+        python3-venv \
+        sudo \
+        build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Runtime installation stage
+FROM dev-tools AS runtime
+
+# Install .NET SDK
+RUN add-apt-repository ppa:dotnet/backports -y && \
+    apt-get update && \
+    apt-get install -y dotnet-sdk-9.0 && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Node.js
+RUN mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list && \
+    apt-get update && \
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
+
+# Final stage
+FROM runtime AS final
+
+# Configure SSH
+RUN mkdir -p /var/run/sshd && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+# Create users
+RUN useradd -m -s /bin/bash developer && \
+    usermod -aG sudo developer && \
+    echo 'root:supersecurepassword' | chpasswd && \
+    echo 'developer:devpassword' | chpasswd
+
+# Create and set up code directory
+WORKDIR /app
+RUN mkdir -p /app/code && \
+    chown -R developer:developer /app/code
+
+# Expose SSH port
+EXPOSE 22
+
+# Start SSH daemon
+CMD ["/usr/sbin/sshd", "-D"]
