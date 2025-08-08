@@ -70,8 +70,8 @@ var litellm = builder.AddContainer("litellm", "ghcr.io/berriai/litellm-database"
 .WithReference(litellmDb)
 .WithReference(ollama)
 .WaitFor(postgres)
-.WaitFor(ollama)
-.WithHttpHealthCheck("/health", 401); // LiteLLM health check endpoint
+.WaitFor(ollama); 
+// Note: LiteLLM health check disabled due to authentication requirements
 // Open-WebUI with Azure AD Authentication and health check
 var authRedirectUri = new Uri(new Uri(openWebUiConfig.PublicUrl), "/oauth/oidc/callback").ToString();
     var openWebUi = builder.AddContainer("openwebui", "ghcr.io/open-webui/open-webui", "latest")
@@ -133,31 +133,26 @@ var n8n = builder.AddContainer("n8n", "docker.n8n.io/n8nio/n8n")
 
 // Development Container with SSH access for multi-language development
 // First attempt with regular container - if this fails, we can fall back to Dockerfile approach
+var devContainer = (IResourceBuilder<ContainerResource>?)null;
 try
 {
-    var devContainer = builder.AddContainer("devcontainer", "ubuntu", "24.04")
+    devContainer = builder.AddContainer("devcontainer", "ubuntu", "24.04")
         .WithEndpoint(targetPort: 22, port: 2222, scheme: "tcp", name: "ssh")
+        .WithHttpEndpoint(targetPort: 3456, port: 3456, name: "ccr-http")
         .WithBindMount("./code", "/app/code")
-        .WithArgs("/bin/bash", "-c", @"
-            export DEBIAN_FRONTEND=noninteractive &&
-            apt-get update && apt-get install -y software-properties-common ca-certificates curl gnupg openssh-server git vim nano make gcc g++ cmake libtool autoconf automake libc6-dev libstdc++6 python3-pip python3-venv sudo build-essential &&
-            add-apt-repository ppa:dotnet/backports -y &&
-            mkdir -p /etc/apt/keyrings &&
-            curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg &&
-            echo 'deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main' > /etc/apt/sources.list.d/nodesource.list &&
-            apt-get update &&
-            apt-get install -y dotnet-sdk-9.0 nodejs &&
-            mkdir -p /var/run/sshd &&
-            echo 'root:supersecurepassword' | chpasswd &&
-            echo 'developer:devpassword' | chpasswd &&
-            sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config &&
-            sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
-            useradd -m -s /bin/bash developer &&
-            usermod -aG sudo developer &&
-            mkdir -p /app/code &&
-            chown -R developer:developer /app/code &&
-            exec /usr/sbin/sshd -D
-        ")
+        .WithEntrypoint("/bin/bash")
+.WithArgs(
+    "-c",
+    "apt-get update && apt-get install -y openssh-server curl && " +
+    "mkdir -p /var/run/sshd && " +
+    "useradd -m -s /bin/bash developer && " +
+    "echo 'developer:devpassword' | chpasswd && " +
+    "echo 'root:supersecurepassword' | chpasswd && " +
+    "sed -i 's/#PermitRootLogin yes/PermitRootLogin yes/' /etc/ssh/sshd_config && " +
+    "sed -i 's/#PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config && " +
+    "exec /usr/sbin/sshd -D"
+)
+
         .WithEnvironment("DEBIAN_FRONTEND", "noninteractive")
         .WithEnvironment("TZ", "UTC");
 }
@@ -173,6 +168,17 @@ var reverseProxy = builder.AddProject<ReverseProxy>("reverseproxy")
     .WaitFor(openWebUi)
     .WaitFor(litellm)
     .WaitFor(n8n);
+    
+// Add devContainer dependency if it was created successfully
+if (devContainer != null)
+{
+    reverseProxy = reverseProxy.WaitFor(devContainer);
+    Console.WriteLine("Reverse proxy will wait for development container to be ready");
+}
+else
+{
+    Console.WriteLine("Development container not available - reverse proxy will start without waiting");
+}
 // Build and run the application
 var app = builder.Build();
 // Optional: Add global health check monitoring

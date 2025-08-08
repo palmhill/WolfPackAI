@@ -8,7 +8,9 @@
       "Bash(cp:*)",
       "Bash(rm:*)",
       "Bash(chmod:*)",
-      "Bash(docker system:*)"
+      "Bash(docker system:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ],
     "deny": []
   }
