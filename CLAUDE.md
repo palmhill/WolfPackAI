@@ -20,7 +20,7 @@ This is a sophisticated .NET Aspire-orchestrated solution that integrates multip
 
 ### Core Projects
 1. **WolfPackAI.AppHost** - The main Aspire orchestration host that configures and manages all containerized services
-2. **ReverseProxy** - YARP-based reverse proxy that routes requests between services with advanced path rewriting
+2. **WolfPackAI.ReverseProxy** - YARP-based reverse proxy that routes requests between services with advanced path rewriting
 3. **WolfPackAI.ServiceDefaults** - Shared service configuration and extensions for OpenTelemetry, health checks, and resilience
 
 ### Service Architecture
@@ -64,7 +64,7 @@ The system features dynamic YAML generation that converts JSON configuration to 
 - **YAML Serialization**: Converts C# configuration objects to LiteLLM-compatible YAML format using YamlDotNet
 - **Environment Variable Integration**: Handles secure API key references via environment variables
 
-#### ReverseProxy/Program.cs - `ReverseProxy/Program.cs`
+#### WolfPackAI.ReverseProxy/Program.cs - `WolfPackAI.ReverseProxy/Program.cs`
 - **YARP Configuration**: Advanced request routing with path transformation and header management
 - **Landing Page**: Serves a responsive HTML portal at `/` with links to all services
 - **Response Transformation**: Handles Location header rewriting for proper service routing

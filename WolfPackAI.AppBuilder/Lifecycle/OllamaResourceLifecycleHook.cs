@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OllamaSharp;
-using AspireExtensions.Resources;
+using WolfPackAI.AppBuilder.Resources;
 
-namespace AspireExtensions.Lifecycle
+namespace WolfPackAI.AppBuilder.Lifecycle
 {
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class OllamaResourceLifecycleHook(ResourceNotificationService notificationService)

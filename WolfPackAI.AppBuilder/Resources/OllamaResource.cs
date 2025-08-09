@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AspireExtensions.Resources
+namespace WolfPackAI.AppBuilder.Resources
 {
     public class OllamaResource : ContainerResource, IResourceWithConnectionString
     {

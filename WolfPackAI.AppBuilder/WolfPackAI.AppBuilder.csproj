@@ -6,10 +6,10 @@
     <Nullable>enable</Nullable>
     
     <!-- NuGet Package Configuration -->
-    <PackageId>AspireExtensions</PackageId>
+    <PackageId>WolfPackAI.AppBuilder</PackageId>
     <Version>1.0.0</Version>
     <Authors>WolfPackAI</Authors>
-    <Description>Aspire extensions for containerized services including OpenWebUI, LiteLLM, n8n, Ollama, and development containers</Description>
+    <Description>WolfPackAI application builder with Aspire extensions for containerized services including OpenWebUI, LiteLLM, n8n, Ollama, and development containers</Description>
     <PackageTags>aspire;containers;openwebui;litellm;n8n;ollama;devcontainer</PackageTags>
     <RepositoryType>git</RepositoryType>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

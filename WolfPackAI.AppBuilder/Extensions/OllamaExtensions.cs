@@ -2,15 +2,15 @@
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Lifecycle;
 using Microsoft.Extensions.DependencyInjection;
-using AspireExtensions.Resources;
-using AspireExtensions.Lifecycle;
+using WolfPackAI.AppBuilder.Resources;
+using WolfPackAI.AppBuilder.Lifecycle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AspireExtensions.Extensions
+namespace WolfPackAI.AppBuilder.Extensions
 {
     public static class OllamaExtensions
     {

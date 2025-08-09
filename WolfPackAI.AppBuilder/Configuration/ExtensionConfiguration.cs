@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace AspireExtensions.Configuration;
+namespace WolfPackAI.AppBuilder.Configuration;
 
 public class NetworkSettings
 {

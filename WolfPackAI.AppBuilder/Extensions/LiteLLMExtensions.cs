@@ -1,9 +1,9 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
-using AspireExtensions.Configuration;
-using AspireExtensions.Resources;
+using WolfPackAI.AppBuilder.Configuration;
+using WolfPackAI.AppBuilder.Resources;
 
-namespace AspireExtensions.Extensions
+namespace WolfPackAI.AppBuilder.Extensions
 {
     public static class LiteLLMExtensions
     {

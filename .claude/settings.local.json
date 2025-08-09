@@ -17,7 +17,11 @@
       "Bash(timeout:*)",
       "Bash(dotnet sln add:*)",
       "Bash(move:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(find:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(rg:*)"
     ],
     "deny": []
   }
