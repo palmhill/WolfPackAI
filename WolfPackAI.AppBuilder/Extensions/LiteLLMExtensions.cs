@@ -57,12 +57,10 @@ namespace WolfPackAI.AppBuilder.Extensions
             string configMountPath = "./litellm-config.yaml",
             string uiUsername = "test",
             string uiPassword = "test",
-            string proxyHost = "localhost",
-            string serverRootPath = "/litellm",
             string logLevel = "DEBUG",
             string name = "litellm",
             string image = "ghcr.io/berriai/litellm-database",
-            string tag = "main-v1.74.8-nightly")
+            string tag = "main-v1.74.15-stable")
         {
             return builder.AddContainer(name, image, tag)
                 .WithHttpEndpoint(port: 4000, targetPort: 4000, name: "http")
@@ -70,8 +68,7 @@ namespace WolfPackAI.AppBuilder.Extensions
                 .WithEnvironment("LITELLM_MASTER_KEY", masterKey)
                 .WithEnvironment("LITELLM_LOG", logLevel)
                 .WithEnvironment("DATABASE_URL", $"postgresql://{postgresUsername}:{postgresPassword}@postgres:{postgresPort.ToString()}/litellmdb")
-                .WithEnvironment("SERVER_ROOT_PATH", serverRootPath)
-                .WithEnvironment("PROXY_HOST", proxyHost)
+                .WithEnvironment("PROXY_BASE_URL", "http://localhost/litellm")
                 .WithEnvironment("UI_USERNAME", uiUsername)
                 .WithEnvironment("UI_PASSWORD", uiPassword)
                 .WithBindMount(configMountPath, "/app/config.yaml")
