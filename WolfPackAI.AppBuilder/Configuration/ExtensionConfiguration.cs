@@ -20,15 +20,6 @@ public class OpenWebUiConfig
     public string PublicUrl { get; set; } = string.Empty;
 }
 
-public class AzureAdConfig
-{
-    [JsonPropertyName("tenantId")]
-    public string TenantId { get; set; } = string.Empty;
-    [JsonPropertyName("clientId")]
-    public string ClientId { get; set; } = string.Empty;
-    [JsonPropertyName("clientSecret")]
-    public string ClientSecret { get; set; } = string.Empty;
-}
 
 public class PostgresConfig
 {
