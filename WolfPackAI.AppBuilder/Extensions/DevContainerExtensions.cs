@@ -1,7 +1,7 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 
-namespace AspireExtensions.Extensions
+namespace WolfPackAI.AppBuilder.Extensions
 {
     public static class DevContainerExtensions
     {

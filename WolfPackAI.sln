@@ -7,14 +7,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WolfPackAI.AppHost", "WolfP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WolfPackAI.ServiceDefaults", "WolfPackAI.ServiceDefaults\WolfPackAI.ServiceDefaults.csproj", "{CD8D462D-4435-4134-9EAB-61B016D06295}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReverseProxy", "ReverseProxy\ReverseProxy.csproj", "{5D6AC422-68D4-4263-B9D1-BC9F109480D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WolfPackAI.ReverseProxy", "WolfPackAI.ReverseProxy\WolfPackAI.ReverseProxy.csproj", "{5D6AC422-68D4-4263-B9D1-BC9F109480D2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
 		..\instructions.md = ..\instructions.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireExtensions", "AspireExtensions\AspireExtensions.csproj", "{B5071A0C-C8E0-4D84-9376-62DBD1B3CEAA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WolfPackAI.AppBuilder", "WolfPackAI.AppBuilder\WolfPackAI.AppBuilder.csproj", "{B5071A0C-C8E0-4D84-9376-62DBD1B3CEAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

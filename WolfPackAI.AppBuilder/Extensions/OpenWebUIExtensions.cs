@@ -1,8 +1,8 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
-using AspireExtensions.Configuration;
+using WolfPackAI.AppBuilder.Configuration;
 
-namespace AspireExtensions.Extensions
+namespace WolfPackAI.AppBuilder.Extensions
 {
     public static class OpenWebUIExtensions
     {
