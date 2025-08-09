@@ -57,6 +57,7 @@ namespace WolfPackAI.AppBuilder.Extensions
             string configMountPath = "./litellm-config.yaml",
             string uiUsername = "test",
             string uiPassword = "test",
+            string serverRootPath = "/litellm",
             string logLevel = "DEBUG",
             string name = "litellm",
             string image = "ghcr.io/berriai/litellm-database",
@@ -68,6 +69,7 @@ namespace WolfPackAI.AppBuilder.Extensions
                 .WithEnvironment("LITELLM_MASTER_KEY", masterKey)
                 .WithEnvironment("LITELLM_LOG", logLevel)
                 .WithEnvironment("DATABASE_URL", $"postgresql://{postgresUsername}:{postgresPassword}@postgres:{postgresPort.ToString()}/litellmdb")
+                .WithEnvironment("SERVER_ROOT_PATH", serverRootPath)
                 .WithEnvironment("PROXY_BASE_URL", "http://localhost/litellm")
                 .WithEnvironment("UI_USERNAME", uiUsername)
                 .WithEnvironment("UI_PASSWORD", uiPassword)
