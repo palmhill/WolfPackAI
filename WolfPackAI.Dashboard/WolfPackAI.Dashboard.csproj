@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\WolfPackAI.ServiceDefaults\WolfPackAI.ServiceDefaults.csproj" />
   </ItemGroup>
 
