@@ -8,7 +8,7 @@ namespace WolfPackAI.AppBuilder.Extensions
     {
         public static IResourceBuilder<ContainerResource> AddN8n(
             this IDistributedApplicationBuilder builder,
-            NetworkSettings networkConfig,
+            int port,
             IResourceBuilder<PostgresServerResource> postgres,
             IResourceBuilder<PostgresDatabaseResource> n8nDb,
             string postgresUsername = "postgres",
@@ -20,20 +20,12 @@ namespace WolfPackAI.AppBuilder.Extensions
             string name = "n8n",
             string tag = "latest")
         {
-            var publicUrl = string.IsNullOrEmpty(networkConfig.PublicUrl) ? "localhost" : networkConfig.PublicUrl;
-            var protocol = string.IsNullOrEmpty(networkConfig.PublicUrl) ? "http" : "https";
-
+    
             return builder.AddContainer(name, "docker.n8n.io/n8nio/n8n", tag)
                 .WithHttpEndpoint(port: 5678, targetPort: 5678, name: "http")
                 .WithVolume("n8n_data", "/home/node/.n8n")
                 .WithEnvironment("DB_TYPE", "postgresdb")
-                .WithEnvironment("N8N_PROTOCOL", protocol)
-                .WithEnvironment("N8N_HOST", publicUrl)
-                .WithEnvironment("N8N_PORT", "5678")
-                .WithEnvironment("N8N_PATH", "/n8n/")
-                .WithEnvironment("WEBHOOK_URL", $"{protocol}://{publicUrl}/n8n/")
-                .WithEnvironment("VUE_APP_URL_BASE_API", $"{protocol}://{publicUrl}/n8n/")
-                .WithEnvironment("N8N_EDITOR_BASE_URL", $"{protocol}://{publicUrl}/n8n/")
+                .WithEnvironment("N8N_PORT", port.ToString())
                 .WithEnvironment("DB_POSTGRESDB_DATABASE", "n8ndb")
                 .WithEnvironment("DB_POSTGRESDB_HOST", "postgres")
                 .WithEnvironment("DB_POSTGRESDB_PORT", postgresPort.ToString())

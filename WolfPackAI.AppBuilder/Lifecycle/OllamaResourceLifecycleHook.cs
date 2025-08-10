@@ -121,7 +121,7 @@ namespace WolfPackAI.AppBuilder.Lifecycle
 
             await foreach (var status in ollamaClient.PullModelAsync(model, cancellationToken))
             {
-                if (status.Total != null && status.Total != 0)
+                if (status?.Total != null && status.Total != 0)
                 {
                     var newPercentage = (long)(status.Completed / (double)status.Total * 100);
                     if (newPercentage != percentage)

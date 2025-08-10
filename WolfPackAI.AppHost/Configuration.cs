@@ -15,7 +15,7 @@ public class LiteLLMConfiguration
     [Required]
     public RouterSettings RouterSettings { get; set; } = new();
     [Required]
-    public NetworkSettings PublicNetwork { get; set; }
+    public DashboardSettings DashboardSettings { get; set; } = new();
     public void Validate()
     {
         // Validate each model config
@@ -64,12 +64,7 @@ public class LiteLLMConfiguration
                 ["num_retries"] = RouterSettings.NumRetries,
                 ["timeout"] = RouterSettings.Timeout
             },
-            //["environment_variables"] = new Dictionary<string, object>
-            //{
-            //    ["AZURE_AD_TENANT_ID"] = Auth.AzureAd?.TenantId ?? "",
-            //    ["AZURE_AD_CLIENT_ID"] = Auth.AzureAd?.ClientId ?? "",
-            //    ["AZURE_AD_CLIENT_SECRET"] = Auth.AzureAd?.ClientSecret ?? ""
-            //}
+
         };
         // Conditionally add optional parameters to litellm_params
         foreach (var modelDict in (List<Dictionary<string, object>>)yamlObject["model_list"])
@@ -91,7 +86,7 @@ public class LiteLLMConfiguration
         return serializer.Serialize(yamlObject);
     }
 }
-public class NetworkSettings
+public class DashboardSettings
 {
     [JsonPropertyName("httpPort")]
     public int HttpPort { get; set; } = 80;
@@ -157,15 +152,6 @@ public class RouterSettings
     public int Timeout { get; set; } = 600;
 }
 
-public class AzureAdConfig
-{
-    [JsonPropertyName("tenantId")]
-    public string TenantId { get; set; } = string.Empty;
-    [JsonPropertyName("clientId")]
-    public string ClientId { get; set; } = string.Empty;
-    [JsonPropertyName("clientSecret")]
-    public string ClientSecret { get; set; } = string.Empty;
-}
 public class PostgresConfig
 {
     [JsonPropertyName("username")]
