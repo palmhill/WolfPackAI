@@ -10,7 +10,7 @@
     <Version>1.0.0</Version>
     <Authors>WolfPackAI</Authors>
     <Description>WolfPackAI application builder with Aspire extensions for containerized services including OpenWebUI, LiteLLM, n8n, Ollama, and development containers</Description>
-    <PackageTags>aspire;containers;openwebui;litellm;n8n;ollama;devcontainer</PackageTags>
+    <PackageTags>aspire;containers;openwebui;litellm;n8n;ollama</PackageTags>
     <RepositoryType>git</RepositoryType>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/palmhill/WolfPackAI</PackageProjectUrl>

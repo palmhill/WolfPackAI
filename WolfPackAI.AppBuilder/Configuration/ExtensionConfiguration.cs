@@ -5,14 +5,12 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace WolfPackAI.AppBuilder.Configuration;
 
-public class NetworkSettings
+public class DashboardSettings
 {
     [JsonPropertyName("httpPort")]
     public int HttpPort { get; set; } = 80;
     [JsonPropertyName("httpsPort")]
     public int HttpsPort { get; set; } = 443;
-    [JsonPropertyName("publicUrl")]
-    public string PublicUrl { get; set; } = string.Empty;
 }
 
 public class OpenWebUiConfig
@@ -20,6 +18,11 @@ public class OpenWebUiConfig
     public string PublicUrl { get; set; } = string.Empty;
 }
 
+public class n8nConfig
+{
+    [JsonPropertyName("port")]
+    public int Port { get; set; } = 5678;
+}
 
 public class PostgresConfig
 {
@@ -41,8 +44,6 @@ public class LiteLLMConfiguration
     public GeneralSettings GeneralSettings { get; set; } = new();
     [Required]
     public RouterSettings RouterSettings { get; set; } = new();
-    [Required]
-    public NetworkSettings PublicNetwork { get; set; } = new();
 
     public void Validate()
     {

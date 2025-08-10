@@ -4,16 +4,16 @@ using Microsoft.Extensions.Logging;
 using WolfPackAI.AppHost;
 using Projects;
 using WolfPackAI.AppBuilder.Extensions;
-using WolfPackAI.AppBuilder.Configuration;
 
 var builder = DistributedApplication.CreateBuilder(args);
 // Load and validate LiteLLM configuration
 var liteLlmConfig = builder.Configuration.GetSection("LiteLLM").Get<WolfPackAI.AppBuilder.Configuration.LiteLLMConfiguration>();
 var postgresConfig = builder.Configuration.GetSection("Postgres").Get<WolfPackAI.AppBuilder.Configuration.PostgresConfig>();
 var openWebUiConfig = builder.Configuration.GetSection("OpenWebUI").Get<WolfPackAI.AppBuilder.Configuration.OpenWebUiConfig>();
-var networkConfig = builder.Configuration.GetSection("PublicNetwork").Get<WolfPackAI.AppBuilder.Configuration.NetworkSettings>();
+var n8nConfig = builder.Configuration.GetSection("n8n").Get<WolfPackAI.AppBuilder.Configuration.n8nConfig>();
+var networkConfig = builder.Configuration.GetSection("Dashboard").Get<WolfPackAI.AppBuilder.Configuration.DashboardSettings>();
 
-if (liteLlmConfig == null || postgresConfig == null || openWebUiConfig == null || networkConfig == null)
+if (liteLlmConfig == null || postgresConfig == null || openWebUiConfig == null || networkConfig == null || n8nConfig == null)
 {
     throw new InvalidOperationException("Configuration section is missing in appsettings.json");
 }
@@ -72,35 +72,23 @@ var openWebUi = builder.AddOpenWebUI(
     pgPort);
 // n8n workflow automation container
 var n8n = builder.AddN8n(
-    networkConfig,
+    n8nConfig.Port,
     postgres,
     n8nDb,
     pgUsername,
     pgPassword,
     pgPort);
 
-// Development Container with SSH access for multi-language development
-var devContainer = builder.AddDevContainer();
-
-// Reverse Proxy
-var reverseProxy = builder.AddProject<Projects.WolfPackAI_ReverseProxy>("reverseproxy")
+// Dashboard Proxy
+var dashboard = builder.AddProject<Projects.WolfPackAI_Dashboard>("dashboard")
     .WithExternalHttpEndpoints()
     .WaitFor(openWebUi)
     .WaitFor(litellm)
     .WaitFor(n8n);
-    
-// Add devContainer dependency if it was created successfully
-if (devContainer != null)
-{
-    reverseProxy = reverseProxy.WaitFor(devContainer);
-    Console.WriteLine("Reverse proxy will wait for development container to be ready");
-}
-else
-{
-    Console.WriteLine("Development container not available - reverse proxy will start without waiting");
-}
+
+
 // Build and run the application
 var app = builder.Build();
 // Optional: Add global health check monitoring
-//app.Services.GetRequiredService<ILogger<program>>().LogInformation("Starting application with health checks enabled");</ program >
+//app.Services.GetRequiredService<ILogger<program>>().LogInformation("Starting application with health checks enabled");
 app.Run();
