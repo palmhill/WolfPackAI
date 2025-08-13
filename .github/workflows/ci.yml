@@ -54,25 +54,28 @@ jobs:
           fi
 
       - name: Publish ${{ matrix.rid }} (self-contained single-file)
+        shell: bash
         run: |
+          OUT_DIR="$GITHUB_WORKSPACE/out/${{ matrix.rid }}"
+          mkdir -p "$OUT_DIR"
           dotnet publish WolfPackAI.AppHost/WolfPackAI.AppHost.csproj \
             -c Release \
             -r ${{ matrix.rid }} \
             --self-contained true \
             -p:PublishSingleFile=true \
             -p:IncludeNativeLibrariesForSelfExtract=true \
-            -p:ContinuousIntegrationBuild=true
+            -p:ContinuousIntegrationBuild=true \
+            -o "$OUT_DIR"
 
       - name: Archive artifact ${{ matrix.rid }}
         shell: bash
         run: |
-          PUBLISH_DIR="WolfPackAI.AppHost/bin/Release/net9.0/${{ matrix.rid }}/publish"
-          echo "Zipping from $PUBLISH_DIR"
-          if [ ! -d "$PUBLISH_DIR" ] || [ -z "$(ls -A "$PUBLISH_DIR")" ]; then
-            echo "Publish output missing or empty: $PUBLISH_DIR"
-            exit 1
+          OUT_DIR="$GITHUB_WORKSPACE/out/${{ matrix.rid }}"
+          echo "Zipping from $OUT_DIR"
+          if [ ! -d "$OUT_DIR" ] || [ -z "$(ls -A "$OUT_DIR")" ]; then
+            echo "Publish output missing or empty: $OUT_DIR"; exit 1
           fi
-          cd "$PUBLISH_DIR"
+          cd "$OUT_DIR"
           zip -r "$GITHUB_WORKSPACE/WolfPackAI.AppHost-${{ matrix.rid }}.zip" .
 
       - name: Upload artifact ${{ matrix.rid }}

@@ -52,7 +52,10 @@ jobs:
           echo "informational_version=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
 
       - name: Publish ${{ matrix.rid }} (self-contained single-file)
+        shell: bash
         run: |
+          OUT_DIR="$GITHUB_WORKSPACE/out/${{ matrix.rid }}"
+          mkdir -p "$OUT_DIR"
           dotnet publish WolfPackAI.AppHost/WolfPackAI.AppHost.csproj \
             -c Release \
             -r ${{ matrix.rid }} \
@@ -63,16 +66,19 @@ jobs:
             -p:AssemblyVersion=$ASSEMBLY_VERSION \
             -p:FileVersion=$FILE_VERSION \
             -p:InformationalVersion=$INFORMATIONAL_VERSION \
-            -p:ContinuousIntegrationBuild=true
+            -p:ContinuousIntegrationBuild=true \
+            -o "$OUT_DIR"
 
       - name: Create archives
         shell: bash
         run: |
-          PUBLISH_DIR="WolfPackAI.AppHost/bin/Release/net9.0/${{ matrix.rid }}/publish"
-          echo "Zipping from $PUBLISH_DIR"
-          test -d "$PUBLISH_DIR" && test -n "$(ls -A \"$PUBLISH_DIR\")" || { echo "Publish output missing or empty: $PUBLISH_DIR"; exit 1; }
-          cd "$PUBLISH_DIR"
-          zip -r ../../../../../WolfPackAI.AppHost-${VERSION}-${{ matrix.rid }}.zip .
+          OUT_DIR="$GITHUB_WORKSPACE/out/${{ matrix.rid }}"
+          echo "Zipping from $OUT_DIR"
+          if [ ! -d "$OUT_DIR" ] || [ -z "$(ls -A "$OUT_DIR")" ]; then
+            echo "Publish output missing or empty: $OUT_DIR"; exit 1
+          fi
+          cd "$OUT_DIR"
+          zip -r "$GITHUB_WORKSPACE/WolfPackAI.AppHost-${VERSION}-${{ matrix.rid }}.zip" .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
