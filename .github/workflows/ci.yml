@@ -61,12 +61,19 @@ jobs:
             --self-contained true \
             -p:PublishSingleFile=true \
             -p:IncludeNativeLibrariesForSelfExtract=true \
-            -o ./publish/${{ matrix.rid }}
+            -p:ContinuousIntegrationBuild=true
 
       - name: Archive artifact ${{ matrix.rid }}
+        shell: bash
         run: |
-          cd publish/${{ matrix.rid }}
-          zip -r ../../WolfPackAI.AppHost-${{ matrix.rid }}.zip .
+          PUBLISH_DIR="WolfPackAI.AppHost/bin/Release/net9.0/${{ matrix.rid }}/publish"
+          echo "Zipping from $PUBLISH_DIR"
+          if [ ! -d "$PUBLISH_DIR" ] || [ -z "$(ls -A "$PUBLISH_DIR")" ]; then
+            echo "Publish output missing or empty: $PUBLISH_DIR"
+            exit 1
+          fi
+          cd "$PUBLISH_DIR"
+          zip -r "$GITHUB_WORKSPACE/WolfPackAI.AppHost-${{ matrix.rid }}.zip" .
 
       - name: Upload artifact ${{ matrix.rid }}
         uses: actions/upload-artifact@v4

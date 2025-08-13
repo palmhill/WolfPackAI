@@ -63,12 +63,16 @@ jobs:
             -p:AssemblyVersion=$ASSEMBLY_VERSION \
             -p:FileVersion=$FILE_VERSION \
             -p:InformationalVersion=$INFORMATIONAL_VERSION \
-            -o ./publish/${{ matrix.rid }}
+            -p:ContinuousIntegrationBuild=true
 
       - name: Create archives
+        shell: bash
         run: |
-          cd publish/${{ matrix.rid }}
-          zip -r ../../WolfPackAI.AppHost-${VERSION}-${{ matrix.rid }}.zip .
+          PUBLISH_DIR="WolfPackAI.AppHost/bin/Release/net9.0/${{ matrix.rid }}/publish"
+          echo "Zipping from $PUBLISH_DIR"
+          test -d "$PUBLISH_DIR" && test -n "$(ls -A \"$PUBLISH_DIR\")" || { echo "Publish output missing or empty: $PUBLISH_DIR"; exit 1; }
+          cd "$PUBLISH_DIR"
+          zip -r ../../../../../WolfPackAI.AppHost-${VERSION}-${{ matrix.rid }}.zip .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
