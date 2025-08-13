@@ -1,0 +1,52 @@
+name: CI - Build AppHost
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and Publish (matrix)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        rid: [linux-x64, win-x64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+          cache: true
+
+      - name: Restore
+        run: dotnet restore WolfPackAI.AppHost/WolfPackAI.AppHost.csproj
+
+      - name: Publish ${{ matrix.rid }} (self-contained single-file)
+        run: |
+          dotnet publish WolfPackAI.AppHost/WolfPackAI.AppHost.csproj \
+            -c Release \
+            -r ${{ matrix.rid }} \
+            --self-contained true \
+            -p:PublishSingleFile=true \
+            -p:IncludeNativeLibrariesForSelfExtract=true \
+            -o ./publish/${{ matrix.rid }}
+
+      - name: Archive artifact ${{ matrix.rid }}
+        run: |
+          cd publish/${{ matrix.rid }}
+          zip -r ../../WolfPackAI.AppHost-${{ matrix.rid }}.zip .
+
+      - name: Upload artifact ${{ matrix.rid }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: WolfPackAI.AppHost-${{ matrix.rid }}
+          path: WolfPackAI.AppHost-${{ matrix.rid }}.zip
+          if-no-files-found: error

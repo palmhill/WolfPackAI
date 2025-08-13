@@ -1,0 +1,105 @@
+name: Release - Build and Create GitHub Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build publishable artifacts
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rid: [linux-x64, win-x64]
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      assembly_version: ${{ steps.version.outputs.assembly_version }}
+      file_version: ${{ steps.version.outputs.file_version }}
+      informational_version: ${{ steps.version.outputs.informational_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+          cache: true
+
+      - name: Restore
+        run: dotnet restore WolfPackAI.AppHost/WolfPackAI.AppHost.csproj
+
+      - name: Extract version from tag
+        id: version
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          # Derive a numeric-only version for Assembly/File version (strip pre-release/build metadata)
+          NUMERIC="${VERSION%%-*}"
+          IFS='.' read -r A B C D <<< "$NUMERIC"
+          A=${A:-0}; B=${B:-0}; C=${C:-0}; D=${D:-0}
+          FILE_VER="$A.$B.$C.$D"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "ASSEMBLY_VERSION=$FILE_VER" >> $GITHUB_ENV
+          echo "FILE_VERSION=$FILE_VER" >> $GITHUB_ENV
+          echo "INFORMATIONAL_VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "assembly_version=$FILE_VER" >> $GITHUB_OUTPUT
+          echo "file_version=$FILE_VER" >> $GITHUB_OUTPUT
+          echo "informational_version=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Publish ${{ matrix.rid }} (self-contained single-file)
+        run: |
+          dotnet publish WolfPackAI.AppHost/WolfPackAI.AppHost.csproj \
+            -c Release \
+            -r ${{ matrix.rid }} \
+            --self-contained true \
+            -p:PublishSingleFile=true \
+            -p:IncludeNativeLibrariesForSelfExtract=true \
+            -p:Version=$VERSION \
+            -p:AssemblyVersion=$ASSEMBLY_VERSION \
+            -p:FileVersion=$FILE_VERSION \
+            -p:InformationalVersion=$INFORMATIONAL_VERSION \
+            -o ./publish/${{ matrix.rid }}
+
+      - name: Create archives
+        run: |
+          cd publish/${{ matrix.rid }}
+          zip -r ../../WolfPackAI.AppHost-${VERSION}-${{ matrix.rid }}.zip .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WolfPackAI.AppHost-${{ env.VERSION }}-${{ matrix.rid }}
+          path: WolfPackAI.AppHost-${{ env.VERSION }}-${{ matrix.rid }}.zip
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download linux-x64 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: WolfPackAI.AppHost-${{ needs.build.outputs.version }}-linux-x64
+          path: ./artifacts
+
+      - name: Download win-x64 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: WolfPackAI.AppHost-${{ needs.build.outputs.version }}-win-x64
+          path: ./artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: WolfPackAI.AppHost v${{ needs.build.outputs.version }}
+          files: |
+            artifacts/WolfPackAI.AppHost-${{ needs.build.outputs.version }}-linux-x64.zip
+            artifacts/WolfPackAI.AppHost-${{ needs.build.outputs.version }}-win-x64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
