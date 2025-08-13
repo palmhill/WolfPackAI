@@ -10,12 +10,8 @@ permissions:
 
 jobs:
   build:
-    name: Build and Publish (matrix)
+    name: Build and Publish
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        rid: [linux-x64, win-x64]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -53,34 +49,35 @@ jobs:
             done
           fi
 
-      - name: Publish ${{ matrix.rid }} (self-contained single-file)
+      - name: Publish (framework-dependent)
         shell: bash
         run: |
-          OUT_DIR="$GITHUB_WORKSPACE/out/${{ matrix.rid }}"
+          set -euo pipefail
+          OUT_DIR="$GITHUB_WORKSPACE/out"
           mkdir -p "$OUT_DIR"
+          echo "Publishing WolfPackAI.AppHost to $OUT_DIR (framework-dependent)"
           dotnet publish WolfPackAI.AppHost/WolfPackAI.AppHost.csproj \
             -c Release \
-            -r ${{ matrix.rid }} \
-            --self-contained true \
-            -p:PublishSingleFile=true \
-            -p:IncludeNativeLibrariesForSelfExtract=true \
             -p:ContinuousIntegrationBuild=true \
             -o "$OUT_DIR"
+          echo "Publish completed. Contents of $OUT_DIR:"
+          ls -la "$OUT_DIR" || true
 
-      - name: Archive artifact ${{ matrix.rid }}
+      - name: Archive artifact
         shell: bash
         run: |
-          OUT_DIR="$GITHUB_WORKSPACE/out/${{ matrix.rid }}"
+          set -euo pipefail
+          OUT_DIR="$GITHUB_WORKSPACE/out"
           echo "Zipping from $OUT_DIR"
           if [ ! -d "$OUT_DIR" ] || [ -z "$(ls -A "$OUT_DIR")" ]; then
             echo "Publish output missing or empty: $OUT_DIR"; exit 1
           fi
           cd "$OUT_DIR"
-          zip -r "$GITHUB_WORKSPACE/WolfPackAI.AppHost-${{ matrix.rid }}.zip" .
+          zip -r "$GITHUB_WORKSPACE/WolfPackAI.AppHost.zip" .
 
-      - name: Upload artifact ${{ matrix.rid }}
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: WolfPackAI.AppHost-${{ matrix.rid }}
-          path: WolfPackAI.AppHost-${{ matrix.rid }}.zip
+          name: WolfPackAI.AppHost
+          path: WolfPackAI.AppHost.zip
           if-no-files-found: error
