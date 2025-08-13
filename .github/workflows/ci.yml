@@ -24,10 +24,34 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
-          cache: true
 
-      - name: Restore
-        run: dotnet restore WolfPackAI.AppHost/WolfPackAI.AppHost.csproj
+      - name: Build solution (or all projects if no .sln)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ls *.sln 1> /dev/null 2>&1; then
+            SOLUTION=$(ls -1 *.sln | head -n 1)
+            echo "Building solution: $SOLUTION"
+            dotnet restore "$SOLUTION"
+            dotnet build "$SOLUTION" -c Release --no-restore
+          else
+            echo "No .sln found; building all projects"
+            shopt -u dotglob
+            shopt -s globstar nullglob
+            projects=(**/*.csproj)
+            if [ ${#projects[@]} -eq 0 ]; then
+              echo "No .csproj files found" >&2
+              exit 1
+            fi
+            echo "Restoring ${#projects[@]} projects"
+            for p in "${projects[@]}"; do
+              dotnet restore "$p"
+            done
+            echo "Building ${#projects[@]} projects"
+            for p in "${projects[@]}"; do
+              dotnet build "$p" -c Release --no-restore
+            done
+          fi
 
       - name: Publish ${{ matrix.rid }} (self-contained single-file)
         run: |
