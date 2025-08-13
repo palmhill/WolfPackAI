@@ -1,84 +1,93 @@
 name: CI - Build AppHost
-
 on:
   push:
     branches: ["**"]
   pull_request:
-
 permissions:
   contents: read
-
 jobs:
   build:
-    name: Build and Publish
+    name: Build and Test
     runs-on: ubuntu-latest
-    env:
-      OUT_DIR: ${{ github.workspace }}/out  # Define OUT_DIR at the job level
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+        
       - name: Setup .NET 9 SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
-
-      - name: Build solution (or all projects if no .sln)
+          
+      - name: Restore dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ls *.sln 1> /dev/null 2>&1; then
+            SOLUTION=$(ls -1 *.sln | head -n 1)
+            echo "Restoring solution: $SOLUTION"
+            dotnet restore "$SOLUTION"
+          else
+            echo "No .sln found; restoring all projects"
+            dotnet restore
+          fi
+          
+      - name: Build solution
         shell: bash
         run: |
           set -euo pipefail
           if ls *.sln 1> /dev/null 2>&1; then
             SOLUTION=$(ls -1 *.sln | head -n 1)
             echo "Building solution: $SOLUTION"
-            dotnet restore "$SOLUTION"
             dotnet build "$SOLUTION" -c Release --no-restore
           else
             echo "No .sln found; building all projects"
-            shopt -u dotglob
-            shopt -s globstar nullglob
-            projects=(**/*.csproj)
-            if [ ${#projects[@]} -eq 0 ]; then
-              echo "No .csproj files found" >&2
-              exit 1
-            fi
-            echo "Restoring ${#projects[@]} projects"
-            for p in "${projects[@]}"; do
-              dotnet restore "$p"
-            done
-            echo "Building ${#projects[@]} projects"
-            for p in "${projects[@]}"; do
-              dotnet build "$p" -c Release --no-restore
-            done
+            dotnet build -c Release --no-restore
           fi
-
-      - name: Publish (framework-dependent)
+          
+      - name: Validate AppHost project
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p "$OUT_DIR"
-          echo "Publishing WolfPackAI.AppHost to $OUT_DIR (framework-dependent)"
-          dotnet publish WolfPackAI.AppHost/WolfPackAI.AppHost.csproj \
-            -c Release \
-            -p:ContinuousIntegrationBuild=true \
-            -o "$OUT_DIR"
-          echo "Publish completed. Contents of $OUT_DIR:"
-          ls -la "$OUT_DIR" || true
-
-      - name: Archive artifact
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "Zipping from $OUT_DIR"
-          if [ ! -d "$OUT_DIR" ] || [ -z "$(ls -A "$OUT_DIR")" ]; then
-            echo "Publish output missing or empty: $OUT_DIR" >&2
+          echo "Validating WolfPackAI.AppHost project structure"
+          
+          # Check if AppHost project exists
+          if [ ! -f "WolfPackAI.AppHost/WolfPackAI.AppHost.csproj" ]; then
+            echo "Error: AppHost project not found at WolfPackAI.AppHost/WolfPackAI.AppHost.csproj" >&2
             exit 1
           fi
-          cd "$OUT_DIR"
-          zip -r "${{ github.workspace }}/WolfPackAI.AppHost.zip" .
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: WolfPackAI.AppHost
-          path: ${{ github.workspace }}/WolfPackAI.AppHost.zip
-          if-no-files-found: error
+          
+          # Verify it's an Aspire AppHost project
+          if ! grep -q "Aspire.Hosting.AppHost" WolfPackAI.AppHost/WolfPackAI.AppHost.csproj; then
+            echo "Warning: Project may not be a valid Aspire AppHost project"
+          fi
+          
+          echo "AppHost project validation completed successfully"
+          
+      - name: Run tests (if any)
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Look for test projects
+          if ls **/*[Tt]est*/*.csproj 1> /dev/null 2>&1 || ls **/*[Tt]ests*/*.csproj 1> /dev/null 2>&1; then
+            echo "Running tests..."
+            dotnet test -c Release --no-build --verbosity normal
+          else
+            echo "No test projects found, skipping tests"
+          fi
+          
+      - name: Create build summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **AppHost project built successfully**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Project:** WolfPackAI.AppHost" >> $GITHUB_STEP_SUMMARY
+          echo "**Type:** .NET Aspire AppHost (Orchestration project)" >> $GITHUB_STEP_SUMMARY
+          echo "**Configuration:** Release" >> $GITHUB_STEP_SUMMARY
+          echo "**Note:** AppHost projects are orchestration projects and don't produce deployable artifacts." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "To deploy the services orchestrated by this AppHost:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Build and publish the individual service projects" >> $GITHUB_STEP_SUMMARY
+          echo "2. Deploy services to your target environment" >> $GITHUB_STEP_SUMMARY
+          echo "3. Use Azure Developer CLI (azd) for integrated deployment" >> $GITHUB_STEP_SUMMARY
