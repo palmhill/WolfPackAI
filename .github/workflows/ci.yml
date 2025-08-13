@@ -12,6 +12,8 @@ jobs:
   build:
     name: Build and Publish
     runs-on: ubuntu-latest
+    env:
+      OUT_DIR: ${{ github.workspace }}/out  # Define OUT_DIR at the job level
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -53,7 +55,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT_DIR="$GITHUB_WORKSPACE/out"
           mkdir -p "$OUT_DIR"
           echo "Publishing WolfPackAI.AppHost to $OUT_DIR (framework-dependent)"
           dotnet publish WolfPackAI.AppHost/WolfPackAI.AppHost.csproj \
@@ -67,17 +68,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT_DIR="$GITHUB_WORKSPACE/out"
           echo "Zipping from $OUT_DIR"
           if [ ! -d "$OUT_DIR" ] || [ -z "$(ls -A "$OUT_DIR")" ]; then
-            echo "Publish output missing or empty: $OUT_DIR"; exit 1
+            echo "Publish output missing or empty: $OUT_DIR" >&2
+            exit 1
           fi
           cd "$OUT_DIR"
-          zip -r "$GITHUB_WORKSPACE/WolfPackAI.AppHost.zip" .
+          zip -r "${{ github.workspace }}/WolfPackAI.AppHost.zip" .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: WolfPackAI.AppHost
-          path: WolfPackAI.AppHost.zip
+          path: ${{ github.workspace }}/WolfPackAI.AppHost.zip
           if-no-files-found: error
