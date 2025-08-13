@@ -1,0 +1,232 @@
+name: Release - Build and Create GitHub Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build and Package Source
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      assembly_version: ${{ steps.version.outputs.assembly_version }}
+      file_version: ${{ steps.version.outputs.file_version }}
+      informational_version: ${{ steps.version.outputs.informational_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Extract version from tag
+        id: version
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          # Derive a numeric-only version for Assembly/File version (strip pre-release/build metadata)
+          NUMERIC="${VERSION%%-*}"
+          IFS='.' read -r A B C D <<< "$NUMERIC"
+          A=${A:-0}; B=${B:-0}; C=${C:-0}; D=${D:-0}
+          FILE_VER="$A.$B.$C.$D"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "ASSEMBLY_VERSION=$FILE_VER" >> $GITHUB_ENV
+          echo "FILE_VERSION=$FILE_VER" >> $GITHUB_ENV
+          echo "INFORMATIONAL_VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "assembly_version=$FILE_VER" >> $GITHUB_OUTPUT
+          echo "file_version=$FILE_VER" >> $GITHUB_OUTPUT
+          echo "informational_version=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Restore dependencies
+        run: |
+          if [ -f "WolfPackAI.sln" ]; then
+            dotnet restore WolfPackAI.sln
+          else
+            dotnet restore WolfPackAI.AppHost/WolfPackAI.AppHost.csproj
+          fi
+
+      - name: Build solution with version info
+        run: |
+          if [ -f "WolfPackAI.sln" ]; then
+            dotnet build WolfPackAI.sln -c Release --no-restore --nologo \
+              -p:Version=$VERSION \
+              -p:AssemblyVersion=$ASSEMBLY_VERSION \
+              -p:FileVersion=$FILE_VERSION \
+              -p:InformationalVersion=$INFORMATIONAL_VERSION \
+              -p:ContinuousIntegrationBuild=true
+          else
+            dotnet build WolfPackAI.AppHost/WolfPackAI.AppHost.csproj -c Release --no-restore --nologo \
+              -p:Version=$VERSION \
+              -p:AssemblyVersion=$ASSEMBLY_VERSION \
+              -p:FileVersion=$FILE_VERSION \
+              -p:InformationalVersion=$INFORMATIONAL_VERSION \
+              -p:ContinuousIntegrationBuild=true
+          fi
+
+      - name: Validate AppHost build output
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Validating AppHost build artifacts..."
+          
+          # Check for build output directory
+          BUILD_OUTPUT="WolfPackAI.AppHost/bin/Release"
+          if [ ! -d "$BUILD_OUTPUT" ]; then
+            echo "Error: Build output directory not found at $BUILD_OUTPUT" >&2
+            exit 1
+          fi
+          
+          # List build artifacts
+          echo "Build artifacts found:"
+          find "$BUILD_OUTPUT" -type f -name "*.dll" -o -name "*.exe" -o -name "*.json" -o -name "*.pdb" | head -20
+          
+          echo "AppHost build validation completed successfully"
+
+      - name: Package source and build artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          echo "Creating release package for Aspire AppHost..."
+          PACKAGE_NAME="WolfPackAI.AppHost-${VERSION}"
+          TEMP_DIR="$GITHUB_WORKSPACE/temp_package"
+          
+          # Create temporary directory for packaging
+          mkdir -p "$TEMP_DIR"
+          
+          # Copy source files (excluding build outputs, git, etc.)
+          echo "Copying source files..."
+          rsync -av \
+            --exclude='bin/' \
+            --exclude='obj/' \
+            --exclude='.git/' \
+            --exclude='.vs/' \
+            --exclude='*.user' \
+            --exclude='*.suo' \
+            --exclude='*.cache' \
+            --include='*.cs' \
+            --include='*.csproj' \
+            --include='*.sln' \
+            --include='*.json' \
+            --include='*.yml' \
+            --include='*.yaml' \
+            --include='*.md' \
+            --include='*.txt' \
+            --include='*/' \
+            ./ "$TEMP_DIR/src/"
+          
+          # Copy build artifacts for reference
+          echo "Copying build artifacts..."
+          mkdir -p "$TEMP_DIR/build-artifacts"
+          if [ -d "WolfPackAI.AppHost/bin/Release" ]; then
+            cp -r WolfPackAI.AppHost/bin/Release/* "$TEMP_DIR/build-artifacts/"
+          fi
+          
+          # Create deployment guide
+          cat > "$TEMP_DIR/DEPLOYMENT.md" << 'EOF'
+          # WolfPackAI AppHost Deployment Guide
+          
+          This package contains a .NET Aspire AppHost project. AppHost projects are orchestration projects that define how your services should run together.
+          
+          ## What's Included
+          - Source code for the AppHost orchestration project
+          - Build artifacts for reference
+          - This deployment guide
+          
+          ## Deployment Options
+          
+          ### Option 1: Azure Developer CLI (Recommended)
+          ```bash
+          # Install Azure Developer CLI
+          # Navigate to the source directory
+          cd src/
+          azd init
+          azd up
+          ```
+          
+          ### Option 2: Manual Service Deployment
+          1. Build and deploy each individual service project separately
+          2. Configure service discovery and communication
+          3. Use the AppHost project as a reference for service configuration
+          
+          ### Option 3: Container Deployment
+          1. Build each service as a container
+          2. Use the AppHost service definitions to configure container orchestration
+          3. Deploy to Azure Container Apps, Kubernetes, or Docker Compose
+          
+          ## Version Information
+          - Version: ${VERSION}
+          - Build Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          - Git Tag: ${GITHUB_REF_NAME}
+          EOF
+          
+          # Create the final archive
+          cd "$TEMP_DIR"
+          zip -r "$GITHUB_WORKSPACE/${PACKAGE_NAME}.zip" .
+          
+          echo "Package created: ${PACKAGE_NAME}.zip"
+          echo "Package contents:"
+          unzip -l "$GITHUB_WORKSPACE/${PACKAGE_NAME}.zip" | head -30
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WolfPackAI.AppHost-${{ env.VERSION }}
+          path: WolfPackAI.AppHost-${{ env.VERSION }}.zip
+          if-no-files-found: error
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: WolfPackAI.AppHost-${{ needs.build.outputs.version }}
+          path: ./artifacts
+
+      - name: Generate release notes
+        shell: bash
+        run: |
+          cat > release_notes.md << EOF
+          # WolfPackAI AppHost Release ${{ needs.build.outputs.version }}
+          
+          This release contains the .NET Aspire AppHost orchestration project.
+          
+          ## 📦 What's Included
+          - Complete source code for the AppHost project
+          - Build artifacts for reference
+          - Deployment guide with multiple deployment options
+          
+          ## 🚀 Deployment
+          The AppHost project is an orchestration project that defines service relationships. See the included \`DEPLOYMENT.md\` for deployment instructions.
+          
+          **Recommended:** Use Azure Developer CLI (\`azd up\`) for simplified deployment.
+          
+          ## 📋 Version Information
+          - **Version:** ${{ needs.build.outputs.version }}
+          - **Assembly Version:** ${{ needs.build.outputs.assembly_version }}
+          - **File Version:** ${{ needs.build.outputs.file_version }}
+          - **Informational Version:** ${{ needs.build.outputs.informational_version }}
+          EOF
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: WolfPackAI AppHost v${{ needs.build.outputs.version }}
+          body_path: release_notes.md
+          files: |
+            artifacts/WolfPackAI.AppHost-${{ needs.build.outputs.version }}.zip
+          draft: false
+          prerelease: ${{ contains(needs.build.outputs.version, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
