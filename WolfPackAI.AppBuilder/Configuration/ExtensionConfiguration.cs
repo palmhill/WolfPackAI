@@ -104,6 +104,8 @@ public class LiteLLMConfiguration
             {
                 paramsDict["api_version"] = modelConfig.LiteLLMParams.ApiVersion;
             }
+
+            paramsDict["supports_reasoning"] = modelConfig.LiteLLMParams.SupportsReasoning;
         }
         
         var serializer = new SerializerBuilder()
@@ -139,6 +141,11 @@ public class LiteLLMParams
     [JsonPropertyName("apiVersion")]
     [YamlMember(Alias = "api_version")]
     public string ApiVersion { get; set; } = string.Empty;
+
+
+    [JsonPropertyName("supportsReasoning")]
+    [YamlMember(Alias = "supports_reasoning")]
+    public bool SupportsReasoning { get; set; } = false;
 }
 
 public class LiteLLMSettings

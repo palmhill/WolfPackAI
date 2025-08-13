@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WolfPackAI.AppHost;
 using Projects;
 using WolfPackAI.AppBuilder.Extensions;
 
@@ -49,7 +48,7 @@ var openWebUiDb = postgres.AddDatabase("openwebuidb");
 var litellmDb = postgres.AddDatabase("litellmdb");
 var n8nDb = postgres.AddDatabase("n8ndb");
 // Ollama container
-var ollama = builder.AddOllama("qwen3:0.6b", useGpu: true, hostPort: 1143);
+var ollama = builder.AddOllama(liteLlmConfig.ModelList.First().ModelName, useGpu: true, hostPort: 1143);
 // LiteLLM Proxy Configuration with health check
 var litellm = builder.AddLiteLLM(
     liteLlmConfig,

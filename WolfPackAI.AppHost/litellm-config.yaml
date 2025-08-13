@@ -3,6 +3,7 @@ model_list:
   litellm_params:
     model: ollama/qwen3:0.6b
     api_base: http://ollama:11434
+    supports_reasoning: true
 litellm_settings:
   drop_params: true
   set_verbose: true
