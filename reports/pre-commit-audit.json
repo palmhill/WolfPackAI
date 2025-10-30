@@ -1,0 +1,57 @@
+{
+  "status": "pass",
+  "timestamp": "2025-10-30T18:04:12.875779+00:00",
+  "errors": [],
+  "warnings": [
+    {
+      "file": "WolfPackAI.Dashboard\\appsettings.json",
+      "severity": "medium",
+      "message": "Missing required config section: LiteLLM"
+    },
+    {
+      "file": "WolfPackAI.Dashboard\\appsettings.json",
+      "severity": "medium",
+      "message": "Missing required config section: Postgres"
+    },
+    {
+      "file": "WolfPackAI.Dashboard\\appsettings.json",
+      "severity": "medium",
+      "message": "Missing required config section: OpenWebUI"
+    },
+    {
+      "file": "WolfPackAI.Dashboard\\appsettings.json",
+      "severity": "medium",
+      "message": "Missing required config section: n8n"
+    },
+    {
+      "file": "WolfPackAI.Dashboard\\appsettings.json",
+      "severity": "medium",
+      "message": "Missing required config section: Dashboard"
+    }
+  ],
+  "info": [
+    {
+      "file": ".gitignore",
+      "severity": "low",
+      "message": "Consider adding Environment files pattern: *.env"
+    },
+    {
+      "file": ".gitignore",
+      "severity": "low",
+      "message": "Consider adding App settings pattern: appsettings*.json"
+    },
+    {
+      "file": ".gitignore",
+      "severity": "low",
+      "message": "Consider adding Key files pattern: *.key"
+    },
+    {
+      "file": ".gitignore",
+      "severity": "low",
+      "message": "Consider adding Certificate files pattern: *.pem"
+    }
+  ],
+  "files_scanned": 2,
+  "issues_found": 9,
+  "details": {}
+}

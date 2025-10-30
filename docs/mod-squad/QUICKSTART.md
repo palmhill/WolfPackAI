@@ -92,14 +92,14 @@ npm run mod:wait
 
 Once running, access services at:
 
-| Service | URL | Purpose |
-|---------|-----|---------|
+| Service              | URL                    | Purpose              |
+| -------------------- | ---------------------- | -------------------- |
 | **Aspire Dashboard** | http://localhost:15021 | Monitor all services |
-| **OpenWebUI** | http://localhost:8080 | AI chat interface |
-| **LiteLLM** | http://localhost:4000 | LLM API gateway |
-| **n8n** | http://localhost:5678 | Workflow automation |
-| **Dashboard** | http://localhost:80 | Web portal |
-| **PostgreSQL** | localhost:5432 | Database |
+| **OpenWebUI**        | http://localhost:8080  | AI chat interface    |
+| **LiteLLM**          | http://localhost:4000  | LLM API gateway      |
+| **n8n**              | http://localhost:5678  | Workflow automation  |
+| **Dashboard**        | http://localhost:80    | Web portal           |
+| **PostgreSQL**       | localhost:5432         | Database             |
 
 ---
 
