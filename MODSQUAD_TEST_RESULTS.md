@@ -26,14 +26,14 @@ python scripts/wolfpack_health_check.py --output reports/test-validation.json
 
 ## 📊 Test Results
 
-| Service | Status | Response Time | Details |
-|---------|--------|---------------|---------|
-| **Ollama** | ✅ PASS | 10.0ms | HTTP 200 - Service healthy |
-| **OpenWebUI** | ✅ PASS | 24.2ms | HTTP 200 - Service healthy |
-| **n8n** | ✅ PASS | 16.0ms | HTTP 200 - Service healthy |
-| **PostgreSQL** | ⚠️ SKIP | 5.5ms | pg_isready not installed locally (Docker container running) |
-| **LiteLLM** | ⚠️ AUTH | 26.7ms | HTTP 401 - Auth required (expected, service IS running) |
-| **Dashboard** | ⚠️ SKIP | 4077.0ms | Service not started (Aspire Dashboard on :15021 is running) |
+| Service        | Status | Response Time | Details                                                     |
+| -------------- | ------ | ------------- | ----------------------------------------------------------- |
+| **Ollama**     | ✅ PASS | 10.0ms        | HTTP 200 - Service healthy                                  |
+| **OpenWebUI**  | ✅ PASS | 24.2ms        | HTTP 200 - Service healthy                                  |
+| **n8n**        | ✅ PASS | 16.0ms        | HTTP 200 - Service healthy                                  |
+| **PostgreSQL** | ⚠️ SKIP | 5.5ms         | pg_isready not installed locally (Docker container running) |
+| **LiteLLM**    | ⚠️ AUTH | 26.7ms        | HTTP 401 - Auth required (expected, service IS running)     |
+| **Dashboard**  | ⚠️ SKIP | 4077.0ms      | Service not started (Aspire Dashboard on :15021 is running) |
 
 ### Performance Metrics
 - **P95 Response Time:** 4077.0ms
@@ -61,14 +61,14 @@ python scripts/wolfpack_health_check.py --output reports/test-validation.json
 
 ## 🎯 Critical Fixes Validated
 
-| Fix | Status | Evidence |
-|-----|--------|----------|
-| **LiteLLM Config Complete** | ✅ VERIFIED | Service running and responding (401 is auth, not failure) |
-| **Port 8000 (No Admin)** | ✅ VERIFIED | No admin errors, port binding successful |
-| **Dashboard Config Added** | ✅ VERIFIED | ServiceEndpoints section present in appsettings.json |
-| **Ollama Download Handling** | ✅ VERIFIED | Models already downloaded, service healthy in 10ms |
-| **Port Checking** | ✅ VERIFIED | Script detected 5 ports in use, prompted user |
-| **Windows Encoding** | ✅ VERIFIED | All emojis removed, scripts run without Unicode errors |
+| Fix                          | Status     | Evidence                                                  |
+| ---------------------------- | ---------- | --------------------------------------------------------- |
+| **LiteLLM Config Complete**  | ✅ VERIFIED | Service running and responding (401 is auth, not failure) |
+| **Port 8000 (No Admin)**     | ✅ VERIFIED | No admin errors, port binding successful                  |
+| **Dashboard Config Added**   | ✅ VERIFIED | ServiceEndpoints section present in appsettings.json      |
+| **Ollama Download Handling** | ✅ VERIFIED | Models already downloaded, service healthy in 10ms        |
+| **Port Checking**            | ✅ VERIFIED | Script detected 5 ports in use, prompted user             |
+| **Windows Encoding**         | ✅ VERIFIED | All emojis removed, scripts run without Unicode errors    |
 
 ---
 

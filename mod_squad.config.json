@@ -104,7 +104,7 @@
     "scenarios": [
       {
         "name": "Dashboard Load",
-        "url": "http://localhost:80",
+        "url": "http://localhost:8000",
         "checks": ["no_console_errors", "page_loads", "status_200"]
       },
       {

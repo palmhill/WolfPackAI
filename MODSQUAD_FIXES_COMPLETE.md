@@ -91,18 +91,18 @@
 
 ## 📊 Changes Summary
 
-| File | Lines Changed | Fix Applied |
-|------|---------------|-------------|
-| `WolfPackAI.AppBuilder/Configuration/ExtensionConfiguration.cs` | +8 | Added general_settings to YAML, default port 8000 |
-| `WolfPackAI.AppHost/appsettings.json` | 1 | Port 80 → 8000 |
-| `WolfPackAI.Dashboard/appsettings.json` | +14 | Added ServiceEndpoints + CORS |
-| `bootstrap.ps1` | +49 | Port checking + Ollama detection |
-| `litellm-config.yaml` | +3 | Complete config with models + master key |
-| `mod_squad.config.json` | 1 | Dashboard URL :80 → :8000 |
-| `README.md` | +6 | Added service URLs |
-| `docs/mod-squad/QUICKSTART.md` | 1 | Port 80 → 8000 |
-| `docs/mod-squad/ASSESSMENT.md` | 1 | Port 80 → 8000 |
-| `reports/pre-commit-audit.json` | Auto | Updated by pre-commit hook |
+| File                                                            | Lines Changed | Fix Applied                                       |
+| --------------------------------------------------------------- | ------------- | ------------------------------------------------- |
+| `WolfPackAI.AppBuilder/Configuration/ExtensionConfiguration.cs` | +8            | Added general_settings to YAML, default port 8000 |
+| `WolfPackAI.AppHost/appsettings.json`                           | 1             | Port 80 → 8000                                    |
+| `WolfPackAI.Dashboard/appsettings.json`                         | +14           | Added ServiceEndpoints + CORS                     |
+| `bootstrap.ps1`                                                 | +49           | Port checking + Ollama detection                  |
+| `litellm-config.yaml`                                           | +3            | Complete config with models + master key          |
+| `mod_squad.config.json`                                         | 1             | Dashboard URL :80 → :8000                         |
+| `README.md`                                                     | +6            | Added service URLs                                |
+| `docs/mod-squad/QUICKSTART.md`                                  | 1             | Port 80 → 8000                                    |
+| `docs/mod-squad/ASSESSMENT.md`                                  | 1             | Port 80 → 8000                                    |
+| `reports/pre-commit-audit.json`                                 | Auto          | Updated by pre-commit hook                        |
 
 **Total:** 11 files, 84 lines changed
 

@@ -1,0 +1,35 @@
+{
+  "status": "fail",
+  "timestamp": "2025-10-30T19:50:46.678249+00:00",
+  "scenarios": {
+    "Dashboard Load": {
+      "success": false,
+      "error": "Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost/\nCall log:\n  - navigating to \"http://localhost/\", waiting until \"networkidle\"\n",
+      "checks": {}
+    },
+    "OpenWebUI Load": {
+      "success": false,
+      "load_time_ms": 45,
+      "status_code": 200,
+      "console_errors": [],
+      "failed_requests": [],
+      "checks": {
+        "no_console_errors": "PASS",
+        "page_loads": "PASS",
+        "status_200": "PASS",
+        "chat_interface_visible": "FAIL: No input field found"
+      },
+      "screenshot": "reports/OpenWebUI_Load_failure.png"
+    }
+  },
+  "errors": [
+    {
+      "scenario": "Dashboard Load",
+      "error": "Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost/\nCall log:\n  - navigating to \"http://localhost/\", waiting until \"networkidle\"\n"
+    }
+  ],
+  "timings": {
+    "OpenWebUI Load": 45
+  },
+  "details": {}
+}

@@ -1,0 +1,164 @@
+# MOD SQUAD Standard Operating Procedure
+# Universal validation protocol for ALL Dr. SC Prime projects
+# Auto-applied to every Cursor workspace
+
+## MANDATORY VALIDATION CHECKS
+
+### 1. Port & URL Consistency (CRITICAL)
+**Rule:** Same service = same port everywhere
+**Enforcement:** Repo audit MUST scan all configs
+**Trigger:** Any port change in any file
+**Action:** 
+- Scan ALL JSON for localhost:PORT patterns
+- Scan ALL configs for "port": PORT patterns  
+- Flag inconsistencies as HIGH severity
+- BLOCK commit if found
+
+**Example violations:**
+- Dashboard service: localhost:8000
+- Dashboard browser test: localhost:80
+- **Result:** INCONSISTENCY ERROR - commit blocked
+
+### 2. Dangerous Ports Detection
+**Rule:** Ports 80, 443, 1-1023 require admin on Windows
+**Action:**
+- Flag any use of port 80 or 443
+- Suggest alternatives: 8000, 8443
+- BLOCK commit until fixed
+
+### 3. Service Endpoint Validation
+**Rule:** All service references must have valid endpoints
+**Action:**
+- Check proxy configs have target URLs
+- Verify CORS origins match actual service ports
+- Validate health check URLs exist
+
+### 4. Configuration Completeness
+**Rule:** Required config sections must be present
+**Action:**
+- Validate appsettings.json has all required sections
+- Check environment variables are defined
+- Verify no missing dependencies
+
+### 5. Pre-commit Audit Requirements
+**Must run before EVERY commit:**
+```bash
+python scripts/repo_audit.py --output reports/pre-commit-audit.json
+```
+
+**Must check:**
+- ✅ Secrets scanning
+- ✅ Config validation
+- ✅ Docker config check
+- ✅ .gitignore validation
+- ✅ Port consistency ← NEW REQUIREMENT
+- ✅ URL consistency ← NEW REQUIREMENT
+
+**Exit code must be 0 or commit is BLOCKED**
+
+## MOD SQUAD SCRIPT REQUIREMENTS
+
+### All Python Scripts Must:
+1. ❌ **NO EMOJIS** - Windows cp1252 encoding can't handle them
+2. ✅ Use `[OK]`, `[FAIL]`, `[WARN]` instead
+3. ✅ Use `datetime.now(timezone.utc)` not `datetime.utcnow()`
+4. ✅ Handle exceptions gracefully
+5. ✅ Output JSON reports with standard schema
+
+### Standard Report Schema:
+```json
+{
+  "status": "pass|fail|skipped",
+  "timestamp": "ISO8601",
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "timings": {},
+  "p95_ms": 0,
+  "details": {}
+}
+```
+
+## UNIVERSAL MOD SQUAD FILES
+
+Every project MUST have:
+```
+project-root/
+├── mod_squad.config.json          # Service URLs, thresholds
+├── scripts/
+│   ├── health_check.py            # Service validation
+│   ├── browser_mod.py             # UI testing
+│   └── repo_audit.py              # Config scanning + consistency
+├── package.json                   # npm run mod:all
+├── requirements.txt               # Python deps
+├── .github/workflows/mod-squad.yml # CI gates
+├── .git/hooks/pre-commit          # Local validation
+├── bootstrap.ps1 or bootstrap.sh  # One-click launch
+└── docs/mod-squad/
+    ├── ASSESSMENT.md              # Architecture
+    ├── QUICKSTART.md              # User guide
+    └── PROGRESS.md                # Execution tracker
+```
+
+## CURSOR INTEGRATION
+
+### Auto-apply on Project Open:
+1. Check for `mod_squad.config.json`
+2. If missing: Prompt to run `apply_mod_squad.ps1`
+3. If present: Run `npm run mod:quick` to validate
+4. Show health status in Cursor status bar
+
+### Pre-save Validation:
+- On save of any config file: Check port consistency
+- On save of appsettings.json: Validate required sections
+- On save of any .py script: Check for emojis/encoding issues
+
+### Git Integration:
+- Before commit: Auto-run pre-commit hook
+- Show validation results in Cursor
+- Block commit if validation fails (unless --no-verify)
+
+## AGENT ACCOUNTABILITY
+
+### All AI agents (Cursor Claude, Desktop Claude, etc.) MUST:
+1. Use MOD SQUAD validation before proposing changes
+2. Run consistency checks after any port/URL modification
+3. Update ALL occurrences when changing ports
+4. Verify fixes with actual tests, not assumptions
+5. Log all actions in PROGRESS.md tracker table
+
+### Mandatory Agent Checks:
+```python
+# Before proposing port change:
+1. Search entire codebase for current port
+2. Identify ALL files that reference it
+3. Propose changes to ALL files simultaneously
+4. Run repo audit to verify consistency
+5. Only then commit
+```
+
+## FAILURE RECOVERY
+
+### If Inconsistency Found:
+1. STOP immediately
+2. Report all inconsistent references
+3. Fix ALL occurrences in one atomic commit
+4. Re-run audit to verify
+5. Do NOT proceed until audit passes
+
+### If Validation Fails:
+1. Capture full error output
+2. Identify root cause
+3. Apply fix with MOD SQUAD protocol
+4. Re-test
+5. Document lesson learned
+
+## THIS IS NOW YOUR STANDARD WORKING ENVIRONMENT
+
+Copy this file to:
+- `C:\Users\SSaint-Cyr\.cursorrules-global`
+- Every project's `.cursorrules-modsquad`
+- Apply automatically to all Cursor workspaces
+
+**Every project you work on will have these protections by default.**
+

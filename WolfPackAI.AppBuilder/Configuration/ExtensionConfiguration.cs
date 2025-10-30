@@ -10,7 +10,7 @@ public class DashboardSettings
     [JsonPropertyName("httpPort")]
     public int HttpPort { get; set; } = 8000;
     [JsonPropertyName("httpsPort")]
-    public int HttpsPort { get; set; } = 443;
+    public int HttpsPort { get; set; } = 8443;
 }
 
 public class OpenWebUiConfig

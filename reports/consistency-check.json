@@ -1,7 +1,20 @@
 {
-  "status": "pass",
-  "timestamp": "2025-10-30T19:46:28.701366+00:00",
-  "errors": [],
+  "status": "fail",
+  "timestamp": "2025-10-30T19:54:08.574099+00:00",
+  "errors": [
+    {
+      "files": "WolfPackAI.AppHost\\appsettings.json",
+      "severity": "high",
+      "message": "Port 443 used in 1 location(s). Port 443 requires admin on Windows; use 8443+ instead",
+      "details": [
+        {
+          "file": "WolfPackAI.AppHost\\appsettings.json",
+          "context": "HttpPort: 443",
+          "type": "http_config"
+        }
+      ]
+    }
+  ],
   "warnings": [
     {
       "file": "WolfPackAI.Dashboard\\appsettings.json",
@@ -52,6 +65,6 @@
     }
   ],
   "files_scanned": 2,
-  "issues_found": 9,
+  "issues_found": 10,
   "details": {}
 }
