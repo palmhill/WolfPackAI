@@ -50,18 +50,18 @@
 
 ## 📊 **Model Comparison:**
 
-| Model | Size | Speed | Quality | Use Case | Cost |
-|-------|------|-------|---------|----------|------|
-| **deepseek-coder:6.7b** | 3.8 GB | ⚡⚡⚡ Fast | ⭐⭐⭐ Good | Quick code tasks | FREE |
-| **deepseek-coder-v2:16b** | 8.9 GB | ⚡⚡ Medium | ⭐⭐⭐⭐ Great | Balanced coding | FREE |
-| **deepseek-coder:33b** | 19 GB | ⚡ Slower | ⭐⭐⭐⭐⭐ Excellent | Complex projects | FREE |
-| **llama3.2** | 2 GB | ⚡⚡⚡ Fast | ⭐⭐⭐ Good | General chat | FREE |
-| **mistral** | 4 GB | ⚡⚡ Medium | ⭐⭐⭐⭐ Great | Balanced tasks | FREE |
-| **phi3** | 2 GB | ⚡⚡⚡ Fast | ⭐⭐⭐ Good | Quick answers | FREE |
-| **gpt-4** | Cloud | ⚡⚡ Medium | ⭐⭐⭐⭐⭐ Best | Complex reasoning | $$$$ |
-| **gpt-3.5-turbo** | Cloud | ⚡⚡⚡ Fast | ⭐⭐⭐⭐ Great | Fast responses | $ |
-| **claude-3-5-sonnet** | Cloud | ⚡⚡ Medium | ⭐⭐⭐⭐⭐ Best | Writing, analysis | $$$ |
-| **claude-3-haiku** | Cloud | ⚡⚡⚡ Fast | ⭐⭐⭐⭐ Great | Quick tasks | $$ |
+| Model                     | Size   | Speed     | Quality         | Use Case          | Cost |
+| ------------------------- | ------ | --------- | --------------- | ----------------- | ---- |
+| **deepseek-coder:6.7b**   | 3.8 GB | ⚡⚡⚡ Fast  | ⭐⭐⭐ Good        | Quick code tasks  | FREE |
+| **deepseek-coder-v2:16b** | 8.9 GB | ⚡⚡ Medium | ⭐⭐⭐⭐ Great      | Balanced coding   | FREE |
+| **deepseek-coder:33b**    | 19 GB  | ⚡ Slower  | ⭐⭐⭐⭐⭐ Excellent | Complex projects  | FREE |
+| **llama3.2**              | 2 GB   | ⚡⚡⚡ Fast  | ⭐⭐⭐ Good        | General chat      | FREE |
+| **mistral**               | 4 GB   | ⚡⚡ Medium | ⭐⭐⭐⭐ Great      | Balanced tasks    | FREE |
+| **phi3**                  | 2 GB   | ⚡⚡⚡ Fast  | ⭐⭐⭐ Good        | Quick answers     | FREE |
+| **gpt-4**                 | Cloud  | ⚡⚡ Medium | ⭐⭐⭐⭐⭐ Best      | Complex reasoning | $$$$ |
+| **gpt-3.5-turbo**         | Cloud  | ⚡⚡⚡ Fast  | ⭐⭐⭐⭐ Great      | Fast responses    | $    |
+| **claude-3-5-sonnet**     | Cloud  | ⚡⚡ Medium | ⭐⭐⭐⭐⭐ Best      | Writing, analysis | $$$  |
+| **claude-3-haiku**        | Cloud  | ⚡⚡⚡ Fast  | ⭐⭐⭐⭐ Great      | Quick tasks       | $$   |
 
 ---
 
