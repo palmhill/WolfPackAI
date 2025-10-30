@@ -26,6 +26,36 @@ Write-Host ""
 if (-not $SkipChecks) {
     Write-Host "📋 Checking Prerequisites..." -ForegroundColor Yellow
     
+    # Check ports availability
+    Write-Host "  🔍 Checking port availability..." -ForegroundColor Cyan
+    $requiredPorts = @(5432, 1143, 4000, 5678, 8000, 8080)
+    $portsInUse = @()
+    
+    foreach ($port in $requiredPorts) {
+        $connection = Test-NetConnection -ComputerName localhost -Port $port -WarningAction SilentlyContinue -InformationLevel Quiet
+        if ($connection) {
+            $portsInUse += $port
+        }
+    }
+    
+    if ($portsInUse.Count -gt 0) {
+        Write-Host "  ⚠️  Warning: The following ports are already in use:" -ForegroundColor Yellow
+        foreach ($port in $portsInUse) {
+            Write-Host "     - Port $port" -ForegroundColor Yellow
+        }
+        Write-Host "     You may need to stop conflicting services or WolfPackAI may fail to start." -ForegroundColor Yellow
+        Write-Host "     Run 'netstat -ano | findstr :<PORT>' to find what's using a port." -ForegroundColor Gray
+        Write-Host ""
+        
+        $response = Read-Host "Continue anyway? (y/N)"
+        if ($response -ne 'y' -and $response -ne 'Y') {
+            Write-Host "❌ Aborted by user" -ForegroundColor Red
+            exit 1
+        }
+    } else {
+        Write-Host "  ✅ All required ports available" -ForegroundColor Green
+    }
+    
     # Check .NET SDK
     try {
         $dotnetVersion = dotnet --version
@@ -164,6 +194,27 @@ Write-Host "     Waiting for services to become healthy (timeout: ${Timeout}s)..
 Write-Host ""
 
 # Step 5: Wait for Services
+Write-Host "🔍 Checking for first-run Ollama model download..." -ForegroundColor Yellow
+
+# Detect first run by checking if models are cached
+$isFirstRun = $false
+try {
+    $ollamaCheck = docker ps --format "{{.Names}}" 2>$null | Select-String "ollama"
+    if ($ollamaCheck) {
+        $modelCheck = docker exec $ollamaCheck.Line ollama list 2>$null
+        if (-not $modelCheck -or $modelCheck.Length -lt 50) {
+            $isFirstRun = $true
+            $Timeout = 600  # Extend to 10 minutes for first run
+            Write-Host "  ⏳ First run detected! Ollama will download AI models (5-10 minutes)..." -ForegroundColor Cyan
+            Write-Host "     Extended timeout to ${Timeout}s. Please be patient..." -ForegroundColor Cyan
+        }
+    }
+} catch {
+    # Docker not ready yet, proceed with default timeout
+}
+
+Write-Host ""
+
 $startTime = Get-Date
 $healthCheckInterval = 5
 $attempt = 0
@@ -173,7 +224,11 @@ if (Test-Path "scripts/wolfpack_health_check.py") {
         $attempt++
         $elapsed = [int]((Get-Date) - $startTime).TotalSeconds
         
-        Write-Host "  🔄 Attempt $attempt (${elapsed}s elapsed)..." -ForegroundColor Cyan
+        if ($isFirstRun) {
+            Write-Host "  🔄 Attempt $attempt (${elapsed}s elapsed) - Downloading models..." -ForegroundColor Cyan
+        } else {
+            Write-Host "  🔄 Attempt $attempt (${elapsed}s elapsed)..." -ForegroundColor Cyan
+        }
         
         python scripts/wolfpack_health_check.py --config mod_squad.config.json 2>$null
         
@@ -195,6 +250,9 @@ if (Test-Path "scripts/wolfpack_health_check.py") {
         Write-Host ""
         Write-Host "  ⚠️  Timeout reached. Some services may still be starting." -ForegroundColor Yellow
         Write-Host "     Check Aspire Dashboard for service status." -ForegroundColor Yellow
+        if ($isFirstRun) {
+            Write-Host "     Note: Large AI models may still be downloading." -ForegroundColor Yellow
+        }
     }
 } else {
     Write-Host "  ⚠️  Health check script not found, waiting 30s..." -ForegroundColor Yellow
@@ -217,7 +275,7 @@ Write-Host "  • Aspire Dashboard:  http://localhost:15021" -ForegroundColor Wh
 Write-Host "  • OpenWebUI:         http://localhost:8080" -ForegroundColor White
 Write-Host "  • LiteLLM:           http://localhost:4000" -ForegroundColor White
 Write-Host "  • n8n:               http://localhost:5678" -ForegroundColor White
-Write-Host "  • Dashboard:         http://localhost:80" -ForegroundColor White
+Write-Host "  • Dashboard:         http://localhost:8000" -ForegroundColor White
 Write-Host ""
 Write-Host "🛑 To stop: Press Ctrl+C in this window" -ForegroundColor Yellow
 Write-Host ""

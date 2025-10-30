@@ -95,6 +95,13 @@ WolfPackAI includes comprehensive MOD SQUAD validation for production readiness:
 npm run mod:all
 ```
 
+**Access services:**
+- Aspire Dashboard: http://localhost:15021
+- Dashboard: http://localhost:8000
+- OpenWebUI: http://localhost:8080
+- LiteLLM: http://localhost:4000
+- n8n: http://localhost:5678
+
 See [`docs/mod-squad/QUICKSTART.md`](docs/mod-squad/QUICKSTART.md) for complete MOD SQUAD documentation.
 
 ### Service Monitoring

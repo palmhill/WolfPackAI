@@ -52,7 +52,7 @@ Dashboard (waits for OpenWebUI, LiteLLM, n8n)
 | **LiteLLM** | `http://localhost:4000/health` | 200 OK (disabled in code due to auth) | GET | Yes (Bearer token) |
 | **OpenWebUI** | `http://localhost:8080/health` | 200 OK | GET | No |
 | **n8n** | `http://localhost:5678/healthz` | 200 OK (assumed) | GET | No |
-| **Dashboard** | `http://localhost:80/` or `:443` | 200 OK | GET | No |
+| **Dashboard** | `http://localhost:8000/` or `:443` | 200 OK | GET | No |
 
 **Note:** LiteLLM health check is currently disabled in `Program.cs` (line 61 comment).
 

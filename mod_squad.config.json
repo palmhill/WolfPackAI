@@ -75,7 +75,7 @@
     "dashboard": {
       "type": "web-portal",
       "enabled": true,
-      "url": "http://localhost:80",
+      "url": "http://localhost:8000",
       "health_endpoint": "/",
       "health_type": "http",
       "method": "GET",

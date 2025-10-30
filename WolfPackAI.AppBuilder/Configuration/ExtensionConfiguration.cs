@@ -8,7 +8,7 @@ namespace WolfPackAI.AppBuilder.Configuration;
 public class DashboardSettings
 {
     [JsonPropertyName("httpPort")]
-    public int HttpPort { get; set; } = 80;
+    public int HttpPort { get; set; } = 8000;
     [JsonPropertyName("httpsPort")]
     public int HttpsPort { get; set; } = 443;
 }
@@ -82,6 +82,10 @@ public class LiteLLMConfiguration
             {
                 ["drop_params"] = Settings.DropParams,
                 ["set_verbose"] = Settings.SetVerbose
+            },
+            ["general_settings"] = new Dictionary<string, object>
+            {
+                ["master_key"] = GeneralSettings.MasterKey
             },
             ["router_settings"] = new Dictionary<string, object>
             {
