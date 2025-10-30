@@ -1,0 +1,18 @@
+# WolfPackAI MOD SQUAD Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# HTTP requests for health checks
+requests>=2.31.0
+
+# Browser automation for UI testing
+playwright>=1.40.0
+
+# JSON schema validation (optional)
+jsonschema>=4.20.0
+
+# PostgreSQL client (optional, for direct DB checks)
+psycopg2-binary>=2.9.9
+
+# Color output for terminal
+colorama>=0.4.6
+

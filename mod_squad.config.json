@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "WolfPackAI MOD SQUAD Configuration - Service health checks, thresholds, and validation rules",
+  "version": "1.0.0",
+  "project": {
+    "name": "WolfPackAI",
+    "type": "dotnet-aspire-microservices",
+    "base_url": "http://localhost",
+    "aspire_dashboard": "http://localhost:15021"
+  },
+  "services": {
+    "postgres": {
+      "type": "database",
+      "enabled": true,
+      "host": "localhost",
+      "port": 5432,
+      "health_command": "pg_isready -h localhost -p 5432 -U postgres",
+      "health_type": "cli",
+      "timeout_ms": 5000,
+      "databases": ["openwebuidb", "litellmdb", "n8ndb"],
+      "critical": true
+    },
+    "ollama": {
+      "type": "llm-runtime",
+      "enabled": true,
+      "url": "http://localhost:1143",
+      "health_endpoint": "/api/tags",
+      "health_type": "http",
+      "method": "GET",
+      "timeout_ms": 10000,
+      "expected_status": 200,
+      "auth": "none",
+      "critical": true,
+      "notes": "First launch downloads models (5-10 min)"
+    },
+    "litellm": {
+      "type": "api-gateway",
+      "enabled": true,
+      "url": "http://localhost:4000",
+      "health_endpoint": "/health",
+      "health_type": "http",
+      "method": "GET",
+      "timeout_ms": 5000,
+      "expected_status": 200,
+      "auth": "bearer",
+      "auth_token_env": "LITELLM_MASTER_KEY",
+      "critical": true,
+      "notes": "Health check disabled in code due to auth; may need to skip or mock"
+    },
+    "openwebui": {
+      "type": "web-ui",
+      "enabled": true,
+      "url": "http://localhost:8080",
+      "health_endpoint": "/health",
+      "health_type": "http",
+      "method": "GET",
+      "timeout_ms": 5000,
+      "expected_status": 200,
+      "auth": "none",
+      "critical": true,
+      "browser_test": true
+    },
+    "n8n": {
+      "type": "workflow-automation",
+      "enabled": true,
+      "url": "http://localhost:5678",
+      "health_endpoint": "/healthz",
+      "health_type": "http",
+      "method": "GET",
+      "timeout_ms": 5000,
+      "expected_status": 200,
+      "auth": "none",
+      "critical": true
+    },
+    "dashboard": {
+      "type": "web-portal",
+      "enabled": true,
+      "url": "http://localhost:80",
+      "health_endpoint": "/",
+      "health_type": "http",
+      "method": "GET",
+      "timeout_ms": 3000,
+      "expected_status": 200,
+      "auth": "none",
+      "critical": false,
+      "browser_test": true
+    }
+  },
+  "thresholds": {
+    "p95_response_ms": 5000,
+    "p99_response_ms": 10000,
+    "startup_timeout_s": 120,
+    "first_run_timeout_s": 600,
+    "health_check_interval_s": 5,
+    "max_retries": 3
+  },
+  "browser_tests": {
+    "enabled": true,
+    "headless": true,
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "scenarios": [
+      {
+        "name": "Dashboard Load",
+        "url": "http://localhost:80",
+        "checks": ["no_console_errors", "page_loads", "status_200"]
+      },
+      {
+        "name": "OpenWebUI Load",
+        "url": "http://localhost:8080",
+        "checks": ["no_console_errors", "page_loads", "status_200", "chat_interface_visible"]
+      }
+    ]
+  },
+  "repo_audit": {
+    "enabled": true,
+    "scan_patterns": {
+      "secrets": [
+        "password\\s*=\\s*['\"][^'\"]+['\"]",
+        "api[_-]?key\\s*=\\s*['\"][^'\"]+['\"]",
+        "token\\s*=\\s*['\"][^'\"]+['\"]",
+        "sk-[a-zA-Z0-9]{20,}"
+      ],
+      "config_files": [
+        "**/appsettings.json",
+        "**/appsettings.*.json",
+        "**/*.config",
+        "**/.env*"
+      ]
+    },
+    "exclude_paths": [
+      "**/bin/**",
+      "**/obj/**",
+      "**/node_modules/**",
+      "**/.git/**"
+    ]
+  },
+  "reporting": {
+    "output_dir": "reports",
+    "format": "json",
+    "schema": {
+      "status": "pass|fail",
+      "timestamp": "ISO8601",
+      "errors": ["array of error objects"],
+      "timings": {"service_name": "ms"},
+      "p95_ms": "number",
+      "p99_ms": "number",
+      "details": "object"
+    }
+  },
+  "ci_gates": {
+    "block_on_failure": true,
+    "required_checks": ["health", "audit"],
+    "optional_checks": ["browser"],
+    "artifact_retention_days": 30
+  }
+}
+

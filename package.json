@@ -1,0 +1,32 @@
+{
+  "name": "wolfpackai",
+  "version": "1.0.0",
+  "description": "WolfPackAI - AI Development and Deployment Platform with MOD SQUAD Validation",
+  "scripts": {
+    "mod:health": "python scripts/wolfpack_health_check.py --output reports/health.json",
+    "mod:browser": "python scripts/wolfpack_browser_mod.py --output reports/browser.json",
+    "mod:audit": "python scripts/wolfpack_repo_audit.py --output reports/audit.json",
+    "mod:all": "npm run mod:health && npm run mod:browser && npm run mod:audit",
+    "mod:quick": "python scripts/wolfpack_health_check.py --quick",
+    "mod:wait": "python scripts/wolfpack_health_check.py --wait --timeout 120",
+    "preinstall": "python -m pip install -r requirements.txt 2>nul || echo Python dependencies will be installed separately"
+  },
+  "keywords": [
+    "ai",
+    "llm",
+    "aspire",
+    "microservices",
+    "docker",
+    "mod-squad"
+  ],
+  "author": "Dr. SC Prime",
+  "license": "MIT",
+  "devDependencies": {
+    "playwright": "^1.40.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
+

@@ -30,13 +30,13 @@ A centralized dashboard providing seamless access to all AI services:
 
 WolfPackAI orchestrates the following services in a cohesive microservices architecture:
 
-| Service | Purpose | Port | Technology |
-|---------|---------|------|------------|
-| **OpenWebUI** | AI chat interface | 8080 | Python/Docker |
-| **LiteLLM** | LLM API gateway | 4000 | Python/Docker |
-| **n8n** | Workflow automation | 5678 | Node.js/Docker |
-| **Ollama** | Local LLM runtime | 1143 | Go/Docker |
-| **PostgreSQL** | Primary database | 5432 | PostgreSQL |
+| Service        | Purpose             | Port | Technology     |
+| -------------- | ------------------- | ---- | -------------- |
+| **OpenWebUI**  | AI chat interface   | 8080 | Python/Docker  |
+| **LiteLLM**    | LLM API gateway     | 4000 | Python/Docker  |
+| **n8n**        | Workflow automation | 5678 | Node.js/Docker |
+| **Ollama**     | Local LLM runtime   | 1143 | Go/Docker      |
+| **PostgreSQL** | Primary database    | 5432 | PostgreSQL     |
 
 ### n8n Workflow Automation  
 ![n8n Workflow](ReadMeAssets/n8n-ui-workflow.png)
@@ -82,6 +82,20 @@ dotnet clean
 ```
 
 For a step-by-step walkthrough of the standalone developer workflow, see [`docs/QUICKSTART.md`](docs/QUICKSTART.md).
+
+### MOD SQUAD Validation
+
+WolfPackAI includes comprehensive MOD SQUAD validation for production readiness:
+
+```bash
+# One-command launch with validation
+.\bootstrap.ps1
+
+# Or run validation manually
+npm run mod:all
+```
+
+See [`docs/mod-squad/QUICKSTART.md`](docs/mod-squad/QUICKSTART.md) for complete MOD SQUAD documentation.
 
 ### Service Monitoring
 
