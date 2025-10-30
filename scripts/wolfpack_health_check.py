@@ -10,7 +10,7 @@ import sys
 import time
 import argparse
 from typing import Dict, List, Tuple
-from datetime import datetime
+from datetime import datetime, timezone
 import subprocess
 
 try:
@@ -30,7 +30,7 @@ class WolfPackHealthChecker:
         self.config = self._load_config()
         self.results = {
             "status": "unknown",
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "services": {},
             "timings": {},
             "p95_ms": 0,
@@ -137,7 +137,7 @@ class WolfPackHealthChecker:
         all_healthy = True
         timings = []
         
-        print("🔍 WolfPackAI Health Check")
+        print("WolfPackAI Health Check")
         print("=" * 60)
         
         for service_name, service_config in services.items():
@@ -158,8 +158,8 @@ class WolfPackHealthChecker:
             self.results["timings"][service_name] = round(elapsed_ms, 2)
             timings.append(elapsed_ms)
             
-            status_icon = "✅" if healthy else ("🔴" if is_critical else "⚠️")
-            print(f"{status_icon} {service_name:15} {elapsed_ms:7.1f}ms  {message}")
+            status_icon = "[OK]" if healthy else ("[FAIL]" if is_critical else "[WARN]")
+            print(f"{status_icon:8} {service_name:15} {elapsed_ms:7.1f}ms  {message}")
             
             if not healthy:
                 self.results["errors"].append({
@@ -187,26 +187,26 @@ class WolfPackHealthChecker:
     
     def wait_for_services(self) -> bool:
         """Wait for services to become healthy (with timeout)."""
-        print(f"⏳ Waiting for services to become healthy (timeout: {self.timeout}s)...")
+        print(f"Waiting for services to become healthy (timeout: {self.timeout}s)...")
         start_time = time.time()
         attempt = 0
         interval = self.config.get("thresholds", {}).get("health_check_interval_s", 5)
         
         while (time.time() - start_time) < self.timeout:
             attempt += 1
-            print(f"\n🔄 Attempt {attempt} ({int(time.time() - start_time)}s elapsed)")
+            print(f"\n[ATTEMPT {attempt}] ({int(time.time() - start_time)}s elapsed)")
             
             if self.check_all_services():
                 elapsed = int(time.time() - start_time)
-                print(f"\n✅ All services healthy after {elapsed}s!")
+                print(f"\n[OK] All services healthy after {elapsed}s!")
                 return True
             
             remaining = self.timeout - int(time.time() - start_time)
             if remaining > 0:
-                print(f"⏱️  Retrying in {interval}s... ({remaining}s remaining)")
+                print(f"Retrying in {interval}s... ({remaining}s remaining)")
                 time.sleep(interval)
         
-        print(f"\n❌ Timeout reached after {self.timeout}s. Some services are not healthy.")
+        print(f"\n[FAIL] Timeout reached after {self.timeout}s. Some services are not healthy.")
         return False
     
     def save_report(self, output_path: str):
@@ -214,9 +214,9 @@ class WolfPackHealthChecker:
         try:
             with open(output_path, 'w') as f:
                 json.dump(self.results, f, indent=2)
-            print(f"\n📄 Report saved: {output_path}")
+            print(f"\n[OK] Report saved: {output_path}")
         except Exception as e:
-            print(f"\n⚠️  Failed to save report: {e}")
+            print(f"\n[WARN] Failed to save report: {e}")
     
     def run(self, output_path: str = None, quick: bool = False) -> int:
         """Run health check and return exit code."""
@@ -233,13 +233,13 @@ class WolfPackHealthChecker:
             self.save_report(output_path)
         
         if success:
-            print("\n✅ Health check PASSED")
+            print("\n[PASS] Health check PASSED")
             return 0
         else:
-            print("\n❌ Health check FAILED")
+            print("\n[FAIL] Health check FAILED")
             print("\nFailed services:")
             for error in self.results["errors"]:
-                icon = "🔴" if error["critical"] else "⚠️"
+                icon = "[CRITICAL]" if error["critical"] else "[WARN]"
                 print(f"  {icon} {error['service']}: {error['message']}")
             return 1
 

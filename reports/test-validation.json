@@ -1,0 +1,76 @@
+{
+  "status": "fail",
+  "timestamp": "2025-10-30T19:41:53.286598+00:00",
+  "services": {
+    "postgres": {
+      "healthy": false,
+      "elapsed_ms": 5.53,
+      "message": "pg_isready command not found (PostgreSQL client not installed)",
+      "critical": true,
+      "url": "N/A"
+    },
+    "ollama": {
+      "healthy": true,
+      "elapsed_ms": 9.99,
+      "message": "ollama is healthy (HTTP 200)",
+      "critical": true,
+      "url": "http://localhost:1143"
+    },
+    "litellm": {
+      "healthy": false,
+      "elapsed_ms": 26.7,
+      "message": "litellm returned HTTP 401, expected 200",
+      "critical": true,
+      "url": "http://localhost:4000"
+    },
+    "openwebui": {
+      "healthy": true,
+      "elapsed_ms": 24.21,
+      "message": "openwebui is healthy (HTTP 200)",
+      "critical": true,
+      "url": "http://localhost:8080"
+    },
+    "n8n": {
+      "healthy": true,
+      "elapsed_ms": 15.96,
+      "message": "n8n is healthy (HTTP 200)",
+      "critical": true,
+      "url": "http://localhost:5678"
+    },
+    "dashboard": {
+      "healthy": false,
+      "elapsed_ms": 4076.98,
+      "message": "dashboard connection refused (service not started or wrong port)",
+      "critical": false,
+      "url": "http://localhost:8000"
+    }
+  },
+  "timings": {
+    "postgres": 5.53,
+    "ollama": 9.99,
+    "litellm": 26.7,
+    "openwebui": 24.21,
+    "n8n": 15.96,
+    "dashboard": 4076.98
+  },
+  "p95_ms": 4076.98,
+  "p99_ms": 4076.98,
+  "errors": [
+    {
+      "service": "postgres",
+      "message": "pg_isready command not found (PostgreSQL client not installed)",
+      "critical": true
+    },
+    {
+      "service": "litellm",
+      "message": "litellm returned HTTP 401, expected 200",
+      "critical": true
+    },
+    {
+      "service": "dashboard",
+      "message": "dashboard connection refused (service not started or wrong port)",
+      "critical": false
+    }
+  ],
+  "details": {}
+}
