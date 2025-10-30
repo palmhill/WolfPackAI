@@ -1,0 +1,13 @@
+model_list:
+- model_name: ollama/deepseek-coder-v2:16b
+  litellm_params:
+    model: ollama/deepseek-coder-v2:16b
+    api_base: http://ollama:11434
+    supports_reasoning: true
+litellm_settings:
+  drop_params: true
+  set_verbose: true
+router_settings:
+  routing_strategy: least-busy
+  num_retries: 3
+  timeout: 600

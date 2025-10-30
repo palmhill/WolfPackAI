@@ -1,0 +1,13 @@
+model_list:
+
+litellm_settings:
+  drop_params: true
+  set_verbose: true
+
+general_settings:
+  
+router_settings:
+  routing_strategy: "least-busy"
+  num_retries: 3
+  timeout: 600
+  

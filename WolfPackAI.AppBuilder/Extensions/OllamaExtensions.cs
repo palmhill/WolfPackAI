@@ -1,0 +1,54 @@
+﻿using Aspire.Hosting;
+using Aspire.Hosting.ApplicationModel;
+using Aspire.Hosting.Lifecycle;
+using Microsoft.Extensions.DependencyInjection;
+using WolfPackAI.AppBuilder.Resources;
+using WolfPackAI.AppBuilder.Lifecycle;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace WolfPackAI.AppBuilder.Extensions
+{
+    public static class OllamaExtensions
+    {
+        private const int OllamaContainerPort = 11434;
+
+        public static IResourceBuilder<OllamaResource> AddOllama(this IDistributedApplicationBuilder builder,
+        string modelName,
+        string hostIpAddress = "",
+        bool useGpu = true,
+        string ollamaTag = "latest",
+        string name = "Ollama",
+        int? hostPort = 11438)
+        {
+            var ollamaResource = new OllamaResource(name, modelName, hostIpAddress, hostPort.ToString()!);
+            builder.Services.TryAddLifecycleHook<OllamaResourceLifecycleHook>();
+
+            var ollamaResourceBuilder = builder.AddResource(ollamaResource)
+                .WithAnnotation(new ContainerImageAnnotation { Image = "ollama/ollama", Tag = ollamaTag })
+                .PublishAsContainer()
+                .WithVolume("ollama", "/root/.ollama")
+                .WithExternalHttpEndpoints();
+
+            if (useGpu)
+            {
+                ollamaResourceBuilder.WithContainerRuntimeArgs("--gpus=all");
+            }
+
+            if (!string.IsNullOrWhiteSpace(hostIpAddress))
+            {
+                ollamaResourceBuilder
+                    .WithContainerRuntimeArgs("-p", $"0.0.0.0:{hostPort}:{OllamaContainerPort}");
+            }
+            else
+            {
+                ollamaResourceBuilder.WithHttpEndpoint(hostPort, OllamaContainerPort);
+            }
+
+            return ollamaResourceBuilder;
+        }
+    }
+}

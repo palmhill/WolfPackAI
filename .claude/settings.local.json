@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build)",
+      "Bash(dotnet build:*)",
+      "Bash(mkdir:*)",
+      "Bash(docker build:*)",
+      "Bash(cp:*)",
+      "Bash(rm:*)",
+      "Bash(chmod:*)",
+      "Bash(docker system:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(dotnet run:*)",
+      "Bash(docker:*)",
+      "Bash(start \"\" \"C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe\")",
+      "Bash(timeout:*)",
+      "Bash(dotnet sln add:*)",
+      "Bash(move:*)",
+      "Bash(mv:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(find:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(rg:*)"
+    ],
+    "deny": []
+  }
+}

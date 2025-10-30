@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    
+    <!-- NuGet Package Configuration -->
+    <PackageId>WolfPackAI.AppBuilder</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>WolfPackAI</Authors>
+    <Description>WolfPackAI application builder with Aspire extensions for containerized services including OpenWebUI, LiteLLM, n8n, Ollama, and development containers</Description>
+    <PackageTags>aspire;containers;openwebui;litellm;n8n;ollama</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/palmhill/WolfPackAI</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="OllamaSharp" Version="5.3.3" />
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.3.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.7" />
+    <PackageReference Include="YamlDotNet" Version="16.3.0" />
+  </ItemGroup>
+
+</Project>
