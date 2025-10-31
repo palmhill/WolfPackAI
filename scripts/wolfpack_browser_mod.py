@@ -8,7 +8,7 @@ Part of MOD SQUAD validation suite.
 import json
 import sys
 import argparse
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List
 
 try:
@@ -28,7 +28,7 @@ class WolfPackBrowserMod:
         self.config = self._load_config()
         self.results = {
             "status": "unknown",
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "scenarios": {},
             "errors": [],
             "timings": {},
@@ -53,7 +53,7 @@ class WolfPackBrowserMod:
         url = scenario["url"]
         checks = scenario.get("checks", [])
         
-        print(f"\n🌐 Testing: {scenario_name}")
+        print(f"\n[TEST] {scenario_name}")
         print(f"   URL: {url}")
         
         try:
@@ -94,28 +94,28 @@ class WolfPackBrowserMod:
                         scenario_result["success"] = False
                         scenario_result["console_errors"] = console_errors[:5]  # Limit to first 5
                         scenario_result["checks"][check] = f"FAIL: {len(console_errors)} console errors"
-                        print(f"   ❌ Console errors detected ({len(console_errors)})")
+                        print(f"   [FAIL] Console errors detected ({len(console_errors)})")
                     else:
                         scenario_result["checks"][check] = "PASS"
-                        print(f"   ✅ No console errors")
+                        print(f"   [OK] No console errors")
                 
                 elif check == "page_loads":
                     if response and response.ok:
                         scenario_result["checks"][check] = "PASS"
-                        print(f"   ✅ Page loaded successfully ({load_time}ms)")
+                        print(f"   [OK] Page loaded successfully ({load_time}ms)")
                     else:
                         scenario_result["success"] = False
                         scenario_result["checks"][check] = f"FAIL: HTTP {response.status if response else 'N/A'}"
-                        print(f"   ❌ Page load failed")
+                        print(f"   [FAIL] Page load failed")
                 
                 elif check == "status_200":
                     if response and response.status == 200:
                         scenario_result["checks"][check] = "PASS"
-                        print(f"   ✅ HTTP 200 OK")
+                        print(f"   [OK] HTTP 200 OK")
                     else:
                         scenario_result["success"] = False
                         scenario_result["checks"][check] = f"FAIL: HTTP {response.status if response else 'N/A'}"
-                        print(f"   ❌ Expected HTTP 200, got {response.status if response else 'N/A'}")
+                        print(f"   [FAIL] Expected HTTP 200, got {response.status if response else 'N/A'}")
                 
                 elif check == "chat_interface_visible":
                     # Check for OpenWebUI-specific elements
@@ -124,22 +124,22 @@ class WolfPackBrowserMod:
                         has_input = page.query_selector("textarea, input[type='text']") is not None
                         if has_input:
                             scenario_result["checks"][check] = "PASS"
-                            print(f"   ✅ Chat interface detected")
+                            print(f"   [OK] Chat interface detected")
                         else:
                             scenario_result["success"] = False
                             scenario_result["checks"][check] = "FAIL: No input field found"
-                            print(f"   ❌ Chat interface not found")
+                            print(f"   [FAIL] Chat interface not found")
                     except Exception as e:
                         scenario_result["success"] = False
                         scenario_result["checks"][check] = f"FAIL: {str(e)}"
-                        print(f"   ❌ Chat interface check error: {e}")
+                        print(f"   [FAIL] Chat interface check error: {e}")
             
             # Save screenshot on failure
             if not scenario_result["success"]:
                 screenshot_path = f"reports/{scenario_name.replace(' ', '_')}_failure.png"
                 page.screenshot(path=screenshot_path)
                 scenario_result["screenshot"] = screenshot_path
-                print(f"   📸 Screenshot saved: {screenshot_path}")
+                print(f"   [SCREENSHOT] Saved: {screenshot_path}")
             
             page.close()
             self.results["scenarios"][scenario_name] = scenario_result
@@ -147,7 +147,7 @@ class WolfPackBrowserMod:
             return scenario_result["success"]
         
         except PlaywrightTimeout as e:
-            print(f"   ❌ Timeout: {str(e)}")
+            print(f"   [FAIL] Timeout: {str(e)}")
             self.results["scenarios"][scenario_name] = {
                 "success": False,
                 "error": f"Timeout: {str(e)}",
@@ -160,7 +160,7 @@ class WolfPackBrowserMod:
             return False
         
         except Exception as e:
-            print(f"   ❌ Error: {str(e)}")
+            print(f"   [FAIL] Error: {str(e)}")
             self.results["scenarios"][scenario_name] = {
                 "success": False,
                 "error": str(e),
@@ -174,18 +174,18 @@ class WolfPackBrowserMod:
     
     def run_tests(self) -> bool:
         """Run all browser test scenarios."""
-        print("🌐 WolfPackAI Browser MOD")
+        print("WolfPackAI Browser MOD")
         print("=" * 60)
         
         browser_config = self.config.get("browser_tests", {})
         if not browser_config.get("enabled", True):
-            print("⏭️  Browser tests disabled in config")
+            print("[SKIP] Browser tests disabled in config")
             self.results["status"] = "skipped"
             return True
         
         scenarios = browser_config.get("scenarios", [])
         if not scenarios:
-            print("⚠️  No scenarios configured")
+            print("[WARN] No scenarios configured")
             self.results["status"] = "skipped"
             return True
         
@@ -210,9 +210,9 @@ class WolfPackBrowserMod:
         try:
             with open(output_path, 'w') as f:
                 json.dump(self.results, f, indent=2)
-            print(f"\n📄 Report saved: {output_path}")
+            print(f"\n[OK] Report saved: {output_path}")
         except Exception as e:
-            print(f"\n⚠️  Failed to save report: {e}")
+            print(f"\n[WARN] Failed to save report: {e}")
     
     def run(self, output_path: str = None) -> int:
         """Run browser tests and return exit code."""
@@ -222,13 +222,13 @@ class WolfPackBrowserMod:
             self.save_report(output_path)
         
         if success:
-            print("\n✅ Browser tests PASSED")
+            print("\n[PASS] Browser tests PASSED")
             return 0
         else:
-            print("\n❌ Browser tests FAILED")
+            print("\n[FAIL] Browser tests FAILED")
             print("\nFailed scenarios:")
             for error in self.results["errors"]:
-                print(f"  🔴 {error['scenario']}: {error['error']}")
+                print(f"  [FAIL] {error['scenario']}: {error['error']}")
             return 1
 
 

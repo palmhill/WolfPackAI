@@ -21,24 +21,38 @@ namespace WolfPackAI.AppBuilder.Extensions
             string uiPassword = "test",
             string logLevel = "DEBUG",
             string name = "litellm",
-            string image = "ghcr.io/berriai/litellm-database",
-            string tag = "main-v1.74.8-nightly")
+            string image = "litellm/litellm-database",
+                string tag = "v1.79.1.dev1",
+                string? openAiApiKey = null,
+                string? anthropicApiKey = null)
         {
-            return builder.AddContainer(name, image, tag)
-                .WithHttpEndpoint(port: 4000, targetPort: 4000, name: "http")
-                .WithEnvironment("STORE_MODEL_IN_DB", "True")
-                .WithEnvironment("LITELLM_MASTER_KEY", liteLlmConfig.GeneralSettings.MasterKey)
-                .WithEnvironment("LITELLM_LOG", logLevel)
-                .WithEnvironment("DATABASE_URL", $"postgresql://{postgresUsername}:{postgresPassword}@postgres:{postgresPort.ToString()}/litellmdb")
-                .WithEnvironment("UI_USERNAME", uiUsername)
-                .WithEnvironment("UI_PASSWORD", uiPassword)
-                .WithBindMount(configMountPath, "/app/config.yaml")
-                .WithArgs("--config", "/app/config.yaml")
-                .WithReference(postgres)
-                .WithReference(litellmDb)
-                .WithReference(ollama)
-                .WaitFor(postgres)
-                .WaitFor(ollama);
+                var container = builder.AddContainer(name, image, tag)
+                    .WithHttpEndpoint(port: 4000, targetPort: 4000, name: "http")
+                    .WithEnvironment("STORE_MODEL_IN_DB", "True")
+                    .WithEnvironment("LITELLM_MASTER_KEY", liteLlmConfig.GeneralSettings.MasterKey)
+                    .WithEnvironment("LITELLM_LOG", logLevel)
+                    .WithEnvironment("DATABASE_URL", $"postgresql://{postgresUsername}:{postgresPassword}@postgres:{postgresPort.ToString()}/litellmdb")
+                    .WithEnvironment("UI_USERNAME", uiUsername)
+                    .WithEnvironment("UI_PASSWORD", uiPassword)
+                    .WithBindMount(configMountPath, "/app/config.yaml")
+                    .WithArgs("--config", "/app/config.yaml")
+                    .WithReference(postgres)
+                    .WithReference(litellmDb)
+                    .WithReference(ollama);
+
+                if (!string.IsNullOrEmpty(openAiApiKey))
+                {
+                    container = container.WithEnvironment("OPENAI_API_KEY", openAiApiKey);
+                }
+
+                if (!string.IsNullOrEmpty(anthropicApiKey))
+                {
+                    container = container.WithEnvironment("ANTHROPIC_API_KEY", anthropicApiKey);
+                }
+
+                return container
+                    .WaitFor(postgres)
+                    .WaitFor(ollama);
         }
 
         public static IResourceBuilder<ContainerResource> AddLiteLLM(
@@ -56,24 +70,38 @@ namespace WolfPackAI.AppBuilder.Extensions
             string serverRootPath = "/litellm",
             string logLevel = "DEBUG",
             string name = "litellm",
-            string image = "ghcr.io/berriai/litellm-database",
-            string tag = "main-v1.74.15-stable")
+            string image = "litellm/litellm-database",
+                string tag = "v1.79.1.dev1",
+                string? openAiApiKey = null,
+                string? anthropicApiKey = null)
         {
-            return builder.AddContainer(name, image, tag)
-                .WithHttpEndpoint(port: 4000, targetPort: 4000, name: "http")
-                .WithEnvironment("STORE_MODEL_IN_DB", "True")
-                .WithEnvironment("LITELLM_MASTER_KEY", masterKey)
-                .WithEnvironment("LITELLM_LOG", logLevel)
-                .WithEnvironment("DATABASE_URL", $"postgresql://{postgresUsername}:{postgresPassword}@postgres:{postgresPort.ToString()}/litellmdb")
-                .WithEnvironment("UI_USERNAME", uiUsername)
-                .WithEnvironment("UI_PASSWORD", uiPassword)
-                .WithBindMount(configMountPath, "/app/config.yaml")
-                .WithArgs("--config", "/app/config.yaml")
-                .WithReference(postgres)
-                .WithReference(litellmDb)
-                .WithReference(ollama)
-                .WaitFor(postgres)
-                .WaitFor(ollama);
+                var container = builder.AddContainer(name, image, tag)
+                    .WithHttpEndpoint(port: 4000, targetPort: 4000, name: "http")
+                    .WithEnvironment("STORE_MODEL_IN_DB", "True")
+                    .WithEnvironment("LITELLM_MASTER_KEY", masterKey)
+                    .WithEnvironment("LITELLM_LOG", logLevel)
+                    .WithEnvironment("DATABASE_URL", $"postgresql://{postgresUsername}:{postgresPassword}@postgres:{postgresPort.ToString()}/litellmdb")
+                    .WithEnvironment("UI_USERNAME", uiUsername)
+                    .WithEnvironment("UI_PASSWORD", uiPassword)
+                    .WithBindMount(configMountPath, "/app/config.yaml")
+                    .WithArgs("--config", "/app/config.yaml")
+                    .WithReference(postgres)
+                    .WithReference(litellmDb)
+                    .WithReference(ollama);
+
+                if (!string.IsNullOrEmpty(openAiApiKey))
+                {
+                    container = container.WithEnvironment("OPENAI_API_KEY", openAiApiKey);
+                }
+
+                if (!string.IsNullOrEmpty(anthropicApiKey))
+                {
+                    container = container.WithEnvironment("ANTHROPIC_API_KEY", anthropicApiKey);
+                }
+
+                return container
+                    .WaitFor(postgres)
+                    .WaitFor(ollama);
         }
     }
 }

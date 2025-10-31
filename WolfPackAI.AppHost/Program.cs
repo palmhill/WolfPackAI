@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Projects;
 using WolfPackAI.AppBuilder.Extensions;
+using WolfPackAI.AppBuilder.Configuration;
+using WolfPackAI.AppBuilder.Services;
 
 var builder = DistributedApplication.CreateBuilder(args);
 // Load and validate LiteLLM configuration
@@ -13,10 +15,20 @@ var n8nConfig = builder.Configuration.GetSection("n8n").Get<WolfPackAI.AppBuilde
 var networkConfig = builder.Configuration.GetSection("Dashboard").Get<WolfPackAI.AppBuilder.Configuration.DashboardSettings>();
 var sslConfig = builder.Configuration.GetSection("LiteLLMSSL").Get<WolfPackAI.AppBuilder.Configuration.LiteLLMSSLConfig>() 
     ?? new WolfPackAI.AppBuilder.Configuration.LiteLLMSSLConfig();
+var providerApiKeys = builder.Configuration.GetSection("ProviderApiKeys").Get<ProviderApiKeys>();
 
 if (liteLlmConfig == null || postgresConfig == null || openWebUiConfig == null || networkConfig == null || n8nConfig == null)
 {
     throw new InvalidOperationException("Configuration section is missing in appsettings.json");
+}
+// If provider credentials exist, augment the model list from provider APIs before validation
+try
+{
+    await ModelDiscoveryService.AugmentWithCloudModelsAsync(liteLlmConfig, providerApiKeys);
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Warning: Failed to augment model list from provider APIs: {ex}");
 }
 try
 {
@@ -59,7 +71,9 @@ var litellm = builder.AddLiteLLM(
     ollama,
     pgUsername,
     pgPassword,
-    pgPort);
+    pgPort,
+    openAiApiKey: providerApiKeys?.OpenAI,
+    anthropicApiKey: providerApiKeys?.Anthropic);
 // Note: LiteLLM health check disabled due to authentication requirements
 
 // Add nginx reverse proxy with SSL if enabled

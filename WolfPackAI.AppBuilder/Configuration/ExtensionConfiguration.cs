@@ -5,12 +5,21 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace WolfPackAI.AppBuilder.Configuration;
 
+public class ProviderApiKeys
+{
+    [JsonPropertyName("openai")]
+    public string OpenAI { get; set; } = string.Empty;
+
+    [JsonPropertyName("anthropic")]
+    public string Anthropic { get; set; } = string.Empty;
+}
+
 public class DashboardSettings
 {
     [JsonPropertyName("httpPort")]
-    public int HttpPort { get; set; } = 80;
+    public int HttpPort { get; set; } = 8000;
     [JsonPropertyName("httpsPort")]
-    public int HttpsPort { get; set; } = 443;
+    public int HttpsPort { get; set; } = 8443;
 }
 
 public class OpenWebUiConfig
@@ -56,8 +65,17 @@ public class LiteLLMConfiguration
                 throw new ValidationException($"LiteLLM params missing for model {model.ModelName}");
             if (string.IsNullOrEmpty(model.LiteLLMParams.Model))
                 throw new ValidationException($"Model type missing for model {model.ModelName}");
-            if (string.IsNullOrEmpty(model.LiteLLMParams.ApiBase))
-                throw new ValidationException($"API base URL missing for model {model.ModelName}");
+            
+            // API base is required ONLY for local Ollama models
+            // Cloud models (OpenAI, Anthropic, Google) don't need apiBase
+            bool isLocalModel = model.ModelName.StartsWith("ollama/");
+            if (isLocalModel && string.IsNullOrEmpty(model.LiteLLMParams.ApiBase))
+                throw new ValidationException($"API base URL missing for local model {model.ModelName}");
+            
+            // Cloud models must have API key reference
+            bool isCloudModel = !isLocalModel;
+            if (isCloudModel && string.IsNullOrEmpty(model.LiteLLMParams.ApiKey))
+                throw new ValidationException($"API key missing for cloud model {model.ModelName}");
         }
         // Validate general settings
         if (string.IsNullOrEmpty(GeneralSettings.MasterKey))
@@ -69,19 +87,48 @@ public class LiteLLMConfiguration
         // Convert the C# configuration to the expected YAML format for LiteLLM
         var yamlObject = new Dictionary<string, object>
         {
-            ["model_list"] = ModelList.Select(m => new Dictionary<string, object>
+            ["model_list"] = ModelList.Select(m => 
             {
-                ["model_name"] = m.ModelName,
-                ["litellm_params"] = new Dictionary<string, object>
+                var litellmParams = new Dictionary<string, object>
                 {
-                    ["model"] = m.LiteLLMParams.Model,
-                    ["api_base"] = m.LiteLLMParams.ApiBase
+                    ["model"] = m.LiteLLMParams.Model
+                };
+                
+                // Only add api_base if it's not empty (cloud models don't need it)
+                if (!string.IsNullOrEmpty(m.LiteLLMParams.ApiBase))
+                {
+                    litellmParams["api_base"] = m.LiteLLMParams.ApiBase;
                 }
+                
+                // Add api_key if specified
+                if (!string.IsNullOrEmpty(m.LiteLLMParams.ApiKey))
+                {
+                    litellmParams["api_key"] = $"os.environ/{m.LiteLLMParams.ApiKey}";
+                }
+                
+                // Add supports_reasoning
+                litellmParams["supports_reasoning"] = m.LiteLLMParams.SupportsReasoning;
+
+                // Add mode when specified (e.g., "embedding")
+                if (!string.IsNullOrEmpty(m.LiteLLMParams.Mode))
+                {
+                    litellmParams["mode"] = m.LiteLLMParams.Mode;
+                }
+                
+                return new Dictionary<string, object>
+                {
+                    ["model_name"] = m.ModelName,
+                    ["litellm_params"] = litellmParams
+                };
             }).ToList(),
             ["litellm_settings"] = new Dictionary<string, object>
             {
                 ["drop_params"] = Settings.DropParams,
                 ["set_verbose"] = Settings.SetVerbose
+            },
+            ["general_settings"] = new Dictionary<string, object>
+            {
+                ["master_key"] = GeneralSettings.MasterKey
             },
             ["router_settings"] = new Dictionary<string, object>
             {
@@ -91,21 +138,16 @@ public class LiteLLMConfiguration
             },
         };
         
-        // Conditionally add optional parameters to litellm_params
+        // API version handling (if needed in future)
         foreach (var modelDict in (List<Dictionary<string, object>>)yamlObject["model_list"])
         {
             var paramsDict = (Dictionary<string, object>)modelDict["litellm_params"];
             var modelConfig = ModelList.First(m => m.ModelName == (string)modelDict["model_name"]);
-            if (!string.IsNullOrEmpty(modelConfig.LiteLLMParams.ApiKey))
-            {
-                paramsDict["api_key"] = $"os.environ/{modelConfig.LiteLLMParams.ApiKey}";
-            }
+            
             if (!string.IsNullOrEmpty(modelConfig.LiteLLMParams.ApiVersion))
             {
                 paramsDict["api_version"] = modelConfig.LiteLLMParams.ApiVersion;
             }
-
-            paramsDict["supports_reasoning"] = modelConfig.LiteLLMParams.SupportsReasoning;
         }
         
         var serializer = new SerializerBuilder()
@@ -146,6 +188,10 @@ public class LiteLLMParams
     [JsonPropertyName("supportsReasoning")]
     [YamlMember(Alias = "supports_reasoning")]
     public bool SupportsReasoning { get; set; } = false;
+
+    [JsonPropertyName("mode")]
+    [YamlMember(Alias = "mode")]
+    public string Mode { get; set; } = string.Empty;
 }
 
 public class LiteLLMSettings

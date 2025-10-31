@@ -98,7 +98,7 @@ Once running, access services at:
 | **OpenWebUI**        | http://localhost:8080  | AI chat interface    |
 | **LiteLLM**          | http://localhost:4000  | LLM API gateway      |
 | **n8n**              | http://localhost:5678  | Workflow automation  |
-| **Dashboard**        | http://localhost:80    | Web portal           |
+| **Dashboard**        | http://localhost:8000  | Web portal           |
 | **PostgreSQL**       | localhost:5432         | Database             |
 
 ---
