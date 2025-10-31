@@ -222,3 +222,35 @@ public class RouterSettings
     [JsonPropertyName("timeout")]
     public int Timeout { get; set; } = 600;
 }
+
+public class LiteLLMSSLConfig
+{
+    [JsonPropertyName("enabled")]
+    public bool Enabled { get; set; } = false;
+    
+    [JsonPropertyName("domain")]
+    public string Domain { get; set; } = string.Empty;
+    
+    [JsonPropertyName("email")]
+    public string Email { get; set; } = string.Empty;
+    
+    [JsonPropertyName("useStaging")]
+    public bool UseStaging { get; set; } = true; // Use Let's Encrypt staging by default for testing
+    
+    [JsonPropertyName("httpPort")]
+    public int HttpPort { get; set; } = 80;
+    
+    [JsonPropertyName("httpsPort")]
+    public int HttpsPort { get; set; } = 443;
+    
+    public void Validate()
+    {
+        if (Enabled)
+        {
+            if (string.IsNullOrEmpty(Domain))
+                throw new ValidationException("Domain is required when SSL is enabled");
+            if (string.IsNullOrEmpty(Email))
+                throw new ValidationException("Email is required for Let's Encrypt certificate registration");
+        }
+    }
+}
