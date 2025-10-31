@@ -84,6 +84,7 @@ if (sslConfig.Enabled)
         Console.WriteLine($"      Or nginx will generate them automatically on first start (if using custom entrypoint)");
         
         (nginx, certbot) = builder.AddNginxWithSSL(sslConfig, litellm, nginxConfigPath);
+        nginx.WaitFor(litellm);
         Console.WriteLine($"SSL enabled for LiteLLM on domain: {sslConfig.Domain}");
         Console.WriteLine($"Access LiteLLM at: https://{sslConfig.Domain}");
     }

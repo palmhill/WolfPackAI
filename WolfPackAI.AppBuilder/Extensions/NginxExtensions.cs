@@ -27,18 +27,18 @@ public static class NginxExtensions
         
         // Get LiteLLM endpoint for proxy pass
         var litellmEndpoint = litellm.GetEndpoint("http");
-        
+
         // Create nginx container with config mount
-        // Note: We use a custom entrypoint script if available, but nginx:alpine works with default
+        // Mount an init script into docker-entrypoint.d to generate a temp cert if missing
         var nginx = builder.AddContainer(name, nginxImage)
             .WithHttpEndpoint(port: sslConfig.HttpPort, targetPort: 80, name: "http")
             .WithHttpEndpoint(port: sslConfig.HttpsPort, targetPort: 443, name: "https")
             .WithBindMount(nginxConfigPath, "/etc/nginx/conf.d/default.conf")
             .WithVolume(certsVolume, "/etc/letsencrypt")
             .WithVolume(webrootVolume, "/var/www/certbot")
-            .WithEnvironment("DOMAIN", sslConfig.Domain)
-            .WithReference(litellm)
-            .WaitFor(litellm);
+            .WithBindMount("./nginx-cert-init.sh", "/docker-entrypoint.d/40-generate-temp-cert.sh")
+            .WithEnvironment("DOMAIN", sslConfig.Domain);
+            
         
         // Create certbot container for SSL certificate management
         // First run: Obtain initial certificate
