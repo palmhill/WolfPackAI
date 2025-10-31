@@ -4,80 +4,578 @@ model_list:
     model: ollama/deepseek-coder-v2:16b
     api_base: http://ollama:11434
     supports_reasoning: true
-- model_name: ollama/deepseek-coder-v2:latest
+- model_name: openai/gpt-4-0613
   litellm_params:
-    model: ollama/deepseek-coder-v2:latest
-    api_base: http://ollama:11434
-    supports_reasoning: true
-- model_name: ollama/deepseek-coder:6.7b
-  litellm_params:
-    model: ollama/deepseek-coder:6.7b
-    api_base: http://ollama:11434
-    supports_reasoning: true
-- model_name: ollama/deepseek-coder:33b
-  litellm_params:
-    model: ollama/deepseek-coder:33b
-    api_base: http://ollama:11434
-    supports_reasoning: true
-- model_name: ollama/llama3.2
-  litellm_params:
-    model: ollama/llama3.2
-    api_base: http://ollama:11434
+    model: gpt-4-0613
+    api_key: os.environ/OPENAI_API_KEY
     supports_reasoning: false
-- model_name: ollama/mistral
-  litellm_params:
-    model: ollama/mistral
-    api_base: http://ollama:11434
-    supports_reasoning: false
-- model_name: ollama/codellama
-  litellm_params:
-    model: ollama/codellama
-    api_base: http://ollama:11434
-    supports_reasoning: false
-- model_name: ollama/phi3
-  litellm_params:
-    model: ollama/phi3
-    api_base: http://ollama:11434
-    supports_reasoning: false
-- model_name: ollama/qwen2.5-coder
-  litellm_params:
-    model: ollama/qwen2.5-coder
-    api_base: http://ollama:11434
-    supports_reasoning: false
-- model_name: ollama/gemma2
-  litellm_params:
-    model: ollama/gemma2
-    api_base: http://ollama:11434
-    supports_reasoning: false
-- model_name: ollama/neural-chat
-  litellm_params:
-    model: ollama/neural-chat
-    api_base: http://ollama:11434
-    supports_reasoning: false
-- model_name: gpt-4
+- model_name: openai/gpt-4
   litellm_params:
     model: gpt-4
     api_key: os.environ/OPENAI_API_KEY
-    supports_reasoning: true
-- model_name: gpt-3.5-turbo
+    supports_reasoning: false
+- model_name: openai/gpt-3.5-turbo
   litellm_params:
     model: gpt-3.5-turbo
     api_key: os.environ/OPENAI_API_KEY
     supports_reasoning: false
-- model_name: claude-3-5-sonnet-20241022
+- model_name: openai/gpt-5-search-api-2025-10-14
   litellm_params:
-    model: claude-3-5-sonnet-20241022
+    model: gpt-5-search-api-2025-10-14
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-realtime-mini
+  litellm_params:
+    model: gpt-realtime-mini
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-realtime-mini-2025-10-06
+  litellm_params:
+    model: gpt-realtime-mini-2025-10-06
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/sora-2
+  litellm_params:
+    model: sora-2
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/sora-2-pro
+  litellm_params:
+    model: sora-2-pro
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/davinci-002
+  litellm_params:
+    model: davinci-002
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/babbage-002
+  litellm_params:
+    model: babbage-002
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-3.5-turbo-instruct
+  litellm_params:
+    model: gpt-3.5-turbo-instruct
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-3.5-turbo-instruct-0914
+  litellm_params:
+    model: gpt-3.5-turbo-instruct-0914
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/dall-e-3
+  litellm_params:
+    model: dall-e-3
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/dall-e-2
+  litellm_params:
+    model: dall-e-2
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-4-1106-preview
+  litellm_params:
+    model: gpt-4-1106-preview
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-3.5-turbo-1106
+  litellm_params:
+    model: gpt-3.5-turbo-1106
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/tts-1-hd
+  litellm_params:
+    model: tts-1-hd
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/tts-1-1106
+  litellm_params:
+    model: tts-1-1106
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/tts-1-hd-1106
+  litellm_params:
+    model: tts-1-hd-1106
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/text-embedding-3-small
+  litellm_params:
+    model: text-embedding-3-small
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+    mode: embedding
+- model_name: openai/text-embedding-3-large
+  litellm_params:
+    model: text-embedding-3-large
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+    mode: embedding
+- model_name: openai/gpt-4-0125-preview
+  litellm_params:
+    model: gpt-4-0125-preview
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-4-turbo-preview
+  litellm_params:
+    model: gpt-4-turbo-preview
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-3.5-turbo-0125
+  litellm_params:
+    model: gpt-3.5-turbo-0125
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-4-turbo
+  litellm_params:
+    model: gpt-4-turbo
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-4-turbo-2024-04-09
+  litellm_params:
+    model: gpt-4-turbo-2024-04-09
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-4o
+  litellm_params:
+    model: gpt-4o
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-2024-05-13
+  litellm_params:
+    model: gpt-4o-2024-05-13
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-mini-2024-07-18
+  litellm_params:
+    model: gpt-4o-mini-2024-07-18
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-mini
+  litellm_params:
+    model: gpt-4o-mini
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-2024-08-06
+  litellm_params:
+    model: gpt-4o-2024-08-06
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/chatgpt-4o-latest
+  litellm_params:
+    model: chatgpt-4o-latest
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/o1-mini-2024-09-12
+  litellm_params:
+    model: o1-mini-2024-09-12
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/o1-mini
+  litellm_params:
+    model: o1-mini
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-4o-realtime-preview-2024-10-01
+  litellm_params:
+    model: gpt-4o-realtime-preview-2024-10-01
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-audio-preview-2024-10-01
+  litellm_params:
+    model: gpt-4o-audio-preview-2024-10-01
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-audio-preview
+  litellm_params:
+    model: gpt-4o-audio-preview
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-realtime-preview
+  litellm_params:
+    model: gpt-4o-realtime-preview
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/omni-moderation-latest
+  litellm_params:
+    model: omni-moderation-latest
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/omni-moderation-2024-09-26
+  litellm_params:
+    model: omni-moderation-2024-09-26
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-4o-realtime-preview-2024-12-17
+  litellm_params:
+    model: gpt-4o-realtime-preview-2024-12-17
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-audio-preview-2024-12-17
+  litellm_params:
+    model: gpt-4o-audio-preview-2024-12-17
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-mini-realtime-preview-2024-12-17
+  litellm_params:
+    model: gpt-4o-mini-realtime-preview-2024-12-17
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-mini-audio-preview-2024-12-17
+  litellm_params:
+    model: gpt-4o-mini-audio-preview-2024-12-17
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/o1-2024-12-17
+  litellm_params:
+    model: o1-2024-12-17
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/o1
+  litellm_params:
+    model: o1
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-4o-mini-realtime-preview
+  litellm_params:
+    model: gpt-4o-mini-realtime-preview
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-mini-audio-preview
+  litellm_params:
+    model: gpt-4o-mini-audio-preview
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/computer-use-preview
+  litellm_params:
+    model: computer-use-preview
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/o3-mini
+  litellm_params:
+    model: o3-mini
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/o3-mini-2025-01-31
+  litellm_params:
+    model: o3-mini-2025-01-31
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-2024-11-20
+  litellm_params:
+    model: gpt-4o-2024-11-20
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/computer-use-preview-2025-03-11
+  litellm_params:
+    model: computer-use-preview-2025-03-11
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-4o-search-preview-2025-03-11
+  litellm_params:
+    model: gpt-4o-search-preview-2025-03-11
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-search-preview
+  litellm_params:
+    model: gpt-4o-search-preview
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-mini-search-preview-2025-03-11
+  litellm_params:
+    model: gpt-4o-mini-search-preview-2025-03-11
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-mini-search-preview
+  litellm_params:
+    model: gpt-4o-mini-search-preview
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-transcribe
+  litellm_params:
+    model: gpt-4o-transcribe
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-mini-transcribe
+  litellm_params:
+    model: gpt-4o-mini-transcribe
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/o1-pro-2025-03-19
+  litellm_params:
+    model: o1-pro-2025-03-19
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/o1-pro
+  litellm_params:
+    model: o1-pro
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-4o-mini-tts
+  litellm_params:
+    model: gpt-4o-mini-tts
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/o3-2025-04-16
+  litellm_params:
+    model: o3-2025-04-16
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/o4-mini-2025-04-16
+  litellm_params:
+    model: o4-mini-2025-04-16
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/o3
+  litellm_params:
+    model: o3
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/o4-mini
+  litellm_params:
+    model: o4-mini
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4.1-2025-04-14
+  litellm_params:
+    model: gpt-4.1-2025-04-14
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-4.1
+  litellm_params:
+    model: gpt-4.1
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-4.1-mini-2025-04-14
+  litellm_params:
+    model: gpt-4.1-mini-2025-04-14
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-4.1-mini
+  litellm_params:
+    model: gpt-4.1-mini
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-4.1-nano-2025-04-14
+  litellm_params:
+    model: gpt-4.1-nano-2025-04-14
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-4.1-nano
+  litellm_params:
+    model: gpt-4.1-nano
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-image-1
+  litellm_params:
+    model: gpt-image-1
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/codex-mini-latest
+  litellm_params:
+    model: codex-mini-latest
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/o3-pro
+  litellm_params:
+    model: o3-pro
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-realtime-preview-2025-06-03
+  litellm_params:
+    model: gpt-4o-realtime-preview-2025-06-03
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-audio-preview-2025-06-03
+  litellm_params:
+    model: gpt-4o-audio-preview-2025-06-03
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/o3-pro-2025-06-10
+  litellm_params:
+    model: o3-pro-2025-06-10
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/o4-mini-deep-research
+  litellm_params:
+    model: o4-mini-deep-research
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/o3-deep-research
+  litellm_params:
+    model: o3-deep-research
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-4o-transcribe-diarize
+  litellm_params:
+    model: gpt-4o-transcribe-diarize
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/o3-deep-research-2025-06-26
+  litellm_params:
+    model: o3-deep-research-2025-06-26
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/o4-mini-deep-research-2025-06-26
+  litellm_params:
+    model: o4-mini-deep-research-2025-06-26
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-5-chat-latest
+  litellm_params:
+    model: gpt-5-chat-latest
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-5-2025-08-07
+  litellm_params:
+    model: gpt-5-2025-08-07
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-5
+  litellm_params:
+    model: gpt-5
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-5-mini-2025-08-07
+  litellm_params:
+    model: gpt-5-mini-2025-08-07
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-5-mini
+  litellm_params:
+    model: gpt-5-mini
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-5-nano-2025-08-07
+  litellm_params:
+    model: gpt-5-nano-2025-08-07
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-5-nano
+  litellm_params:
+    model: gpt-5-nano
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-audio-2025-08-28
+  litellm_params:
+    model: gpt-audio-2025-08-28
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-realtime
+  litellm_params:
+    model: gpt-realtime
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-realtime-2025-08-28
+  litellm_params:
+    model: gpt-realtime-2025-08-28
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-audio
+  litellm_params:
+    model: gpt-audio
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-5-codex
+  litellm_params:
+    model: gpt-5-codex
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-image-1-mini
+  litellm_params:
+    model: gpt-image-1-mini
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-5-pro-2025-10-06
+  litellm_params:
+    model: gpt-5-pro-2025-10-06
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-5-pro
+  litellm_params:
+    model: gpt-5-pro
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-audio-mini
+  litellm_params:
+    model: gpt-audio-mini
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-audio-mini-2025-10-06
+  litellm_params:
+    model: gpt-audio-mini-2025-10-06
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/gpt-5-search-api
+  litellm_params:
+    model: gpt-5-search-api
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: true
+- model_name: openai/gpt-3.5-turbo-16k
+  litellm_params:
+    model: gpt-3.5-turbo-16k
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/tts-1
+  litellm_params:
+    model: tts-1
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/whisper-1
+  litellm_params:
+    model: whisper-1
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+- model_name: openai/text-embedding-ada-002
+  litellm_params:
+    model: text-embedding-ada-002
+    api_key: os.environ/OPENAI_API_KEY
+    supports_reasoning: false
+    mode: embedding
+- model_name: anthropic/claude-haiku-4-5-20251001
+  litellm_params:
+    model: claude-haiku-4-5-20251001
+    api_key: os.environ/ANTHROPIC_API_KEY
+    supports_reasoning: false
+- model_name: anthropic/claude-sonnet-4-5-20250929
+  litellm_params:
+    model: claude-sonnet-4-5-20250929
+    api_key: os.environ/ANTHROPIC_API_KEY
+    supports_reasoning: false
+- model_name: anthropic/claude-opus-4-1-20250805
+  litellm_params:
+    model: claude-opus-4-1-20250805
+    api_key: os.environ/ANTHROPIC_API_KEY
+    supports_reasoning: false
+- model_name: anthropic/claude-opus-4-20250514
+  litellm_params:
+    model: claude-opus-4-20250514
+    api_key: os.environ/ANTHROPIC_API_KEY
+    supports_reasoning: false
+- model_name: anthropic/claude-sonnet-4-20250514
+  litellm_params:
+    model: claude-sonnet-4-20250514
+    api_key: os.environ/ANTHROPIC_API_KEY
+    supports_reasoning: false
+- model_name: anthropic/claude-3-7-sonnet-20250219
+  litellm_params:
+    model: claude-3-7-sonnet-20250219
     api_key: os.environ/ANTHROPIC_API_KEY
     supports_reasoning: true
-- model_name: claude-3-haiku-20240307
+- model_name: anthropic/claude-3-5-haiku-20241022
+  litellm_params:
+    model: claude-3-5-haiku-20241022
+    api_key: os.environ/ANTHROPIC_API_KEY
+    supports_reasoning: false
+- model_name: anthropic/claude-3-haiku-20240307
   litellm_params:
     model: claude-3-haiku-20240307
     api_key: os.environ/ANTHROPIC_API_KEY
     supports_reasoning: false
-- model_name: gemini/gemini-pro
+- model_name: anthropic/claude-3-opus-20240229
   litellm_params:
-    model: gemini/gemini-pro
-    api_key: os.environ/GEMINI_API_KEY
+    model: claude-3-opus-20240229
+    api_key: os.environ/ANTHROPIC_API_KEY
     supports_reasoning: false
 litellm_settings:
   drop_params: true

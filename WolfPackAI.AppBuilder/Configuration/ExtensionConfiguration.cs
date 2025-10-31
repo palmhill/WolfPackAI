@@ -5,6 +5,15 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace WolfPackAI.AppBuilder.Configuration;
 
+public class ProviderApiKeys
+{
+    [JsonPropertyName("openai")]
+    public string OpenAI { get; set; } = string.Empty;
+
+    [JsonPropertyName("anthropic")]
+    public string Anthropic { get; set; } = string.Empty;
+}
+
 public class DashboardSettings
 {
     [JsonPropertyName("httpPort")]
@@ -99,6 +108,12 @@ public class LiteLLMConfiguration
                 
                 // Add supports_reasoning
                 litellmParams["supports_reasoning"] = m.LiteLLMParams.SupportsReasoning;
+
+                // Add mode when specified (e.g., "embedding")
+                if (!string.IsNullOrEmpty(m.LiteLLMParams.Mode))
+                {
+                    litellmParams["mode"] = m.LiteLLMParams.Mode;
+                }
                 
                 return new Dictionary<string, object>
                 {
@@ -173,6 +188,10 @@ public class LiteLLMParams
     [JsonPropertyName("supportsReasoning")]
     [YamlMember(Alias = "supports_reasoning")]
     public bool SupportsReasoning { get; set; } = false;
+
+    [JsonPropertyName("mode")]
+    [YamlMember(Alias = "mode")]
+    public string Mode { get; set; } = string.Empty;
 }
 
 public class LiteLLMSettings
