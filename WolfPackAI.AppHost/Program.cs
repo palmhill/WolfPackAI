@@ -11,6 +11,8 @@ var postgresConfig = builder.Configuration.GetSection("Postgres").Get<WolfPackAI
 var openWebUiConfig = builder.Configuration.GetSection("OpenWebUI").Get<WolfPackAI.AppBuilder.Configuration.OpenWebUiConfig>();
 var n8nConfig = builder.Configuration.GetSection("n8n").Get<WolfPackAI.AppBuilder.Configuration.n8nConfig>();
 var networkConfig = builder.Configuration.GetSection("Dashboard").Get<WolfPackAI.AppBuilder.Configuration.DashboardSettings>();
+var sslConfig = builder.Configuration.GetSection("LiteLLMSSL").Get<WolfPackAI.AppBuilder.Configuration.LiteLLMSSLConfig>() 
+    ?? new WolfPackAI.AppBuilder.Configuration.LiteLLMSSLConfig();
 
 if (liteLlmConfig == null || postgresConfig == null || openWebUiConfig == null || networkConfig == null || n8nConfig == null)
 {
@@ -59,6 +61,38 @@ var litellm = builder.AddLiteLLM(
     pgPassword,
     pgPort);
 // Note: LiteLLM health check disabled due to authentication requirements
+
+// Add nginx reverse proxy with SSL if enabled
+IResourceBuilder<ContainerResource>? nginx = null;
+IResourceBuilder<ContainerResource>? certbot = null;
+if (sslConfig.Enabled)
+{
+    try
+    {
+        sslConfig.Validate();
+        // Generate nginx config with domain substitution
+        var nginxConfigContent = File.ReadAllText("nginx-litellm.conf");
+        nginxConfigContent = nginxConfigContent.Replace("${DOMAIN}", sslConfig.Domain);
+        var nginxConfigPath = "nginx-litellm-generated.conf";
+        File.WriteAllText(nginxConfigPath, nginxConfigContent);
+        Console.WriteLine($"Generated nginx configuration for domain: {sslConfig.Domain}");
+        
+        // Note: Temporary self-signed certificates will be needed for initial nginx startup
+        // Certbot will replace them with Let's Encrypt certificates
+        // Users can generate them manually or use the init script approach
+        Console.WriteLine($"Note: Ensure temporary SSL certificates exist at /etc/letsencrypt/live/{sslConfig.Domain}/");
+        Console.WriteLine($"      Or nginx will generate them automatically on first start (if using custom entrypoint)");
+        
+        (nginx, certbot) = builder.AddNginxWithSSL(sslConfig, litellm, nginxConfigPath);
+        Console.WriteLine($"SSL enabled for LiteLLM on domain: {sslConfig.Domain}");
+        Console.WriteLine($"Access LiteLLM at: https://{sslConfig.Domain}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"SSL configuration failed: {ex.Message}");
+        throw;
+    }
+}
 // Open-WebUI with Azure AD Authentication and health check
 var openWebUi = builder.AddOpenWebUI(
     openWebUiConfig,
