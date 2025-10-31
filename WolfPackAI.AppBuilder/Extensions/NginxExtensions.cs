@@ -31,8 +31,11 @@ public static class NginxExtensions
         // Create nginx container with config mount
         // Mount an init script into docker-entrypoint.d to generate a temp cert if missing
         var nginx = builder.AddContainer(name, nginxImage)
-            .WithHttpEndpoint(port: sslConfig.HttpPort, targetPort: 80, name: "http")
-            .WithHttpEndpoint(port: sslConfig.HttpsPort, targetPort: 443, name: "https")
+            //.WithHttpEndpoint(port: sslConfig.HttpPort, targetPort: 80, name: "http", isProxied:false)
+            //.WithHttpEndpoint(port: sslConfig.HttpsPort, targetPort: 443, name: "https", isProxied: false)
+            //.WithExternalHttpEndpoints()
+            .WithContainerRuntimeArgs("-p", $"0.0.0.0:{sslConfig.HttpPort}:80")
+            .WithContainerRuntimeArgs("-p", $"0.0.0.0:{sslConfig.HttpsPort}:443")
             .WithBindMount(nginxConfigPath, "/etc/nginx/conf.d/default.conf")
             .WithVolume(certsVolume, "/etc/letsencrypt")
             .WithVolume(webrootVolume, "/var/www/certbot")
