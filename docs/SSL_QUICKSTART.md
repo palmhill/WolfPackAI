@@ -29,14 +29,6 @@
    New-NetFirewallRule -DisplayName "HTTPS" -Direction Inbound -LocalPort 443 -Protocol TCP -Action Allow
    ```
 
-4. **Generate Temporary Certificates** (for initial startup)
-   ```bash
-   mkdir -p ./certs/live/litellm.yourdomain.com
-   openssl req -x509 -nodes -days 1 -newkey rsa:2048 \
-     -keyout ./certs/live/litellm.yourdomain.com/privkey.pem \
-     -out ./certs/live/litellm.yourdomain.com/fullchain.pem \
-     -subj "/CN=litellm.yourdomain.com"
-   ```
 
 5. **Run Application**
    ```bash
