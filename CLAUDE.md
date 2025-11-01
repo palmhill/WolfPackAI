@@ -154,6 +154,368 @@ The system implements a sophisticated routing strategy that leverages both LiteL
 - **Service Integration**: Direct access to all other platform services
 - **Timezone Configuration**: Configurable timezone support (default: Europe/London)
 
+### PrimeGate - Cursor IDE Integration Service
+
+#### Purpose and Features
+WolfPackAI.PrimeGate is a compliant LLM exposure service designed for seamless integration with Cursor IDE and other development tools. It provides intelligent model discovery, suggestion, and execution capabilities while maintaining full orchestrator authority.
+
+**Core Features:**
+- **Multi-Source Model Discovery**: Automatically discovers models from Ollama, LiteLLM, and Cursor native sources
+- **Intelligent Model Suggestions**: Task-specific model recommendations with confidence scoring
+- **Cost Optimization**: Suggests models based on cost constraints and performance requirements
+- **Compliant Architecture**: Full orchestrator authority with unlimited access policy
+- **OpenAPI Documentation**: Interactive Swagger UI for API exploration and testing
+- **CORS Support**: Configurable cross-origin resource sharing for web-based integrations
+
+#### Technology Stack
+
+**Framework & Runtime:**
+- **.NET 9.0**: Modern web API built on ASP.NET Core
+- **Minimal APIs**: Lightweight, high-performance endpoint definitions
+- **Dependency Injection**: Built-in service container for extensibility
+
+**Key Dependencies:**
+- **Swashbuckle.AspNetCore 7.2.0**: OpenAPI/Swagger documentation generation
+- **Microsoft.Extensions.Caching.Memory**: In-memory caching for model discovery results
+- **WolfPackAI.ServiceDefaults**: Shared observability and health check configuration
+
+**Architecture Patterns:**
+- **Auto-Discovery Service**: Parallel health checks and model inventory from multiple sources
+- **Model Suggestion Engine**: Configurable intelligent recommendations based on task characteristics
+- **Execution Service**: Direct task execution with fallback strategies
+- **Configuration-Driven**: Strongly-typed settings from appsettings.json
+
+#### API Endpoints
+
+PrimeGate exposes 5 RESTful API endpoints:
+
+**1. GET /api/status** - Service Health and Information
+```json
+{
+  "service": "WolfPackAI.PrimeGate",
+  "version": "1.0.0",
+  "status": "online",
+  "role": "compliant-expose-all",
+  "orchestratorAuthority": "full",
+  "timestamp": "2025-11-01T..."
+}
+```
+
+**2. GET /api/llms** - Comprehensive Model Discovery
+Returns inventory of all discovered models from:
+- Ollama local models (with size, parameters, capabilities)
+- LiteLLM configured cloud models (GPT-4, Claude, Gemini, etc.)
+- Cursor native embedded models (cursor-fast, cursor-smart)
+
+```json
+{
+  "totalModels": 4,
+  "sources": {
+    "ollama": 2,
+    "litellm": 0,
+    "cursor-native": 2
+  },
+  "models": [
+    {
+      "id": "deepseek-coder-v2:16b",
+      "name": "deepseek-coder-v2:16b",
+      "source": "ollama",
+      "size": 8929374720,
+      "sizeFormatted": "8.3 GB",
+      "capabilities": ["code", "chat", "local"],
+      "parameters": {
+        "format": "gguf",
+        "family": "deepseek",
+        "parameter_size": "16B"
+      }
+    }
+  ]
+}
+```
+
+**3. POST /api/suggest** - Intelligent Model Suggestion
+Analyzes task requirements and suggests optimal models with reasoning:
+```json
+// Request
+{
+  "description": "Refactor complex authentication logic",
+  "language": "csharp",
+  "taskType": "refactor",
+  "constraints": {
+    "preferLocal": true,
+    "maxCost": 0.01
+  }
+}
+
+// Response
+{
+  "recommended": {
+    "modelId": "deepseek-coder-v2:16b",
+    "source": "ollama",
+    "confidence": 0.85,
+    "reasoning": "Local model optimized for code refactoring"
+  },
+  "alternatives": [...]
+}
+```
+
+**4. POST /api/execute** - Task Execution
+Executes tasks with selected models and returns results:
+```json
+// Request
+{
+  "modelId": "deepseek-coder-v2:16b",
+  "prompt": "Explain this async method",
+  "parameters": {
+    "temperature": 0.7,
+    "max_tokens": 1000
+  }
+}
+
+// Response
+{
+  "status": "success",
+  "modelUsed": "deepseek-coder-v2:16b",
+  "result": "This is an asynchronous method that...",
+  "executionTimeMs": 1234,
+  "tokensUsed": 156,
+  "cost": 0.0
+}
+```
+
+**5. GET /api/policy** - Access Policy Information
+Returns unlimited access policy for orchestrator integration:
+```json
+{
+  "tokenLimit": 2147483647,
+  "requestsPerMinute": 2147483647,
+  "concurrentModels": 2147483647,
+  "costLimit": 1.7976931348623157E+308,
+  "restrictions": [],
+  "note": "Orchestrator has unlimited access to all resources"
+}
+```
+
+#### Configuration Details
+
+**Location**: `WolfPackAI.PrimeGate/appsettings.json`
+
+**PrimeGate Settings:**
+```json
+{
+  "PrimeGate": {
+    "ServiceName": "WolfPackAI.PrimeGate",
+    "Version": "1.0.0",
+    "Role": "compliant-expose-all",
+    "OrchestratorAuthority": "full",
+    "Port": 7000,
+    "DiscoveryCacheSeconds": 30,
+    "HealthCheckTimeoutSeconds": 3,
+    "EnableSwagger": true,
+    "EnableCors": true,
+    "CorsOrigins": ["*"]
+  }
+}
+```
+
+**Endpoint Configuration:**
+```json
+{
+  "Endpoints": {
+    "LiteLLM": {
+      "BaseUrl": "http://localhost:4000",
+      "HealthEndpoint": "/health",
+      "ChatCompletionsEndpoint": "/v1/chat/completions",
+      "ModelsEndpoint": "/v1/models",
+      "Timeout": 30
+    },
+    "Ollama": {
+      "BaseUrl": "http://localhost:1143",
+      "TagsEndpoint": "/api/tags",
+      "GenerateEndpoint": "/api/generate",
+      "HealthEndpoint": "/",
+      "Timeout": 30
+    }
+  }
+}
+```
+
+**Model Discovery Configuration:**
+```json
+{
+  "ModelDiscovery": {
+    "EnableOllama": true,
+    "EnableLiteLLM": true,
+    "EnableCursorNative": true,
+    "ParallelDiscovery": true,
+    "FailureMode": "graceful"
+  }
+}
+```
+
+**Model Suggestion Preferences:**
+```json
+{
+  "ModelSuggestion": {
+    "EnableIntelligentSuggestions": true,
+    "PreferredModels": {
+      "Refactor": "claude-sonnet",
+      "CodeReview": "claude-sonnet",
+      "Algorithm": "gpt-4",
+      "Fast": "deepseek-coder",
+      "Security": "claude-opus"
+    }
+  }
+}
+```
+
+#### Cursor Integration Methods
+
+**Method 1: Direct LiteLLM Access (Primary)**
+Configure Cursor to use LiteLLM's OpenAI-compatible endpoint:
+- Base URL: `http://localhost:4000/v1`
+- API Key: LiteLLM master key from configuration
+- Models: All LiteLLM-configured models available in Cursor dropdown
+
+**Method 2: PrimeGate API for Model Discovery**
+Use PrimeGate's intelligent suggestion system:
+- Query `/api/llms` to discover all available models
+- Use `/api/suggest` for task-specific model recommendations
+- Execute tasks via `/api/execute` with automatic routing
+
+**Method 3: Swagger UI Exploration**
+Interactive API testing and documentation:
+- URL: `http://localhost:7000/swagger`
+- Test all endpoints directly from browser
+- View request/response schemas
+- Generate client code examples
+
+See [docs/CURSOR_INTEGRATION.md](docs/CURSOR_INTEGRATION.md) for complete integration guide.
+
+#### Service Access Points
+
+- **PrimeGate API**: `http://localhost:7000/api/` - Main API endpoints
+- **Swagger UI**: `http://localhost:7000/swagger` - Interactive API documentation
+- **Health Check**: `http://localhost:7000/api/status` - Service health monitoring
+- **Model Discovery**: `http://localhost:7000/api/llms` - Real-time model inventory
+
+#### Architecture Overview
+
+**Service Responsibilities:**
+1. **Auto-Discovery**: Parallel health checks and model enumeration from Ollama, LiteLLM, and Cursor native sources
+2. **Intelligent Routing**: Task analysis and optimal model selection based on capabilities and constraints
+3. **Execution Proxy**: Unified execution interface with fallback strategies
+4. **Policy Enforcement**: Access control and resource management (currently unlimited for orchestrator)
+5. **Observability**: OpenTelemetry integration for metrics, traces, and logging
+
+**Data Flow:**
+```
+Cursor IDE / Client
+    ↓
+PrimeGate API (Port 7000)
+    ↓
+Model Discovery Service
+    ↓
+┌─────────────┬──────────────┬────────────────┐
+│   Ollama    │   LiteLLM    │  Cursor Native │
+│  (1143)     │   (4000)     │   (embedded)   │
+└─────────────┴──────────────┴────────────────┘
+```
+
+**Caching Strategy:**
+- Discovery results cached for 30 seconds (configurable)
+- Cache invalidation on health check failures
+- Per-source caching with parallel refresh
+
+**Error Handling:**
+- Graceful degradation on source failures
+- Alternative model suggestions on execution errors
+- Detailed error responses with troubleshooting hints
+
+#### Development Workflow
+
+**Running PrimeGate Standalone:**
+```bash
+# Build the project
+dotnet build WolfPackAI.PrimeGate
+
+# Run the service
+dotnet run --project WolfPackAI.PrimeGate
+
+# Verify service is running
+curl http://localhost:7000/api/status
+```
+
+**Testing API Endpoints:**
+```bash
+# 1. Check service health
+curl http://localhost:7000/api/status
+
+# 2. Discover all models
+curl http://localhost:7000/api/llms
+
+# 3. Get model suggestion
+curl -X POST http://localhost:7000/api/suggest \
+  -H "Content-Type: application/json" \
+  -d '{"description": "Refactor code", "taskType": "refactor"}'
+
+# 4. Execute a task
+curl -X POST http://localhost:7000/api/execute \
+  -H "Content-Type: application/json" \
+  -d '{"modelId": "deepseek-coder-v2:16b", "prompt": "Hello"}'
+
+# 5. Check access policy
+curl http://localhost:7000/api/policy
+```
+
+**Integration with Aspire:**
+PrimeGate is designed to be orchestrated by WolfPackAI.AppHost:
+- Automatic service discovery
+- Health check integration
+- OpenTelemetry metrics collection
+- Dependency management with LiteLLM and Ollama
+
+**Development Tools:**
+- **Swagger UI**: Interactive API testing at `http://localhost:7000/swagger`
+- **Health Checks**: Built-in ASP.NET Core health endpoints
+- **Structured Logging**: Console and OpenTelemetry logging
+- **Hot Reload**: .NET 9.0 hot reload for rapid development
+
+#### File Locations
+
+**Core Files:**
+- `WolfPackAI.PrimeGate/Program.cs` - Main application entry point and API endpoint definitions
+- `WolfPackAI.PrimeGate/appsettings.json` - Complete service configuration
+- `WolfPackAI.PrimeGate/WolfPackAI.PrimeGate.csproj` - Project file with dependencies
+
+**Configuration Models:**
+- `Configuration/PrimeGateSettings.cs` - Service settings
+- `Configuration/EndpointsConfiguration.cs` - LiteLLM and Ollama endpoints
+- `Configuration/ModelDiscoveryConfiguration.cs` - Discovery behavior
+- `Configuration/PolicyConfiguration.cs` - Access policy settings
+- `Configuration/ModelSuggestionConfiguration.cs` - Suggestion preferences
+
+**Services:**
+- `Services/IAutoDiscoveryService.cs` - Model discovery interface
+- `Services/AutoDiscoveryService.cs` - Multi-source model discovery implementation
+- `Services/IModelSuggestionService.cs` - Model suggestion interface
+- `Services/ModelSuggestionService.cs` - Intelligent suggestion engine
+- `Services/IExecutionService.cs` - Task execution interface
+- `Services/ExecutionService.cs` - Unified execution with fallbacks
+
+**Models:**
+- `Models/Requests/TaskRequest.cs` - Task suggestion request
+- `Models/Requests/ExecutionRequest.cs` - Task execution request
+- `Models/Responses/StatusResponse.cs` - Service status
+- `Models/Responses/LLMInventoryResponse.cs` - Model discovery results
+- `Models/Responses/SuggestionResponse.cs` - Model suggestions
+- `Models/Responses/ExecutionResponse.cs` - Execution results
+- `Models/Responses/PolicyResponse.cs` - Access policy
+
+**Documentation:**
+- `docs/CURSOR_INTEGRATION.md` - Complete Cursor integration guide
+- `docs/TROUBLESHOOTING_PRIMEGATE.md` - Troubleshooting and diagnostics
+
 ### Development Workflow
 
 #### Getting Started:

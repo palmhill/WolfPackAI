@@ -36,7 +36,9 @@
       "Bash(find:*)",
       "Bash(for file in PRIMEGATE_*.md WolfPackAI.PrimeGate/*.md)",
       "Bash(do [ -f \"$file\" ])",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(Select-String -Pattern \"litellm|primegate|PrimeGate\")",
+      "Bash(dotnet sln:*)"
     ],
     "deny": [],
     "ask": []
