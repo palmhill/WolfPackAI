@@ -1,0 +1,89 @@
+{
+  // ========================================
+  // WolfPackAI Project-Specific Settings
+  // ========================================
+  // These settings override global Cursor configuration for this workspace only.
+  // This allows you to use WolfPackAI models specifically for this project
+  // while maintaining different settings for other projects.
+  // ========================================
+
+  // ========================================
+  // Primary Model Configuration
+  // ========================================
+  "cursor.general.enableCustomModels": true,
+
+  // Ollama Direct Access (FREE, No authentication required)
+  "cursor.general.apiBaseUrl": "http://localhost:1143/v1",
+  "openai.api.baseUrl": "http://localhost:1143/v1",
+  "openai.api.key": "ollama",
+
+  // ========================================
+  // Model Preferences
+  // ========================================
+  // Primary model for chat and completions
+  "cursor.aiPreferences.model": "deepseek-coder-v2:16b",
+  "cursor.agent.preferredModel": "deepseek-coder-v2:16b",
+  "cursor.aiPreferences.useModelForAutoComplete": "deepseek-coder-v2:16b",
+
+  // Enable WolfPackAI integration
+  "cursor.general.preferLocalModels": true,
+  "cursor.general.allowNativeFallback": true,
+  "cursor.agent.allowOrchestration": true,
+  "cursor.agent.enableWolfPackAI": true,
+  "cursor.aiPreferences.fallbackForAutoComplete": true,
+
+  // ========================================
+  // Available Models
+  // ========================================
+  // All models accessible through Ollama and LiteLLM
+  "cursor.chat.availableModels": [
+    // ====== LOCAL (Ollama) - FREE ======
+    "deepseek-coder-v2:16b",     // Primary coding model
+    "deepseek-coder-v2:latest",  // Latest version
+
+    // ====== CLOUD (LiteLLM Proxy) - Requires API Keys ======
+    // Note: LiteLLM requires authentication with sk-dev-1234
+    // To use LiteLLM instead of Ollama, change apiBaseUrl to:
+    // "http://localhost:4000/v1" and set key to "sk-dev-1234"
+    "claude-sonnet-4",           // Anthropic's latest
+    "gpt-4-turbo",               // OpenAI's latest
+    "claude-opus-4",             // Most capable
+    "claude-haiku-4",            // Fast and efficient
+    "gpt-4",                     // Advanced reasoning
+    "gpt-3.5-turbo",             // Cost-effective
+    "gemini-pro"                 // Google's model
+  ],
+
+  // ========================================
+  // Alternative Configuration: LiteLLM Proxy
+  // ========================================
+  // To use LiteLLM instead of direct Ollama access:
+  // 1. Uncomment these lines (remove the //)
+  // 2. Comment out the Ollama configuration above
+  //
+  // "cursor.general.apiBaseUrl": "http://localhost:4000/v1",
+  // "openai.api.baseUrl": "http://localhost:4000/v1",
+  // "openai.api.key": "sk-dev-1234",
+  //
+  // Benefits of LiteLLM:
+  // - Advanced routing and load balancing
+  // - Usage tracking and analytics
+  // - Support for multiple cloud providers
+  // - Fallback handling
+  //
+  // Benefits of Ollama Direct:
+  // - No authentication needed
+  // - Simpler configuration
+  // - Lower latency
+  // - No middleware overhead
+
+  // ========================================
+  // Service Endpoints Reference
+  // ========================================
+  // Ollama Direct:    http://localhost:1143
+  // LiteLLM Proxy:    http://localhost:4000
+  // LiteLLM Auth:     Bearer sk-dev-1234
+  // OpenWebUI:        http://localhost:8080
+  // PrimeGate:        http://localhost:7000
+  // ========================================
+}
