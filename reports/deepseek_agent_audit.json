@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-10-31T19:29:00.190243",
+  "timestamp": "2025-10-31T22:48:48.469072",
   "audit_name": "DeepSeek Agent Model Investigation",
   "phases": {
     "phase1_config": {
@@ -50,11 +50,11 @@
     },
     "phase2_ollama": {
       "container_running": true,
-      "container_name": "Ollama-eftjzgcy",
+      "container_name": "Ollama-psvnxtyr",
       "models_list": [
-        "NAME                        ID              SIZE      MODIFIED       ",
-        "deepseek-coder-v2:16b       63fb193b3a9b    8.9 GB    19 minutes ago    ",
-        "deepseek-coder-v2:latest    63fb193b3a9b    8.9 GB    2 days ago        ",
+        "NAME                        ID              SIZE      MODIFIED    ",
+        "deepseek-coder-v2:16b       63fb193b3a9b    8.9 GB    4 hours ago    ",
+        "deepseek-coder-v2:latest    63fb193b3a9b    8.9 GB    2 days ago     ",
         ""
       ],
       "deepseek_found": true
@@ -68,20 +68,20 @@
     "phase4_openwebui": {
       "container_running": true,
       "env_vars": {
-        "ENABLE_SIGNUP": "true",
-        "OPENAI_API_KEY": "sk-dev-1234",
         "DATABASE_URL": "postgresql://postgres:postgres@postgres:5432/openwebuidb",
-        "USER_AGENT": "OpenWebUI/v0.6.18",
-        "ConnectionStrings__postgres": "Host=postgres;Port=5432;Username=postgres;Password=postgres",
-        "WEBUI_URL": "http://localhost/chat",
-        "WEBUI_NAME": "WolfPackAI Portal",
-        "DEFAULT_USER_ROLE": "user",
-        "OPENAI_API_BASE_URL": "http://litellm:4000",
         "CORS_ALLOW_ORIGIN": "*",
+        "USER_AGENT": "OpenWebUI/v0.6.18",
         "ConnectionStrings__openwebuidb": "Host=postgres;Port=5432;Username=postgres;Password=postgres;Database=openwebuidb",
         "ENABLE_PERSISTENT_CONFIG": "false",
+        "WEBUI_URL": "http://localhost/chat",
         "WEBUI_AUTH": "true",
+        "WEBUI_NAME": "WolfPackAI Portal",
         "ENABLE_OAUTH_SIGNUP": "false",
+        "ENABLE_SIGNUP": "true",
+        "OPENAI_API_KEY": "sk-dev-1234",
+        "ConnectionStrings__postgres": "Host=postgres;Port=5432;Username=postgres;Password=postgres",
+        "DEFAULT_USER_ROLE": "user",
+        "OPENAI_API_BASE_URL": "http://litellm:4000",
         "PATH": "/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
         "LANG": "C.UTF-8",
         "GPG_KEY": "A035C8C19219BA821ECEA86B64E628F8D684696D",

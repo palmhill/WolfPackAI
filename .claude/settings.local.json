@@ -19,7 +19,12 @@
       "Bash(docker exec:*)",
       "Bash(netstat:*)",
       "Bash(docker port:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(python scripts/security_audit.py:*)",
+      "Bash(python scripts/elite_runtime_validation.py:*)",
+      "Bash(python scripts/comprehensive_browser_audit.py:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []
