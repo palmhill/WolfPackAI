@@ -1,0 +1,188 @@
+{
+  "audit_type": "elite_runtime_validation",
+  "timestamp": "2025-10-31T17:11:25.820009",
+  "validations": {
+    "configuration_files": {
+      "status": "valid",
+      "results": [
+        {
+          "file": "WolfPackAI.AppHost/appsettings.json",
+          "status": "valid",
+          "valid": true
+        },
+        {
+          "file": "WolfPackAI.AppHost/appsettings.Development.json",
+          "status": "valid",
+          "valid": true
+        },
+        {
+          "file": "WolfPackAI.AppHost/appsettings.Production.json",
+          "status": "valid",
+          "valid": true
+        },
+        {
+          "file": "WolfPackAI.Dashboard/appsettings.json",
+          "status": "valid",
+          "valid": true
+        },
+        {
+          "file": "package.json",
+          "status": "valid",
+          "valid": true
+        }
+      ],
+      "total": 5,
+      "valid": 5
+    },
+    "html_structure": {
+      "status": "valid",
+      "valid": true,
+      "missing_elements": [],
+      "total_elements_checked": 10,
+      "elements_found": 10
+    },
+    "yarp_routing": {
+      "status": "valid",
+      "valid": true,
+      "routes": [
+        {
+          "route": "openwebui-route",
+          "status": "valid",
+          "valid": true,
+          "path": "/chat/{**catch-all}",
+          "destination": "http://openwebui:8080"
+        },
+        {
+          "route": "litellm-route",
+          "status": "valid",
+          "valid": true,
+          "path": "/litellm/{**catch-all}",
+          "destination": "http://litellm:4000"
+        },
+        {
+          "route": "n8n-route",
+          "status": "valid",
+          "valid": true,
+          "path": "/n8n/{**catch-all}",
+          "destination": "http://n8n:5678"
+        }
+      ],
+      "total_routes": 3,
+      "valid_routes": 3
+    },
+    "project_files": {
+      "status": "valid",
+      "valid": true,
+      "projects": [
+        {
+          "project": "WolfPackAI.AppHost/WolfPackAI.AppHost.csproj",
+          "status": "exists",
+          "valid": true
+        },
+        {
+          "project": "WolfPackAI.AppBuilder/WolfPackAI.AppBuilder.csproj",
+          "status": "exists",
+          "valid": true
+        },
+        {
+          "project": "WolfPackAI.Dashboard/WolfPackAI.Dashboard.csproj",
+          "status": "exists",
+          "valid": true
+        },
+        {
+          "project": "WolfPackAI.ServiceDefaults/WolfPackAI.ServiceDefaults.csproj",
+          "status": "exists",
+          "valid": true
+        }
+      ],
+      "total_projects": 4,
+      "valid_projects": 4
+    },
+    "documentation": {
+      "status": "valid",
+      "valid": true,
+      "documents": [
+        {
+          "document": "DEPLOYMENT.md",
+          "status": "exists",
+          "valid": true,
+          "size_bytes": 11494
+        },
+        {
+          "document": "CHANGELOG.md",
+          "status": "exists",
+          "valid": true,
+          "size_bytes": 8325
+        },
+        {
+          "document": "PRODUCTION_UPGRADE_SUMMARY.md",
+          "status": "exists",
+          "valid": true,
+          "size_bytes": 12184
+        },
+        {
+          "document": "README.md",
+          "status": "exists",
+          "valid": true,
+          "size_bytes": 5859
+        },
+        {
+          "document": "workflows/README.md",
+          "status": "exists",
+          "valid": true,
+          "size_bytes": 6805
+        },
+        {
+          "document": "monitoring/README.md",
+          "status": "exists",
+          "valid": true,
+          "size_bytes": 6477
+        }
+      ],
+      "total_documents": 6,
+      "valid_documents": 6
+    },
+    "runtime_endpoints": {
+      "status": "requires_running_services",
+      "note": "Full endpoint validation requires services to be running",
+      "expected_endpoints": [
+        {
+          "path": "/",
+          "expected_status": 200,
+          "description": "Landing page"
+        },
+        {
+          "path": "/health",
+          "expected_status": 200,
+          "description": "Health check"
+        },
+        {
+          "path": "/alive",
+          "expected_status": 200,
+          "description": "Liveness check"
+        },
+        {
+          "path": "/chat",
+          "expected_status": 200,
+          "description": "OpenWebUI (when service running)"
+        },
+        {
+          "path": "/litellm/",
+          "expected_status": 200,
+          "description": "LiteLLM (when service running)"
+        },
+        {
+          "path": "/n8n/",
+          "expected_status": 200,
+          "description": "n8n (when service running)"
+        }
+      ]
+    }
+  },
+  "overall_status": {
+    "status": "pass",
+    "validations_passed": 5,
+    "total_validations": 5,
+    "percentage": 100.0
+  }
+}

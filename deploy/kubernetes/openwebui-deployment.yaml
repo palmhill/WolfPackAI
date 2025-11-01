@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openwebui
+  namespace: wolfpackai
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: openwebui
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openwebui
+  namespace: wolfpackai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: openwebui
+  template:
+    metadata:
+      labels:
+        app: openwebui
+    spec:
+      containers:
+      - name: openwebui
+        image: ghcr.io/open-webui/open-webui:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ENABLE_PERSISTENT_CONFIG
+          value: "false"
+        - name: WEBUI_URL
+          valueFrom:
+            configMapKeyRef:
+              name: wolfpackai-config
+              key: OPENWEBUI_PUBLIC_URL
+        - name: WEBUI_AUTH
+          value: "true"
+        - name: WEBUI_NAME
+          value: "WolfPackAI Portal"
+        - name: ENABLE_OAUTH_SIGNUP
+          value: "false"
+        - name: ENABLE_SIGNUP
+          value: "true"
+        - name: OPENAI_API_BASE_URL
+          value: "http://litellm:4000"
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: wolfpackai-secrets
+              key: litellm-master-key
+        - name: DATABASE_URL
+          value: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/openwebuidb"
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: wolfpackai-secrets
+              key: postgres-username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wolfpackai-secrets
+              key: postgres-password
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5

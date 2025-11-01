@@ -1,0 +1,82 @@
+{
+  "name": "AI Code Review Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "review-code",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Code Review Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://litellm:4000/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{$env.LITELLM_MASTER_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"model\": \"ollama/deepseek-coder-v2:16b\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an expert code reviewer. Analyze code for: 1) Bugs and potential issues, 2) Security vulnerabilities, 3) Performance optimizations, 4) Best practices, 5) Code style. Provide specific, actionable feedback.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Review this code:\\n\\n\" + $json.body.code + \"\\n\\nLanguage: \" + ($json.body.language || \"unknown\")\n    }\n  ],\n  \"temperature\": 0.3\n} }}",
+        "options": {}
+      },
+      "id": "ai-review",
+      "name": "AI Code Review",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract and structure the review\nconst review = items[0].json.choices[0].message.content;\nconst originalCode = items[0].json.body?.code || '';\nconst language = items[0].json.body?.language || 'unknown';\n\nreturn {\n  json: {\n    language: language,\n    review: review,\n    timestamp: new Date().toISOString(),\n    model: items[0].json.model,\n    codeLength: originalCode.length\n  }\n};"
+      },
+      "id": "format-response",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "webhook-response",
+      "name": "Send Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [850, 300]
+    }
+  ],
+  "connections": {
+    "Code Review Webhook": {
+      "main": [[{"node": "AI Code Review", "type": "main", "index": 0}]]
+    },
+    "AI Code Review": {
+      "main": [[{"node": "Format Response", "type": "main", "index": 0}]]
+    },
+    "Format Response": {
+      "main": [[{"node": "Send Response", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

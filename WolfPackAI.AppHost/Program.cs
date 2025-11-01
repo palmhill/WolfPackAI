@@ -83,7 +83,7 @@ if (sslConfig.Enabled)
         Console.WriteLine($"Note: Ensure temporary SSL certificates exist at /etc/letsencrypt/live/{sslConfig.Domain}/");
         Console.WriteLine($"      Or nginx will generate them automatically on first start (if using custom entrypoint)");
         
-        (nginx, certbot) = builder.AddNginxWithSSL(sslConfig, litellm, nginxConfigPath);
+        (nginx, certbot) = builder.AddNginxWithSSL(sslConfig, nginxConfigPath);
         Console.WriteLine($"SSL enabled for LiteLLM on domain: {sslConfig.Domain}");
         Console.WriteLine($"Access LiteLLM at: https://{sslConfig.Domain}");
     }

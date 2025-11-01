@@ -1,0 +1,180 @@
+{
+  "timestamp": "2025-10-31T19:29:00.190243",
+  "audit_name": "DeepSeek Agent Model Investigation",
+  "phases": {
+    "phase1_config": {
+      "config_files_checked": 2,
+      "deepseek_references": [
+        {
+          "file": "appsettings.json",
+          "model_name": "deepseek-coder-v2:16b",
+          "full_config": {
+            "ModelName": "deepseek-coder-v2:16b",
+            "liteLLMParams": {
+              "model": "ollama/deepseek-coder-v2:16b",
+              "apiBase": "http://ollama:11434",
+              "supportsReasoning": true
+            }
+          }
+        },
+        {
+          "file": "litellm-config.yaml",
+          "content_snippet": "model_list:\n- model_name: deepseek-coder-v2:16b\n  litellm_params:\n    model: ollama/deepseek-coder-v2:16b\n    api_base: http://ollama:11434\n    supports_reasoning: true\nlitellm_settings:\n  drop_params: true\n  set_verbose: true\nrouter_settings:\n  routing_strategy: least-busy\n  num_retries: 3\n  timeout: 600\n"
+        }
+      ],
+      "litellm_config": "model_list:\n- model_name: deepseek-coder-v2:16b\n  litellm_params:\n    model: ollama/deepseek-coder-v2:16b\n    api_base: http://ollama:11434\n    supports_reasoning: true\nlitellm_settings:\n  drop_params: true\n  set_verbose: true\nrouter_settings:\n  routing_strategy: least-busy\n  num_retries: 3\n  timeout: 600\n",
+      "appsettings_config": {
+        "GeneralSettings": {
+          "MasterKey": "sk-1234"
+        },
+        "ModelList": [
+          {
+            "ModelName": "deepseek-coder-v2:16b",
+            "liteLLMParams": {
+              "model": "ollama/deepseek-coder-v2:16b",
+              "apiBase": "http://ollama:11434",
+              "supportsReasoning": true
+            }
+          }
+        ],
+        "Settings": {
+          "DropParams": true,
+          "SetVerbose": true
+        },
+        "RouterSettings": {
+          "RoutingStrategy": "least-busy",
+          "NumRetries": 3,
+          "Timeout": 600
+        }
+      }
+    },
+    "phase2_ollama": {
+      "container_running": true,
+      "container_name": "Ollama-eftjzgcy",
+      "models_list": [
+        "NAME                        ID              SIZE      MODIFIED       ",
+        "deepseek-coder-v2:16b       63fb193b3a9b    8.9 GB    19 minutes ago    ",
+        "deepseek-coder-v2:latest    63fb193b3a9b    8.9 GB    2 days ago        ",
+        ""
+      ],
+      "deepseek_found": true
+    },
+    "phase3_litellm_api": {
+      "api_accessible": false,
+      "models_endpoint": null,
+      "available_models": [],
+      "deepseek_in_api": false
+    },
+    "phase4_openwebui": {
+      "container_running": true,
+      "env_vars": {
+        "ENABLE_SIGNUP": "true",
+        "OPENAI_API_KEY": "sk-dev-1234",
+        "DATABASE_URL": "postgresql://postgres:postgres@postgres:5432/openwebuidb",
+        "USER_AGENT": "OpenWebUI/v0.6.18",
+        "ConnectionStrings__postgres": "Host=postgres;Port=5432;Username=postgres;Password=postgres",
+        "WEBUI_URL": "http://localhost/chat",
+        "WEBUI_NAME": "WolfPackAI Portal",
+        "DEFAULT_USER_ROLE": "user",
+        "OPENAI_API_BASE_URL": "http://litellm:4000",
+        "CORS_ALLOW_ORIGIN": "*",
+        "ConnectionStrings__openwebuidb": "Host=postgres;Port=5432;Username=postgres;Password=postgres;Database=openwebuidb",
+        "ENABLE_PERSISTENT_CONFIG": "false",
+        "WEBUI_AUTH": "true",
+        "ENABLE_OAUTH_SIGNUP": "false",
+        "PATH": "/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "LANG": "C.UTF-8",
+        "GPG_KEY": "A035C8C19219BA821ECEA86B64E628F8D684696D",
+        "PYTHON_VERSION": "3.11.14",
+        "PYTHON_SHA256": "8d3ed8ec5c88c1c95f5e558612a725450d2452813ddad5e58fdb1a53b1209b78",
+        "ENV": "prod",
+        "PORT": "8080",
+        "USE_OLLAMA_DOCKER": "false",
+        "USE_CUDA_DOCKER": "false",
+        "USE_SLIM_DOCKER": "false",
+        "USE_CUDA_DOCKER_VER": "cu128",
+        "USE_EMBEDDING_MODEL_DOCKER": "sentence-transformers/all-MiniLM-L6-v2",
+        "USE_RERANKING_MODEL_DOCKER": "",
+        "OLLAMA_BASE_URL": "/ollama",
+        "WEBUI_SECRET_KEY": "",
+        "SCARF_NO_ANALYTICS": "true",
+        "DO_NOT_TRACK": "true",
+        "ANONYMIZED_TELEMETRY": "false",
+        "WHISPER_MODEL": "base",
+        "WHISPER_MODEL_DIR": "/app/backend/data/cache/whisper/models",
+        "RAG_EMBEDDING_MODEL": "sentence-transformers/all-MiniLM-L6-v2",
+        "RAG_RERANKING_MODEL": "",
+        "SENTENCE_TRANSFORMERS_HOME": "/app/backend/data/cache/embedding/models",
+        "TIKTOKEN_ENCODING_NAME": "cl100k_base",
+        "TIKTOKEN_CACHE_DIR": "/app/backend/data/cache/tiktoken",
+        "HF_HOME": "/app/backend/data/cache/embedding/models",
+        "HOME": "/root",
+        "WEBUI_BUILD_VERSION": "7a83e7dfa367d19f762ec17cac5e4a94ea2bd97d",
+        "DOCKER": "true"
+      },
+      "api_base_url": "http://litellm:4000",
+      "agents_accessible": false
+    },
+    "phase5_connectivity": {
+      "tests": [
+        {
+          "name": "OpenWebUI to LiteLLM",
+          "success": true,
+          "details": "'charmap' codec can't encode character '\\u2705' in position 16: character maps to <undefined>"
+        },
+        {
+          "name": "LiteLLM to Ollama",
+          "success": false,
+          "details": "Failed to reach Ollama: "
+        }
+      ]
+    },
+    "phase6_action_plan": {
+      "critical_issues": [
+        {
+          "phase": "Phase 5",
+          "severity": "CRITICAL",
+          "description": "LiteLLM cannot reach Ollama service",
+          "details": ""
+        }
+      ],
+      "root_cause": "LiteLLM not exposing DeepSeek model via API",
+      "immediate_actions": [
+        {
+          "priority": 1,
+          "action": "Restart LiteLLM container to reload configuration",
+          "command": "docker restart <litellm-container>",
+          "expected_time": "30 seconds"
+        }
+      ],
+      "verification_steps": [
+        "1. Check Ollama has model: docker exec <ollama-container> ollama list",
+        "2. Verify LiteLLM API: curl http://localhost:4000/v1/models",
+        "3. Check OpenWebUI models: curl http://localhost:8080/api/models",
+        "4. Restart all services if needed: dotnet run --project WolfPackAI.AppHost"
+      ]
+    }
+  },
+  "issues": [
+    {
+      "phase": "Phase 3",
+      "severity": "ERROR",
+      "description": "Cannot access LiteLLM API on any known endpoint",
+      "details": {
+        "tried_endpoints": [
+          "http://localhost:4000/v1/models",
+          "http://localhost:4000/models",
+          "http://localhost/litellm/v1/models",
+          "http://localhost/litellm/models"
+        ]
+      }
+    },
+    {
+      "phase": "Phase 5",
+      "severity": "CRITICAL",
+      "description": "LiteLLM cannot reach Ollama service",
+      "details": ""
+    }
+  ],
+  "recommendations": []
+}

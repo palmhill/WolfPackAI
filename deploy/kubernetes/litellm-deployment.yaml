@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: litellm
+  namespace: wolfpackai
+spec:
+  ports:
+  - port: 4000
+    targetPort: 4000
+  selector:
+    app: litellm
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litellm
+  namespace: wolfpackai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: litellm
+  template:
+    metadata:
+      labels:
+        app: litellm
+    spec:
+      containers:
+      - name: litellm
+        image: ghcr.io/berriai/litellm-database:main-v1.74.8-nightly
+        ports:
+        - containerPort: 4000
+        env:
+        - name: STORE_MODEL_IN_DB
+          value: "True"
+        - name: LITELLM_MASTER_KEY
+          valueFrom:
+            secretKeyRef:
+              name: wolfpackai-secrets
+              key: litellm-master-key
+        - name: DATABASE_URL
+          value: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/litellmdb"
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: wolfpackai-secrets
+              key: postgres-username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wolfpackai-secrets
+              key: postgres-password
+        - name: UI_USERNAME
+          value: "admin"
+        - name: UI_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wolfpackai-secrets
+              key: litellm-master-key
+        volumeMounts:
+        - name: litellm-config
+          mountPath: /app/config.yaml
+          subPath: config.yaml
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 4000
+          initialDelaySeconds: 30
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 4000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      volumes:
+      - name: litellm-config
+        configMap:
+          name: litellm-config

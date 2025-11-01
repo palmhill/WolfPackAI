@@ -1,0 +1,59 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'wolfpackai'
+    environment: 'production'
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Aspire Dashboard metrics
+  - job_name: 'aspire-dashboard'
+    static_configs:
+      - targets: ['host.docker.internal:15021']
+    metrics_path: '/metrics'
+
+  # LiteLLM metrics
+  - job_name: 'litellm'
+    static_configs:
+      - targets: ['litellm:4000']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # OpenWebUI metrics
+  - job_name: 'openwebui'
+    static_configs:
+      - targets: ['openwebui:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+
+  # PostgreSQL exporter (if added)
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    scrape_interval: 30s
+
+  # Ollama metrics (if exposed)
+  - job_name: 'ollama'
+    static_configs:
+      - targets: ['ollama:11434']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # n8n metrics (if exposed)
+  - job_name: 'n8n'
+    static_configs:
+      - targets: ['n8n:5678']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # Dashboard/Reverse Proxy
+  - job_name: 'dashboard'
+    static_configs:
+      - targets: ['dashboard:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 10s

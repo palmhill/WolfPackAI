@@ -1,8 +1,23 @@
 {
   "status": "pass",
-  "timestamp": "2025-10-30T18:11:29.751888+00:00",
+  "timestamp": "2025-10-31T22:50:47.652128+00:00",
   "errors": [],
   "warnings": [
+    {
+      "file": "WolfPackAI.AppHost\\appsettings.Development.json",
+      "severity": "medium",
+      "message": "Missing required config section: n8n"
+    },
+    {
+      "file": "WolfPackAI.AppHost\\appsettings.Development.json",
+      "severity": "medium",
+      "message": "Missing required config section: Dashboard"
+    },
+    {
+      "file": "WolfPackAI.AppHost\\appsettings.Production.json",
+      "severity": "medium",
+      "message": "Missing required config section: n8n"
+    },
     {
       "file": "WolfPackAI.Dashboard\\appsettings.json",
       "severity": "medium",
@@ -51,7 +66,7 @@
       "message": "Consider adding Certificate files pattern: *.pem"
     }
   ],
-  "files_scanned": 2,
-  "issues_found": 9,
+  "files_scanned": 6,
+  "issues_found": 12,
   "details": {}
 }

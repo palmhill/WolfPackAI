@@ -1,0 +1,182 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: wolfpackai-postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      - POSTGRES_DB=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - wolfpackai-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USERNAME:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: wolfpackai-ollama
+    ports:
+      - "${OLLAMA_HOST_PORT:-1143}:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    networks:
+      - wolfpackai-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  litellm:
+    image: ghcr.io/berriai/litellm-database:main-v1.74.8-nightly
+    container_name: wolfpackai-litellm
+    ports:
+      - "${LITELLM_PORT:-4000}:4000"
+    environment:
+      - STORE_MODEL_IN_DB=True
+      - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY:?LITELLM_MASTER_KEY is required}
+      - LITELLM_LOG=INFO
+      - DATABASE_URL=postgresql://${POSTGRES_USERNAME:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/litellmdb
+      - UI_USERNAME=${LITELLM_UI_USERNAME:-admin}
+      - UI_PASSWORD=${LITELLM_MASTER_KEY}
+    volumes:
+      - ../../litellm-config.yaml:/app/config.yaml:ro
+      - litellm_data:/app/data
+    networks:
+      - wolfpackai-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: wolfpackai-openwebui
+    ports:
+      - "${OPENWEBUI_PORT:-8080}:8080"
+    environment:
+      - ENABLE_PERSISTENT_CONFIG=false
+      - WEBUI_URL=${OPENWEBUI_PUBLIC_URL:-http://localhost/chat}
+      - WEBUI_AUTH=true
+      - WEBUI_NAME=WolfPackAI Portal
+      - ENABLE_OAUTH_SIGNUP=false
+      - ENABLE_SIGNUP=true
+      - DEFAULT_USER_ROLE=user
+      - OPENAI_API_BASE_URL=http://litellm:4000
+      - OPENAI_API_KEY=${LITELLM_MASTER_KEY}
+      - DATABASE_URL=postgresql://${POSTGRES_USERNAME:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/openwebuidb
+      - CORS_ALLOW_ORIGIN=${CORS_ALLOW_ORIGIN:-*}
+    volumes:
+      - openwebui_data:/app/backend/data
+    networks:
+      - wolfpackai-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      litellm:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: wolfpackai-n8n
+    ports:
+      - "${N8N_PORT:-5678}:5678"
+    environment:
+      - DB_TYPE=postgresdb
+      - N8N_PORT=5678
+      - DB_POSTGRESDB_DATABASE=n8ndb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_USER=${POSTGRES_USERNAME:-postgres}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_POSTGRESDB_SCHEMA=public
+      - DB_POSTGRESDB_SSL=false
+      - GENERIC_TIMEZONE=${TIMEZONE:-UTC}
+      - TZ=${TIMEZONE:-UTC}
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER:-admin}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD:?N8N_BASIC_AUTH_PASSWORD is required}
+      - N8N_RUNNERS_ENABLED=true
+      - WEBHOOK_URL=${N8N_WEBHOOK_URL:-http://localhost:5678/}
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - wolfpackai-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5678/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  dashboard:
+    build:
+      context: ../..
+      dockerfile: WolfPackAI.Dashboard/Dockerfile
+    container_name: wolfpackai-dashboard
+    ports:
+      - "${DASHBOARD_HTTP_PORT:-80}:8080"
+      - "${DASHBOARD_HTTPS_PORT:-443}:8443"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+    networks:
+      - wolfpackai-network
+    depends_on:
+      - openwebui
+      - litellm
+      - n8n
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  ollama_models:
+    driver: local
+  litellm_data:
+    driver: local
+  openwebui_data:
+    driver: local
+  n8n_data:
+    driver: local
+
+networks:
+  wolfpackai-network:
+    driver: bridge

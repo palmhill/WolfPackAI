@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenWebUI LiteLLM Portal</title>
+    <title>WolfPackAI - AI Platform Portal</title>
     <style>
         * {
             margin: 0;
@@ -37,6 +37,58 @@
             color: #4a5568;
             margin-bottom: 0.5rem;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .health-indicators {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .health-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: #f7fafc;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .health-indicator:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .health-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .health-dot.healthy {
+            background-color: #48bb78;
+        }
+
+        .health-dot.checking {
+            background-color: #f6ad55;
+        }
+
+        .health-dot.unhealthy {
+            background-color: #f56565;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
         }
 
         .subtitle {
@@ -145,9 +197,24 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="logo">🚀 AI Portal</h1>
-        <p class="subtitle">OpenWebUI LiteLLM Integration Platform</p>
-        
+        <h1 class="logo">🐺 WolfPackAI</h1>
+        <p class="subtitle">Enterprise AI Platform with LLM Orchestration</p>
+
+        <div class="health-indicators" id="health-indicators">
+            <div class="health-indicator">
+                <div class="health-dot checking" id="health-openwebui"></div>
+                <span>OpenWebUI</span>
+            </div>
+            <div class="health-indicator">
+                <div class="health-dot checking" id="health-litellm"></div>
+                <span>LiteLLM</span>
+            </div>
+            <div class="health-indicator">
+                <div class="health-dot checking" id="health-n8n"></div>
+                <span>n8n</span>
+            </div>
+        </div>
+
         <div class="services-grid">
             <a href="/chat" class="service-card openwebui">
                 <div class="service-icon">💬</div>
@@ -176,8 +243,53 @@
         </div>
 
         <div class="footer">
-            <p>Powered by .NET Aspire • Azure AD Authentication Enabled</p>
+            <p>Powered by .NET Aspire • Enterprise Ready • Production Deployment</p>
         </div>
     </div>
+    <script>
+        // Health check functionality
+        async function checkHealth(service, endpoint) {
+            try {
+                const response = await fetch(endpoint, { method: 'GET', mode: 'no-cors' });
+                return true; // If no error, assume healthy
+            } catch (error) {
+                return false;
+            }
+        }
+
+        async function updateHealthIndicators() {
+            const services = [
+                { id: 'openwebui', endpoint: '/chat/health' },
+                { id: 'litellm', endpoint: '/litellm/health' },
+                { id: 'n8n', endpoint: '/n8n/healthz' }
+            ];
+
+            for (const service of services) {
+                const dot = document.getElementById(`health-${service.id}`);
+                if (dot) {
+                    try {
+                        // Simple check - if endpoint exists, mark as healthy
+                        const response = await fetch(service.endpoint, {
+                            method: 'HEAD',
+                            signal: AbortSignal.timeout(3000)
+                        });
+
+                        if (response.ok || response.status === 401) {
+                            // 401 means service is up but requires auth
+                            dot.className = 'health-dot healthy';
+                        } else {
+                            dot.className = 'health-dot unhealthy';
+                        }
+                    } catch (error) {
+                        dot.className = 'health-dot unhealthy';
+                    }
+                }
+            }
+        }
+
+        // Check health on load and every 30 seconds
+        updateHealthIndicators();
+        setInterval(updateHealthIndicators, 30000);
+    </script>
 </body>
 </html>

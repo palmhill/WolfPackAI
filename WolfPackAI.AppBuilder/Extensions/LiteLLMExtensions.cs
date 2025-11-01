@@ -26,7 +26,7 @@ namespace WolfPackAI.AppBuilder.Extensions
         {
             return builder.AddContainer(name, image, tag)
                 .WithHttpEndpoint(port: 4000, targetPort: 4000, name: "http")
-                .WithEnvironment("STORE_MODEL_IN_DB", "True")
+                .WithEnvironment("STORE_MODEL_IN_DB", "False")
                 .WithEnvironment("LITELLM_MASTER_KEY", liteLlmConfig.GeneralSettings.MasterKey)
                 .WithEnvironment("LITELLM_LOG", logLevel)
                 .WithEnvironment("DATABASE_URL", $"postgresql://{postgresUsername}:{postgresPassword}@postgres:{postgresPort.ToString()}/litellmdb")
@@ -61,7 +61,7 @@ namespace WolfPackAI.AppBuilder.Extensions
         {
             return builder.AddContainer(name, image, tag)
                 .WithHttpEndpoint(port: 4000, targetPort: 4000, name: "http")
-                .WithEnvironment("STORE_MODEL_IN_DB", "True")
+                .WithEnvironment("STORE_MODEL_IN_DB", "False")
                 .WithEnvironment("LITELLM_MASTER_KEY", masterKey)
                 .WithEnvironment("LITELLM_LOG", logLevel)
                 .WithEnvironment("DATABASE_URL", $"postgresql://{postgresUsername}:{postgresPassword}@postgres:{postgresPort.ToString()}/litellmdb")

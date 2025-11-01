@@ -1,5 +1,5 @@
 model_list:
-- model_name: ollama/deepseek-coder-v2:16b
+- model_name: deepseek-coder-v2:16b
   litellm_params:
     model: ollama/deepseek-coder-v2:16b
     api_base: http://ollama:11434

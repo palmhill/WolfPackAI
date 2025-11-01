@@ -12,7 +12,6 @@ public static class NginxExtensions
     public static (IResourceBuilder<ContainerResource> nginx, IResourceBuilder<ContainerResource> certbot) AddNginxWithSSL(
         this IDistributedApplicationBuilder builder,
         LiteLLMSSLConfig sslConfig,
-        IResourceBuilder<ContainerResource> litellm,
         string nginxConfigPath = "./nginx-litellm.conf",
         string name = "nginx-litellm",
         string nginxImage = "nginx:alpine",
@@ -20,14 +19,11 @@ public static class NginxExtensions
     {
         // Validate SSL configuration
         sslConfig.Validate();
-        
+
         // Create volumes for certificates and nginx config
         var certsVolume = "litellm-certs";
         var webrootVolume = "certbot-webroot";
-        
-        // Get LiteLLM endpoint for proxy pass
-        var litellmEndpoint = litellm.GetEndpoint("http");
-        
+
         // Create nginx container with config mount
         // Note: We use a custom entrypoint script if available, but nginx:alpine works with default
         var nginx = builder.AddContainer(name, nginxImage)
@@ -36,9 +32,7 @@ public static class NginxExtensions
             .WithBindMount(nginxConfigPath, "/etc/nginx/conf.d/default.conf")
             .WithVolume(certsVolume, "/etc/letsencrypt")
             .WithVolume(webrootVolume, "/var/www/certbot")
-            .WithEnvironment("DOMAIN", sslConfig.Domain)
-            .WithReference(litellm)
-            .WaitFor(litellm);
+            .WithEnvironment("DOMAIN", sslConfig.Domain);
         
         // Create certbot container for SSL certificate management
         // First run: Obtain initial certificate

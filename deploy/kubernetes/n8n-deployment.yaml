@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: n8n
+  namespace: wolfpackai
+spec:
+  ports:
+  - port: 5678
+    targetPort: 5678
+  selector:
+    app: n8n
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: n8n
+  namespace: wolfpackai
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: n8n
+  template:
+    metadata:
+      labels:
+        app: n8n
+    spec:
+      containers:
+      - name: n8n
+        image: docker.n8n.io/n8nio/n8n:latest
+        ports:
+        - containerPort: 5678
+        env:
+        - name: DB_TYPE
+          value: "postgresdb"
+        - name: N8N_PORT
+          value: "5678"
+        - name: DB_POSTGRESDB_DATABASE
+          value: "n8ndb"
+        - name: DB_POSTGRESDB_HOST
+          value: "postgres"
+        - name: DB_POSTGRESDB_PORT
+          value: "5432"
+        - name: DB_POSTGRESDB_USER
+          valueFrom:
+            secretKeyRef:
+              name: wolfpackai-secrets
+              key: postgres-username
+        - name: DB_POSTGRESDB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wolfpackai-secrets
+              key: postgres-password
+        - name: N8N_BASIC_AUTH_ACTIVE
+          value: "true"
+        - name: N8N_BASIC_AUTH_USER
+          valueFrom:
+            secretKeyRef:
+              name: wolfpackai-secrets
+              key: n8n-auth-user
+        - name: N8N_BASIC_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wolfpackai-secrets
+              key: n8n-auth-password
+        volumeMounts:
+        - name: n8n-data
+          mountPath: /home/node/.n8n
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 5678
+          initialDelaySeconds: 30
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 5678
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      volumes:
+      - name: n8n-data
+        persistentVolumeClaim:
+          claimName: n8n-data-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: n8n-data-pvc
+  namespace: wolfpackai
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi

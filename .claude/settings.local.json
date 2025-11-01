@@ -1,28 +1,27 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dotnet build)",
-      "Bash(dotnet build:*)",
-      "Bash(mkdir:*)",
-      "Bash(docker build:*)",
-      "Bash(cp:*)",
-      "Bash(rm:*)",
-      "Bash(chmod:*)",
-      "Bash(docker system:*)",
-      "WebFetch(domain:github.com)",
-      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(powershell -ExecutionPolicy Bypass -File:*)",
+      "WebSearch",
+      "Bash(git push:*)",
       "Bash(dotnet run:*)",
-      "Bash(docker:*)",
-      "Bash(start \"\" \"C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe\")",
-      "Bash(timeout:*)",
-      "Bash(dotnet sln add:*)",
-      "Bash(move:*)",
-      "Bash(mv:*)",
+      "Bash(taskkill:*)",
+      "Bash(powershell -Command \"Stop-Process -Id 35280 -Force\")",
+      "Bash(powershell:*)",
       "Bash(dotnet clean:*)",
-      "Bash(find:*)",
-      "Bash(dotnet restore:*)",
-      "Bash(rg:*)"
+      "Bash(python scripts/deepseek_agent_audit.py:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker logs:*)",
+      "Bash(findstr:*)",
+      "Bash(Select-String -Pattern \"model|ollama|deepseek|config|error\" -Context 0,2)",
+      "Bash(Select-Object -First 50)",
+      "Bash(curl:*)",
+      "Bash(docker exec:*)",
+      "Bash(netstat:*)",
+      "Bash(docker port:*)",
+      "Bash(git add:*)"
     ],
-    "deny": []
+    "deny": [],
+    "ask": []
   }
 }

@@ -19,14 +19,16 @@ namespace WolfPackAI.AppBuilder.Extensions
             string name = "openwebui",
             string tag = "latest")
         {
-            var authRedirectUri = new Uri(new Uri(openWebUiConfig.PublicUrl), "/oauth/oidc/callback").ToString();
-            
+            // Use basic auth instead of OAuth for local deployment
             return builder.AddContainer(name, "ghcr.io/open-webui/open-webui", tag)
                 .WithHttpEndpoint(port: 8080, targetPort: 8080, name: "http")
                 .WithEnvironment("ENABLE_PERSISTENT_CONFIG", "false")
                 .WithEnvironment("WEBUI_URL", openWebUiConfig.PublicUrl)
                 .WithEnvironment("WEBUI_AUTH", "true")
-                .WithEnvironment("WEBUI_NAME", "AI Portal")
+                .WithEnvironment("WEBUI_NAME", "WolfPackAI Portal")
+                .WithEnvironment("ENABLE_OAUTH_SIGNUP", "false")
+                .WithEnvironment("ENABLE_SIGNUP", "true")
+                .WithEnvironment("DEFAULT_USER_ROLE", "user")
                 .WithEnvironment("OPENAI_API_BASE_URL", litellm.GetEndpoint("http"))
                 .WithEnvironment("OPENAI_API_KEY", liteLlmConfig.GeneralSettings.MasterKey)
                 .WithEnvironment("DATABASE_URL", $"postgresql://{postgresUsername}:{postgresPassword}@postgres:{postgresPort.ToString()}/openwebuidb")

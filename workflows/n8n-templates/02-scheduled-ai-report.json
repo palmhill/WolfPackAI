@@ -1,0 +1,75 @@
+{
+  "name": "Scheduled AI Report Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Every Monday at 9 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://litellm:4000/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{$env.LITELLM_MASTER_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"model\": \"ollama/deepseek-coder-v2:16b\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a helpful assistant that generates weekly reports.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Generate a weekly status report template with sections for: Accomplishments, Challenges, Next Week Goals, and Metrics to Track.\"\n    }\n  ],\n  \"temperature\": 0.7\n} }}",
+        "options": {}
+      },
+      "id": "generate-report",
+      "name": "Generate Weekly Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "fileContent": "={{ $json.choices[0].message.content }}",
+        "fileName": "={{ 'Weekly_Report_' + $now.format('YYYY-MM-DD') + '.txt' }}",
+        "options": {}
+      },
+      "id": "save-file",
+      "name": "Save Report",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "typeVersion": 1,
+      "position": [650, 300]
+    }
+  ],
+  "connections": {
+    "Every Monday at 9 AM": {
+      "main": [[{"node": "Generate Weekly Report", "type": "main", "index": 0}]]
+    },
+    "Generate Weekly Report": {
+      "main": [[{"node": "Save Report", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

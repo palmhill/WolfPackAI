@@ -1,0 +1,91 @@
+{
+  "dashboard": {
+    "title": "WolfPackAI Overview",
+    "tags": ["wolfpackai", "overview"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Service Health Status",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0},
+        "targets": [
+          {
+            "expr": "up{job=~\"litellm|openwebui|ollama|postgres|n8n|dashboard\"}",
+            "legendFormat": "{{job}}"
+          }
+        ],
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "orientation": "horizontal"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "steps": [
+                {"value": 0, "color": "red"},
+                {"value": 1, "color": "green"}
+              ]
+            },
+            "mappings": [
+              {"type": "value", "value": "1", "text": "UP"},
+              {"type": "value", "value": "0", "text": "DOWN"}
+            ]
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "LiteLLM Request Rate",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{job=\"litellm\"}[5m])",
+            "legendFormat": "{{method}} {{status}}"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "OpenWebUI Active Users",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+        "targets": [
+          {
+            "expr": "openwebui_active_users",
+            "legendFormat": "Active Users"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "AI Model Token Usage",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+        "targets": [
+          {
+            "expr": "rate(litellm_total_tokens[5m])",
+            "legendFormat": "{{model}}"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Response Latency (P95)",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=\"litellm\"}[5m]))",
+            "legendFormat": "p95 latency"
+          }
+        ]
+      }
+    ],
+    "refresh": "10s",
+    "schemaVersion": 36,
+    "version": 1
+  }
+}
