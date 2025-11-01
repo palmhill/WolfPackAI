@@ -24,7 +24,19 @@
       "Bash(python scripts/security_audit.py:*)",
       "Bash(python scripts/elite_runtime_validation.py:*)",
       "Bash(python scripts/comprehensive_browser_audit.py:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(dotnet build:*)",
+      "Bash(Select-String -Pattern \"error|warning|succeeded|failed\")",
+      "Bash(Select-Object -Last 20)",
+      "Bash(timeout 30 bash:*)",
+      "Bash(python:*)",
+      "Bash(dotnet new:*)",
+      "Bash(tree:*)",
+      "Bash(timeout 60 bash:*)",
+      "Bash(find:*)",
+      "Bash(for file in PRIMEGATE_*.md WolfPackAI.PrimeGate/*.md)",
+      "Bash(do [ -f \"$file\" ])",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

@@ -6,13 +6,13 @@
 
 ## 🎯 How It Works in Cursor Chat
 
-### Current Cursor Chat (Without Gatekeeper)
+### Current Cursor Chat (Without primegate)
 ```
 You: "Refactor this function"
 Cursor Chat: [Uses cursor-smart or cursor-fast]
 ```
 
-### With WolfPackAI Gatekeeper
+### With WolfPackAI primegate
 ```
 You: "Refactor this function"
 Cursor Chat: [Can use ANY of 15+ models!]
@@ -33,11 +33,11 @@ Options shown:
 
 ### How Auto Mode Benefits
 
-**Without Gatekeeper:**
+**Without primegate:**
 - Cursor Agent uses cursor-smart/cursor-fast
 - Limited to 2 models
 
-**With Gatekeeper:**
+**With primegate:**
 - Cursor Agent can choose from 15+ models
 - Can use different models for different sub-tasks
 - Optimizes cost vs quality automatically
@@ -46,7 +46,7 @@ Options shown:
 ```
 Task: "Add authentication to my app"
 
-Cursor Agent (with Gatekeeper):
+Cursor Agent (with primegate):
 ├─ Subtask 1: Design auth flow
 │  └─ Uses: gpt-4-turbo (complex architecture)
 ├─ Subtask 2: Write auth code
@@ -67,7 +67,7 @@ Result: Best model for each task, optimized cost!
 - cursor-fast
 - cursor-smart
 
-### After Gatekeeper
+### After primegate
 **Option 1: Individual Model Selection**
 ```
 Agent Options:
@@ -88,7 +88,7 @@ Agent Options:
 ```
 
 When you select "WolfPackAI" agent:
-- Gatekeeper analyzes the task
+- primegate analyzes the task
 - Automatically picks best model
 - You get optimal results
 
@@ -96,13 +96,13 @@ When you select "WolfPackAI" agent:
 
 ## 🛠️ How to Enable in Cursor Chat
 
-### Step 1: Gatekeeper Running
+### Step 1: primegate Running
 ```powershell
 # Terminal 1: WolfPackAI services
 dotnet run --project WolfPackAI.AppHost
 
-# Terminal 2: Gatekeeper
-dotnet run --project WolfPackAI.Gatekeeper
+# Terminal 2: primegate
+dotnet run --project WolfPackAI.primegate
 ```
 
 ### Step 2: Open Cursor Chat
@@ -157,7 +157,7 @@ GPT-4: [Detailed, thoughtful architecture design]
 4. Select task
 5. Agent works automatically
 
-**With Gatekeeper:**
+**With primegate:**
 - Agent sees all 15+ models
 - Can switch models mid-task
 - Optimizes for speed/quality/cost
@@ -197,7 +197,7 @@ Total Cost: $0.15 (saved $2.35 with smart routing!)
 ```json
 {
   "name": "WolfPackAI Smart Agent",
-  "description": "Intelligent LLM routing via WolfPackAI Gatekeeper",
+  "description": "Intelligent LLM routing via WolfPackAI primegate",
   "type": "meta-agent",
   "endpoint": "http://localhost:7000/api/suggest",
   "capabilities": [
@@ -225,7 +225,7 @@ Agent Options:
 **How it works:**
 1. You ask a question
 2. "WolfPackAI Smart Agent" analyzes task type
-3. Gatekeeper suggests best model
+3. primegate suggests best model
 4. Request routed to optimal LLM
 5. You get best results automatically!
 
@@ -234,7 +234,7 @@ Agent Options:
 ## 📋 Cursor Integration Checklist
 
 ### Chat Integration
-- [ ] Gatekeeper running
+- [ ] primegate running
 - [ ] Open Cursor in WolfPackAI directory
 - [ ] Open Chat (Ctrl+L)
 - [ ] See WolfPackAI models in dropdown
@@ -242,7 +242,7 @@ Agent Options:
 - [ ] Verify responses work
 
 ### Agent (Auto Mode) Integration
-- [ ] Gatekeeper running
+- [ ] primegate running
 - [ ] Enable Auto mode (Ctrl+Shift+P → Cursor Agent)
 - [ ] Give it a multi-step task
 - [ ] Watch it use different models for different subtasks
@@ -303,7 +303,7 @@ Then select by name in Cursor!
 4. **Documentation**: Use gpt-3.5-turbo (cheap, good enough)
 
 ### For Agent (Auto Mode)
-1. **Let Auto mode decide**: It'll use gatekeeper suggestions
+1. **Let Auto mode decide**: It'll use primegate suggestions
 2. **Monitor cost**: Auto mode optimizes automatically
 3. **Check results**: Different models for different subtasks
 
@@ -315,13 +315,13 @@ Then select by name in Cursor!
 
 **Check:**
 ```powershell
-# 1. Gatekeeper running?
+# 1. primegate running?
 curl http://localhost:7000/api/status
 
 # 2. In WolfPackAI directory?
 Get-Location  # Should be ...\WolfPackAI
 
-# 3. Cursor restarted after gatekeeper started?
+# 3. Cursor restarted after primegate started?
 # Close and reopen Cursor
 ```
 

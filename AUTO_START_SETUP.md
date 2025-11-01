@@ -1,6 +1,6 @@
 # 🚀 WolfPackAI Auto-Start Setup
 
-Make WolfPackAI + Gatekeeper start automatically when Windows boots.
+Make WolfPackAI + primegate start automatically when Windows boots.
 
 ---
 
@@ -14,7 +14,7 @@ start-wolfpack-full.bat
 This will:
 1. Check if Docker is running (start it if needed)
 2. Start WolfPackAI services
-3. Start Gatekeeper
+3. Start primegate
 4. Open in separate windows so you can see logs
 
 **Then open Cursor in WolfPackAI directory and you're ready!**
@@ -36,7 +36,7 @@ This will:
 **That's it!** Next time you boot Windows:
 - Docker Desktop starts automatically
 - WolfPackAI services start automatically (minimized)
-- Gatekeeper starts automatically (minimized)
+- primegate starts automatically (minimized)
 - All models ready when you open Cursor!
 
 ### Option 2: Task Scheduler (More Control)
@@ -58,11 +58,11 @@ This will:
 
 ## 🎨 Using Auto Mode in Cursor
 
-### How It Works with Gatekeeper
+### How It Works with primegate
 
 **When you select "Auto" in Cursor:**
 
-1. **Gatekeeper is already running** (started automatically)
+1. **primegate is already running** (started automatically)
 2. **Cursor detects all available models** (15+ models)
 3. **Orchestrator (Auto mode) sees all options:**
    - cursor-fast (native)
@@ -93,25 +93,25 @@ This will:
 4. **Give it a task** → Auto mode picks best models automatically
 5. **Done!** 🎉
 
-**No manual model selection needed!** Auto mode + Gatekeeper = Fully automated optimal model routing.
+**No manual model selection needed!** Auto mode + primegate = Fully automated optimal model routing.
 
 ---
 
 ## 🔍 How Auto Mode Picks Models
 
-**Auto mode uses the gatekeeper's `/api/suggest` endpoint:**
+**Auto mode uses the primegate's `/api/suggest` endpoint:**
 
 ```
 Your task: "Refactor this authentication code"
 
-Auto mode asks gatekeeper:
+Auto mode asks primegate:
 POST /api/suggest
 {
   "task": "refactor code",
   "context": "authentication, security"
 }
 
-Gatekeeper suggests:
+primegate suggests:
 {
   "suggestion": "claude-sonnet-4",
   "reason": "Best for code structure and security review",
@@ -122,7 +122,7 @@ Auto mode decides:
 "I agree, using claude-sonnet-4 for this task"
 ```
 
-**But remember:** Orchestrator (Auto mode) has FINAL decision. Gatekeeper only suggests!
+**But remember:** Orchestrator (Auto mode) has FINAL decision. primegate only suggests!
 
 ---
 
@@ -135,9 +135,9 @@ Auto mode decides:
 3. **Look for these processes:**
    - ✅ Docker Desktop.exe
    - ✅ dotnet.exe (WolfPackAI.AppHost)
-   - ✅ dotnet.exe (WolfPackAI.Gatekeeper)
+   - ✅ dotnet.exe (WolfPackAI.primegate)
 
-4. **Test gatekeeper:**
+4. **Test primegate:**
    ```powershell
    curl http://localhost:7000/api/status
    ```
@@ -155,8 +155,8 @@ Auto mode decides:
 **To stop all services:**
 
 ```powershell
-# Stop Gatekeeper
-taskkill /FI "WINDOWTITLE eq WolfPackAI Gatekeeper*" /F
+# Stop primegate
+taskkill /FI "WINDOWTITLE eq WolfPackAI primegate*" /F
 
 # Stop WolfPackAI Services
 taskkill /FI "WINDOWTITLE eq WolfPackAI Services*" /F
@@ -169,7 +169,7 @@ Or create `stop-wolfpack.bat`:
 ```batch
 @echo off
 echo Stopping WolfPackAI services...
-taskkill /FI "WINDOWTITLE eq WolfPackAI Gatekeeper*" /F
+taskkill /FI "WINDOWTITLE eq WolfPackAI primegate*" /F
 taskkill /FI "WINDOWTITLE eq WolfPackAI Services*" /F
 echo Done!
 pause
@@ -191,7 +191,7 @@ pause
 
 ### Monitoring
 - **Check Aspire Dashboard** for service health: http://localhost:17064
-- **Check Gatekeeper API docs:** http://localhost:7000/swagger
+- **Check primegate API docs:** http://localhost:7000/swagger
 - **Watch resource usage** in Task Manager
 
 ---

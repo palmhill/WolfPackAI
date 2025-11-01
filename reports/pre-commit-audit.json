@@ -1,6 +1,6 @@
 {
   "status": "pass",
-  "timestamp": "2025-11-01T00:11:38.561732+00:00",
+  "timestamp": "2025-11-01T04:00:22.951881+00:00",
   "errors": [],
   "warnings": [
     {
@@ -42,6 +42,31 @@
       "file": "WolfPackAI.Dashboard\\appsettings.json",
       "severity": "medium",
       "message": "Missing required config section: Dashboard"
+    },
+    {
+      "file": "WolfPackAI.PrimeGate\\appsettings.json",
+      "severity": "medium",
+      "message": "Missing required config section: LiteLLM"
+    },
+    {
+      "file": "WolfPackAI.PrimeGate\\appsettings.json",
+      "severity": "medium",
+      "message": "Missing required config section: Postgres"
+    },
+    {
+      "file": "WolfPackAI.PrimeGate\\appsettings.json",
+      "severity": "medium",
+      "message": "Missing required config section: OpenWebUI"
+    },
+    {
+      "file": "WolfPackAI.PrimeGate\\appsettings.json",
+      "severity": "medium",
+      "message": "Missing required config section: n8n"
+    },
+    {
+      "file": "WolfPackAI.PrimeGate\\appsettings.json",
+      "severity": "medium",
+      "message": "Missing required config section: Dashboard"
     }
   ],
   "info": [
@@ -66,7 +91,7 @@
       "message": "Consider adding Certificate files pattern: *.pem"
     }
   ],
-  "files_scanned": 6,
-  "issues_found": 12,
+  "files_scanned": 7,
+  "issues_found": 17,
   "details": {}
 }

@@ -1,4 +1,4 @@
-# 🔌 Installing WolfPackAI Gatekeeper in Other Projects
+# 🔌 Installing WolfPackAI PrimeGate in Other Projects
 
 **Purpose**: Enable PaiiD, PaπD 2mx, or any other project to access WolfPackAI LLMs
 **Time**: < 5 minutes per project
@@ -8,17 +8,17 @@
 
 ## 🎯 Overview
 
-After confirming gatekeeper works in WolfPackAI (terminal + Cursor), you can optionally enable it in other projects:
+After confirming primegate works in WolfPackAI (terminal + Cursor), you can optionally enable it in other projects:
 
 ```
-PaiiD/                     ← Enable gatekeeper here (optional)
-PaπD 2mx/                  ← Enable gatekeeper here (optional)
-WolfPackAI/                ← Already has gatekeeper ✅
-  └─ Gatekeeper Service    ← Runs from here, shared by all
+PaiiD/                     ← Enable primegate here (optional)
+PaπD 2mx/                  ← Enable primegate here (optional)
+WolfPackAI/                ← Already has primegate ✅
+  └─ PrimeGate Service    ← Runs from here, shared by all
 ```
 
 **Key Points:**
-- Gatekeeper service runs ONCE from WolfPackAI
+- PrimeGate service runs ONCE from WolfPackAI
 - Other projects just connect to it (client-only)
 - Each project can enable/disable independently
 - Zero interference between projects
@@ -29,7 +29,7 @@ WolfPackAI/                ← Already has gatekeeper ✅
 
 **Before installing in other projects:**
 
-1. ✅ Gatekeeper working in WolfPackAI
+1. ✅ PrimeGate working in WolfPackAI
 2. ✅ Tested in terminal (`curl http://localhost:7000/api/status`)
 3. ✅ Tested in Cursor (see [🐺 N LLMs] status bar)
 4. ✅ Confirmed isolation (PaiiD/PaπD currently unaffected)
@@ -66,7 +66,7 @@ Copy-Item -Recurse ..\WolfPackAI\.cursor .\.cursor
 
 ### Step 2: Update Extension Path Check
 
-**Edit** `.cursor\extensions\wolfpackai-gatekeeper.js` in your project:
+**Edit** `.cursor\extensions\wolfpackai-primegate.js` in your project:
 
 **Find this line:**
 ```javascript
@@ -84,23 +84,23 @@ const isWolfPackAI = projectPath.includes("WolfPackAI") ||
 **Or for ANY project** (universal mode):
 ```javascript
 // Enable for ALL projects
-const isWolfPackAI = true;  // Gatekeeper active everywhere
+const isWolfPackAI = true;  // PrimeGate active everywhere
 ```
 
 ### Step 3: Test Installation
 
 ```powershell
-# Make sure WolfPackAI gatekeeper is running
+# Make sure WolfPackAI primegate is running
 # (From WolfPackAI directory in separate terminal)
 cd C:\Users\SSaint-Cyr\Documents\GitHub\WolfPackAI
-dotnet run --project WolfPackAI.Gatekeeper
+dotnet run --project WolfPackAI.PrimeGate
 
 # Open Cursor in your other project
 cd C:\Users\SSaint-Cyr\Documents\GitHub\PaiiD  # or PaπD 2mx
 cursor .
 
 # Check status bar - should see:
-# [🐺 12 LLMs]  ← Gatekeeper active!
+# [🐺 12 LLMs]  ← PrimeGate active!
 ```
 
 ---
@@ -109,7 +109,7 @@ cursor .
 
 ### Option A: Full Access (Recommended)
 ```javascript
-// In .cursor/extensions/wolfpackai-gatekeeper.js
+// In .cursor/extensions/wolfpackai-primegate.js
 // Allow this project to use all WolfPackAI LLMs
 const isWolfPackAI = projectPath.includes("PaiiD");
 ```
@@ -158,22 +158,22 @@ Copy-Item ..\WolfPackAI\.cursorrules .\.cursorrules
 Copy-Item -Recurse ..\WolfPackAI\.cursor .\.cursor
 
 # 3. Update path check
-$extensionPath = ".\.cursor\extensions\wolfpackai-gatekeeper.js"
+$extensionPath = ".\.cursor\extensions\wolfpackai-primegate.js"
 $content = Get-Content $extensionPath -Raw
 $content = $content -replace 'projectPath\.includes\("WolfPackAI"\)', 'projectPath.includes("WolfPackAI") || projectPath.includes("PaiiD")'
 Set-Content $extensionPath $content
 
 # 4. Verify
-Write-Host "✅ Gatekeeper installed in PaiiD!"
-Write-Host "Start WolfPackAI gatekeeper, then open Cursor here."
+Write-Host "✅ PrimeGate installed in PaiiD!"
+Write-Host "Start WolfPackAI primegate, then open Cursor here."
 ```
 
 ### Test It Works
 
 ```powershell
-# Terminal 1: Start gatekeeper (from WolfPackAI)
+# Terminal 1: Start primegate (from WolfPackAI)
 cd ..\WolfPackAI
-dotnet run --project WolfPackAI.Gatekeeper
+dotnet run --project WolfPackAI.PrimeGate
 
 # Terminal 2: Open Cursor in PaiiD
 cd ..\PaiiD
@@ -189,11 +189,11 @@ cursor .
 **After installing in PaiiD, verify isolation:**
 
 ```powershell
-# Should be TRUE (gatekeeper enabled)
+# Should be TRUE (primegate enabled)
 Test-Path "C:\...\PaiiD\.cursorrules"
 
-# Should be TRUE (gatekeeper enabled)
-Test-Path "C:\...\PaiiD\.cursor\extensions\wolfpackai-gatekeeper.js"
+# Should be TRUE (primegate enabled)
+Test-Path "C:\...\PaiiD\.cursor\extensions\wolfpackai-primegate.js"
 
 # Should be TRUE (original still intact)
 Test-Path "C:\...\WolfPackAI\.cursorrules"
@@ -203,8 +203,8 @@ Test-Path "C:\...\WolfPackAI\.cursorrules"
 ```
 
 **Projects remain independent:**
-- Deleting PaiiD gatekeeper files → Doesn't affect WolfPackAI
-- Deleting WolfPackAI gatekeeper files → Doesn't affect PaiiD
+- Deleting PaiiD primegate files → Doesn't affect WolfPackAI
+- Deleting WolfPackAI primegate files → Doesn't affect PaiiD
 - Each project can be configured differently
 
 ---
@@ -215,14 +215,14 @@ Test-Path "C:\...\WolfPackAI\.cursorrules"
 
 **Diagnosis:**
 ```powershell
-# 1. Check if gatekeeper service running
+# 1. Check if primegate service running
 curl http://localhost:7000/api/status
 
 # 2. Check if extension file exists
-Test-Path ".\.cursor\extensions\wolfpackai-gatekeeper.js"
+Test-Path ".\.cursor\extensions\wolfpackai-primegate.js"
 
 # 3. Check if path check updated
-Select-String -Path ".\.cursor\extensions\wolfpackai-gatekeeper.js" -Pattern "PaiiD"
+Select-String -Path ".\.cursor\extensions\wolfpackai-primegate.js" -Pattern "PaiiD"
 # Should return a match
 ```
 
@@ -279,7 +279,7 @@ Each project sees different models!
 ```
 ┌─────────────────────┐
 │ WolfPackAI          │
-│ ├─ Gatekeeper ◄────────── Service runs here (shared)
+│ ├─ PrimeGate ◄────────── Service runs here (shared)
 │ ├─ LiteLLM          │
 │ ├─ Ollama           │
 │ └─ .cursorrules ✅  │
@@ -297,7 +297,7 @@ Each project sees different models!
 ```
 
 **Benefits:**
-- One gatekeeper service (efficient)
+- One primegate service (efficient)
 - Multiple projects benefit (shared resource)
 - Independent configurations (flexible)
 - Easy to enable/disable per project
@@ -306,7 +306,7 @@ Each project sees different models!
 
 ## 🔄 Uninstalling from Other Projects
 
-**To remove gatekeeper from PaiiD (keeps WolfPackAI intact):**
+**To remove primegate from PaiiD (keeps WolfPackAI intact):**
 
 ```powershell
 cd C:\Users\SSaint-Cyr\Documents\GitHub\PaiiD
@@ -331,11 +331,11 @@ cursor .  # Still see [🐺 N LLMs] ✅
 
 **For each project you want to enable:**
 
-- [ ] Gatekeeper tested and working in WolfPackAI
+- [ ] PrimeGate tested and working in WolfPackAI
 - [ ] Copied `.cursorrules` to project directory
 - [ ] Copied `.cursor/` directory to project
-- [ ] Updated `wolfpackai-gatekeeper.js` path check
-- [ ] Tested: Start gatekeeper service
+- [ ] Updated `wolfpackai-primegate.js` path check
+- [ ] Tested: Start primegate service
 - [ ] Tested: Open Cursor in project
 - [ ] Verified: See [🐺 N LLMs] status indicator
 - [ ] Tested: Can use WolfPackAI models
@@ -348,7 +348,7 @@ cursor .  # Still see [🐺 N LLMs] ✅
 ## 🎯 Recommended Setup
 
 **Start with:**
-1. ✅ WolfPackAI (already has gatekeeper)
+1. ✅ WolfPackAI (already has primegate)
 2. ✅ Test thoroughly in terminal + Cursor
 3. ✅ Install in ONE other project (e.g., PaiiD)
 4. ✅ Test that too
@@ -364,10 +364,10 @@ cursor .  # Still see [🐺 N LLMs] ✅
 
 ## 🚀 Advanced: Universal Installation Script
 
-**Create** `install-gatekeeper-everywhere.ps1`:
+**Create** `install-primegate-everywhere.ps1`:
 
 ```powershell
-# Install gatekeeper in all projects (use with caution!)
+# Install primegate in all projects (use with caution!)
 param([string[]]$Projects = @("PaiiD", "PaπD 2mx"))
 
 foreach ($project in $Projects) {
@@ -380,7 +380,7 @@ foreach ($project in $Projects) {
         Copy-Item -Recurse .cursor "$projectPath\.cursor" -Force
 
         # Update path check
-        $ext = "$projectPath\.cursor\extensions\wolfpackai-gatekeeper.js"
+        $ext = "$projectPath\.cursor\extensions\wolfpackai-primegate.js"
         $content = Get-Content $ext -Raw
         $content = $content -replace 'projectPath\.includes\("WolfPackAI"\)', "true"
         Set-Content $ext $content

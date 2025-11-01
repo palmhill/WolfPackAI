@@ -1,4 +1,4 @@
-# 🐺 WolfPackAI Gatekeeper - Quick Start Guide
+# 🐺 WolfPackAI PrimeGate - Quick Start Guide
 
 **Version**: 1.0.0
 **Status**: ✅ BUILD SUCCESS (0 errors, 0 warnings)
@@ -16,23 +16,23 @@ Open PowerShell in the WolfPackAI directory and run:
 cd C:\Users\SSaint-Cyr\Documents\GitHub\WolfPackAI
 
 # 2. Run the injection script
-.\scripts\inject-gatekeeper.ps1
+.\scripts\inject-primegate.ps1
 
 # 3. Done! You'll see success message
 ```
 
 **Expected Output:**
 ```
-🐺 WolfPackAI Gatekeeper - Seamless Injection
+🐺 WolfPackAI PrimeGate - Seamless Injection
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 [1/7] Verifying location...
    ✓ Location confirmed
 [2/7] Checking isolation...
    ✓ Isolation confirmed
-[3/7] Building Gatekeeper service...
+[3/7] Building PrimeGate service...
    ✓ Build successful
 ...
-✅ Gatekeeper injected successfully!
+✅ PrimeGate injected successfully!
 ```
 
 ---
@@ -54,17 +54,17 @@ Wait for:
 📊 Aspire Dashboard: http://localhost:15021
 ```
 
-### Step 2: Start Gatekeeper
+### Step 2: Start PrimeGate
 
 **Terminal 2** (new PowerShell window):
 ```powershell
-# Start the gatekeeper service
-dotnet run --project WolfPackAI.Gatekeeper
+# Start the primegate service
+dotnet run --project WolfPackAI.PrimeGate
 ```
 
 Wait for:
 ```
-🐺 WolfPackAI Gatekeeper starting...
+🐺 WolfPackAI PrimeGate starting...
    Role: Compliant LLM Exposure
    Authority: Orchestrator (Full Control)
    Mode: Seamless Injection
@@ -75,7 +75,7 @@ Wait for:
 
 ## 🧪 Verify It's Working (Terminal Tests)
 
-### Test 1: Check Gatekeeper Status
+### Test 1: Check PrimeGate Status
 ```powershell
 curl http://localhost:7000/api/status
 ```
@@ -83,7 +83,7 @@ curl http://localhost:7000/api/status
 **Expected Response:**
 ```json
 {
-  "service": "WolfPackAI.Gatekeeper",
+  "service": "WolfPackAI.PrimeGate",
   "version": "1.0.0",
   "status": "online",
   "role": "compliant-expose-all",
@@ -171,16 +171,16 @@ cursor .
 # Or manually: File → Open Folder → WolfPackAI
 ```
 
-### Step 2: Verify Gatekeeper is Active
+### Step 2: Verify PrimeGate is Active
 
 **Look for status bar** (bottom of Cursor window):
 ```
-[🐺 12 LLMs]  ← Should appear if gatekeeper running
+[🐺 12 LLMs]  ← Should appear if primegate running
 ```
 
 **Click on it** to see available models:
 ```
-WolfPackAI Gatekeeper
+WolfPackAI PrimeGate
 ├─ Status: Online
 ├─ Models: 12 available
 ├─ Orchestrator: Full Control
@@ -216,11 +216,11 @@ netstat -ano | findstr :7000
 # Kill the process (replace PID with actual process ID)
 taskkill /PID <PID> /F
 
-# Restart gatekeeper
-dotnet run --project WolfPackAI.Gatekeeper
+# Restart primegate
+dotnet run --project WolfPackAI.PrimeGate
 ```
 
-### Issue: "Gatekeeper returns 0 models"
+### Issue: "PrimeGate returns 0 models"
 **Diagnosis:**
 - Ollama not running
 - LiteLLM not running
@@ -237,7 +237,7 @@ curl http://localhost:7000/api/llms
 
 ### Issue: "Cursor doesn't show [🐺 N LLMs]"
 **Diagnosis:**
-- Gatekeeper not running
+- PrimeGate not running
 - Not in WolfPackAI directory (isolation working correctly!)
 
 **Solution:**
@@ -245,7 +245,7 @@ curl http://localhost:7000/api/llms
 # 1. Verify you're in WolfPackAI directory
 Get-Location  # Should show ...\WolfPackAI
 
-# 2. Verify gatekeeper is running
+# 2. Verify primegate is running
 curl http://localhost:7000/api/status
 
 # 3. Restart Cursor
@@ -253,15 +253,15 @@ curl http://localhost:7000/api/status
 
 ### Issue: "Worried about affecting other projects"
 **Solution:**
-- Read [GATEKEEPER_ISOLATION.md](GATEKEEPER_ISOLATION.md)
-- Gatekeeper is 100% isolated to WolfPackAI directory
+- Read [PRIMEGATE_ISOLATION.md](PRIMEGATE_ISOLATION.md)
+- PrimeGate is 100% isolated to WolfPackAI directory
 - Test: Open PaiiD in Cursor → No [🐺 N LLMs] indicator (correct!)
 
 ---
 
 ## 📊 What You Get
 
-**Before Gatekeeper:**
+**Before PrimeGate:**
 ```
 Cursor Models:
   - cursor-fast
@@ -270,7 +270,7 @@ Cursor Models:
 Total: 2 models
 ```
 
-**After Gatekeeper:**
+**After PrimeGate:**
 ```
 Cursor Models:
   - cursor-fast (native)
@@ -294,8 +294,8 @@ Total: 15 models (13 added via WolfPackAI!)
 
 ## 🎯 Next: Using in Other Projects
 
-Once you confirm gatekeeper works here, see:
-**[GATEKEEPER_OTHER_PROJECTS.md](GATEKEEPER_OTHER_PROJECTS.md)** (coming next)
+Once you confirm primegate works here, see:
+**[PRIMEGATE_OTHER_PROJECTS.md](PRIMEGATE_OTHER_PROJECTS.md)** (coming next)
 
 For installing in PaiiD, PaπD 2mx, or any other project.
 
@@ -303,30 +303,30 @@ For installing in PaiiD, PaπD 2mx, or any other project.
 
 ## ✅ Success Checklist
 
-- [ ] Ran `.\scripts\inject-gatekeeper.ps1` → Success
+- [ ] Ran `.\scripts\inject-primegate.ps1` → Success
 - [ ] Started WolfPackAI → Services running
-- [ ] Started Gatekeeper → Listening on port 7000
+- [ ] Started PrimeGate → Listening on port 7000
 - [ ] Tested `/api/status` → Returns "online"
 - [ ] Tested `/api/llms` → Returns list of models
 - [ ] Tested `/api/policy` → Shows unlimited access
 - [ ] Opened Cursor in WolfPackAI → See [🐺 N LLMs]
 - [ ] Verified isolation → PaiiD/other projects unaffected
 
-**All checked?** → Gatekeeper is working perfectly! 🎉
+**All checked?** → PrimeGate is working perfectly! 🎉
 
 ---
 
 ## 🚀 Power User Tips
 
-### Auto-Start Gatekeeper (Optional)
+### Auto-Start PrimeGate (Optional)
 Create a batch file `start-wolfpackai-full.bat`:
 ```batch
 @echo off
 start "WolfPackAI Services" dotnet run --project WolfPackAI.AppHost
 timeout /t 10
-start "Gatekeeper" dotnet run --project WolfPackAI.Gatekeeper
+start "PrimeGate" dotnet run --project WolfPackAI.PrimeGate
 echo.
-echo ✅ WolfPackAI + Gatekeeper started!
+echo ✅ WolfPackAI + PrimeGate started!
 echo.
 pause
 ```

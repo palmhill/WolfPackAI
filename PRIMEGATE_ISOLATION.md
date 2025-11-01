@@ -1,4 +1,4 @@
-# WolfPackAI Gatekeeper - Isolation Guardrails
+# WolfPackAI PrimeGate - Isolation Guardrails
 
 **Version**: 1.0.0
 **Date**: October 31, 2025
@@ -8,7 +8,7 @@
 
 ## 🔒 Isolation Guarantee
 
-**The WolfPackAI Gatekeeper is 100% isolated and will NEVER affect:**
+**The WolfPackAI PrimeGate is 100% isolated and will NEVER affect:**
 - ✅ PaiiD project
 - ✅ PaπD 2mx project
 - ✅ Any other projects in parent directories
@@ -23,20 +23,20 @@
 
 ### 1. Directory-Scoped Activation
 
-**Gatekeeper ONLY activates in:**
+**PrimeGate ONLY activates in:**
 ```
 C:\Users\SSaint-Cyr\Documents\GitHub\WolfPackAI\
 └── And subdirectories within WolfPackAI
 ```
 
-**Gatekeeper NEVER activates in:**
+**PrimeGate NEVER activates in:**
 ```
 C:\Users\SSaint-Cyr\Documents\GitHub\PaiiD\           ← Not affected
 C:\Users\SSaint-Cyr\Documents\GitHub\PaπD 2mx\        ← Not affected
 C:\Users\SSaint-Cyr\Documents\GitHub\AnyOtherProject\ ← Not affected
 ```
 
-**Verification Code** (in `.cursor/extensions/wolfpackai-gatekeeper.js`):
+**Verification Code** (in `.cursor/extensions/wolfpackai-primegate.js`):
 ```javascript
 async initialize(projectPath) {
     // Check if we're in WolfPackAI directory
@@ -55,13 +55,13 @@ async initialize(projectPath) {
 
 ### 2. Project-Specific Configuration Files
 
-**All gatekeeper files are LOCAL to WolfPackAI:**
+**All primegate files are LOCAL to WolfPackAI:**
 
 | File | Location | Scope |
 |------|----------|-------|
 | `.cursorrules` | `WolfPackAI/` | WolfPackAI only |
 | `.cursor/extensions/` | `WolfPackAI/.cursor/` | WolfPackAI only |
-| `WolfPackAI.Gatekeeper/` | `WolfPackAI/` | WolfPackAI only |
+| `WolfPackAI.PrimeGate/` | `WolfPackAI/` | WolfPackAI only |
 
 **NOT using global configs:**
 - ❌ NO files in `%APPDATA%\Cursor\`
@@ -71,12 +71,12 @@ async initialize(projectPath) {
 
 ### 3. Service Port Isolation
 
-**Gatekeeper uses dedicated port 7000:**
+**PrimeGate uses dedicated port 7000:**
 - Ollama: 1143 (unchanged)
 - LiteLLM: 4000 (unchanged)
 - OpenWebUI: 8080 (unchanged)
 - n8n: 5678 (unchanged)
-- **Gatekeeper: 7000** ← NEW, isolated port
+- **PrimeGate: 7000** ← NEW, isolated port
 
 **No conflicts with:**
 - PaiiD services
@@ -85,10 +85,10 @@ async initialize(projectPath) {
 
 ### 4. Graceful Degradation
 
-**If gatekeeper is offline/unavailable:**
+**If primegate is offline/unavailable:**
 ```
-Cursor in PaiiD → Works normally (gatekeeper never loaded)
-Cursor in PaπD 2mx → Works normally (gatekeeper never loaded)
+Cursor in PaiiD → Works normally (primegate never loaded)
+Cursor in PaπD 2mx → Works normally (primegate never loaded)
 Cursor in WolfPackAI → Falls back to Cursor native models (zero disruption)
 ```
 
@@ -97,10 +97,10 @@ Cursor in WolfPackAI → Falls back to Cursor native models (zero disruption)
 ### 5. Zero Modifications to Existing Files
 
 **Files created** (NEW, additive only):
-- `WolfPackAI.Gatekeeper/` (new project)
-- `.cursor/extensions/wolfpackai-gatekeeper.js` (new file)
+- `WolfPackAI.PrimeGate/` (new project)
+- `.cursor/extensions/wolfpackai-primegate.js` (new file)
 - `.cursorrules` (new file)
-- `scripts/inject-gatekeeper.ps1` (new file)
+- `scripts/inject-primegate.ps1` (new file)
 
 **Files modified**: **NONE**
 - ✅ No changes to `WolfPackAI.AppHost`
@@ -116,7 +116,7 @@ Cursor in WolfPackAI → Falls back to Cursor native models (zero disruption)
 
 ### Test 1: Open PaiiD in Cursor
 ```
-Expected: Gatekeeper extension NOT loaded
+Expected: PrimeGate extension NOT loaded
 Expected: No status bar indicators for WolfPackAI
 Expected: Normal Cursor behavior
 Actual: ✅ Confirmed - zero interference
@@ -124,7 +124,7 @@ Actual: ✅ Confirmed - zero interference
 
 ### Test 2: Open PaπD 2mx in Cursor
 ```
-Expected: Gatekeeper extension NOT loaded
+Expected: PrimeGate extension NOT loaded
 Expected: No status bar indicators for WolfPackAI
 Expected: Normal Cursor behavior
 Actual: ✅ Confirmed - zero interference
@@ -132,7 +132,7 @@ Actual: ✅ Confirmed - zero interference
 
 ### Test 3: Open WolfPackAI in Cursor
 ```
-Expected: Gatekeeper extension loaded ONLY in WolfPackAI
+Expected: PrimeGate extension loaded ONLY in WolfPackAI
 Expected: Status bar shows [🐺 N LLMs] if services running
 Expected: Falls back gracefully if services offline
 Actual: ✅ Confirmed - isolated activation
@@ -140,10 +140,10 @@ Actual: ✅ Confirmed - isolated activation
 
 ### Test 4: Switch Between Projects
 ```
-Open PaiiD → Gatekeeper inactive
-Switch to WolfPackAI → Gatekeeper activates
-Switch to PaπD 2mx → Gatekeeper deactivates
-Switch back to WolfPackAI → Gatekeeper reactivates
+Open PaiiD → PrimeGate inactive
+Switch to WolfPackAI → PrimeGate activates
+Switch to PaπD 2mx → PrimeGate deactivates
+Switch back to WolfPackAI → PrimeGate reactivates
 
 Result: ✅ Dynamic activation per project, zero cross-contamination
 ```
@@ -152,7 +152,7 @@ Result: ✅ Dynamic activation per project, zero cross-contamination
 
 ## 🔍 Verification Commands
 
-### Check Gatekeeper NOT affecting other projects:
+### Check PrimeGate NOT affecting other projects:
 
 **1. Check for global configs (should return empty):**
 ```powershell
@@ -167,15 +167,15 @@ Test-Path "$env:USERPROFILE\.modsquad"                  # False (if not created)
 cd "C:\Path\To\PaiiD"
 # Should NOT contain these files:
 Test-Path ".cursorrules"                                # False (unless user added)
-Test-Path ".cursor/extensions/wolfpackai-gatekeeper.js" # False
+Test-Path ".cursor/extensions/wolfpackai-primegate.js" # False
 ```
 
-**3. Check WolfPackAI directory (should contain gatekeeper):**
+**3. Check WolfPackAI directory (should contain primegate):**
 ```powershell
 cd "C:\Users\SSaint-Cyr\Documents\GitHub\WolfPackAI"
 Test-Path ".cursorrules"                                # True
-Test-Path ".cursor/extensions/wolfpackai-gatekeeper.js" # True
-Test-Path "WolfPackAI.Gatekeeper"                       # True
+Test-Path ".cursor/extensions/wolfpackai-primegate.js" # True
+Test-Path "WolfPackAI.PrimeGate"                       # True
 ```
 
 ---
@@ -184,12 +184,12 @@ Test-Path "WolfPackAI.Gatekeeper"                       # True
 
 ### Automatic Isolation Checks
 
-**On gatekeeper startup:**
+**On primegate startup:**
 ```csharp
 // In Program.cs
 if (!IsInWolfPackAIDirectory())
 {
-    Console.WriteLine("Error: Gatekeeper must run in WolfPackAI directory");
+    Console.WriteLine("Error: PrimeGate must run in WolfPackAI directory");
     Console.WriteLine("Current: " + Directory.GetCurrentDirectory());
     Environment.Exit(1);
 }
@@ -197,7 +197,7 @@ if (!IsInWolfPackAIDirectory())
 
 **On Cursor extension load:**
 ```javascript
-// In wolfpackai-gatekeeper.js
+// In wolfpackai-primegate.js
 if (!projectPath.includes("WolfPackAI")) {
     return {
         activated: false,
@@ -220,7 +220,7 @@ Expected output:
 ✅ No global configs found
 ✅ No modifications to PaiiD
 ✅ No modifications to PaπD 2mx
-✅ Gatekeeper files only in WolfPackAI
+✅ PrimeGate files only in WolfPackAI
 ✅ Port 7000 not conflicting
 ✅ Isolation: VERIFIED
 ```
@@ -229,7 +229,7 @@ Expected output:
 
 ## 🔧 How to Extend to Other Projects (Optional)
 
-**If you want gatekeeper in PaiiD or PaπD 2mx (opt-in):**
+**If you want primegate in PaiiD or PaπD 2mx (opt-in):**
 
 1. **Copy .cursorrules:**
    ```powershell
@@ -242,7 +242,7 @@ Expected output:
    ```
 
 3. **Update extension path check:**
-   Edit `PaiiD\.cursor\extensions\wolfpackai-gatekeeper.js`:
+   Edit `PaiiD\.cursor\extensions\wolfpackai-primegate.js`:
    ```javascript
    const isWolfPackAI = projectPath.includes("WolfPackAI") ||
                         projectPath.includes("PaiiD");  // Add PaiiD
@@ -254,20 +254,20 @@ Expected output:
 
 ## 🛟 Uninstall (Complete Removal)
 
-**To completely remove gatekeeper from WolfPackAI:**
+**To completely remove primegate from WolfPackAI:**
 
 ```powershell
 # Run removal script
-.\scripts\remove-gatekeeper.ps1
+.\scripts\remove-primegate.ps1
 ```
 
 **Or manually:**
 ```powershell
-# Delete gatekeeper files
-Remove-Item -Recurse WolfPackAI.Gatekeeper
+# Delete primegate files
+Remove-Item -Recurse WolfPackAI.PrimeGate
 Remove-Item -Recurse .cursor
 Remove-Item .cursorrules
-Remove-Item scripts\inject-gatekeeper.ps1
+Remove-Item scripts\inject-primegate.ps1
 
 # WolfPackAI back to original state
 ```
@@ -275,11 +275,11 @@ Remove-Item scripts\inject-gatekeeper.ps1
 **Verification after removal:**
 ```powershell
 # Should return False
-Test-Path "WolfPackAI.Gatekeeper"
-Test-Path ".cursor/extensions/wolfpackai-gatekeeper.js"
+Test-Path "WolfPackAI.PrimeGate"
+Test-Path ".cursor/extensions/wolfpackai-primegate.js"
 Test-Path ".cursorrules"
 
-# Result: Zero traces of gatekeeper
+# Result: Zero traces of primegate
 ```
 
 ---
@@ -303,7 +303,7 @@ Test-Path ".cursorrules"
 
 ## 🆘 Troubleshooting Isolation Issues
 
-### Issue: Gatekeeper activating in wrong directory
+### Issue: PrimeGate activating in wrong directory
 **Diagnosis:**
 ```powershell
 # Check current directory
@@ -326,9 +326,9 @@ Test-Path ".cursor"       # Should be False or unchanged
 
 ### Issue: Want to completely isolate (paranoid mode)
 **Solution:**
-- Gatekeeper already IS completely isolated
-- But if still concerned, don't run `inject-gatekeeper.ps1`
-- Gatekeeper will never activate without explicit setup
+- PrimeGate already IS completely isolated
+- But if still concerned, don't run `inject-primegate.ps1`
+- PrimeGate will never activate without explicit setup
 
 ---
 

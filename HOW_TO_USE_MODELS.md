@@ -1,7 +1,7 @@
 # 🎯 How to Actually Use Your 15+ AI Models
 
 **Status:** ✅ WolfPackAI services running
-**Services:** Docker, WolfPackAI, Gatekeeper all configured for auto-start
+**Services:** Docker, WolfPackAI, primegate all configured for auto-start
 
 ---
 
@@ -114,7 +114,7 @@ Once services are running (they auto-start now!):
 | Service | URL | Purpose |
 |---------|-----|---------|
 | **OpenWebUI** | http://localhost:5000/chat | Chat with 15+ models |
-| **Gatekeeper API** | http://localhost:7000/swagger | API documentation |
+| **primegate API** | http://localhost:7000/swagger | API documentation |
 | **LiteLLM Admin** | http://localhost:5000/litellm/ | Model management |
 | **Aspire Dashboard** | Check terminal window | Service monitoring |
 | **n8n Workflows** | http://localhost:5000/n8n/ | Automation |
@@ -153,7 +153,7 @@ Once services are running (they auto-start now!):
 **Already configured to auto-start:**
 - ✅ Docker Desktop
 - ✅ WolfPackAI Services (all 15+ models)
-- ✅ Gatekeeper API
+- ✅ primegate API
 - ✅ PowerShell (in WolfPackAI directory)
 - ✅ Windows Terminal (in WolfPackAI directory)
 - ✅ Cursor IDE (WolfPackAI project)

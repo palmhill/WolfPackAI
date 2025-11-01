@@ -213,7 +213,7 @@ Your 15+ Models Available!
 1. Check services are running:
    ```powershell
    # Check WolfPackAI services
-   # Look for "WolfPackAI Services" and "WolfPackAI Gatekeeper" windows
+   # Look for "WolfPackAI Services" and "WolfPackAI primegate" windows
    ```
 2. Restart Cursor (Ctrl+Q, then reopen)
 3. Try clicking in the model dropdown area

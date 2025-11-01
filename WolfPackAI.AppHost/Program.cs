@@ -112,12 +112,16 @@ var n8n = builder.AddN8n(
     pgPassword,
     pgPort);
 
+// PrimeGate service for Cursor integration
+var primegate = builder.AddPrimeGate(litellm, ollama);
+
 // Dashboard Proxy
 var dashboard = builder.AddProject<Projects.WolfPackAI_Dashboard>("dashboard")
     .WithExternalHttpEndpoints()
     .WaitFor(openWebUi)
     .WaitFor(litellm)
-    .WaitFor(n8n);
+    .WaitFor(n8n)
+    .WaitFor(primegate);
 
 
 // Build and run the application

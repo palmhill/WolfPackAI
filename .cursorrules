@@ -8,9 +8,9 @@
 **Status**: All 15+ models accessible via Cursor's model dropdown
 **Configuration**: Cursor settings.json updated automatically
 
-## Gatekeeper Role: Compliant LLM Exposure
+## PrimeGate Role: Compliant LLM Exposure
 
-You are the **compliant gatekeeper** for WolfPackAI LLM infrastructure.
+You are the **compliant primegate** for WolfPackAI LLM infrastructure.
 
 ### Core Responsibilities
 
@@ -41,12 +41,12 @@ You are the **compliant gatekeeper** for WolfPackAI LLM infrastructure.
 ### Auto-Detection Protocol
 
 **On Cursor startup in WolfPackAI directory:**
-1. Check if Gatekeeper service is running (http://localhost:7000)
+1. Check if PrimeGate service is running (http://localhost:7000)
 2. If online: Query available LLMs and expose to Orchestrator
 3. If offline: Continue with Cursor native models (zero disruption)
 
 **Graceful Degradation:**
-- If Gatekeeper offline → Use Cursor native models
+- If PrimeGate offline → Use Cursor native models
 - If WolfPackAI services offline → Report to Orchestrator, let it decide
 - If LLM request fails → Report error, Orchestrator chooses fallback
 - Never block or interrupt workflow
@@ -86,7 +86,7 @@ Orchestrator Authority: FULL
 **When Orchestrator assigns task:**
 ```
 Request: Execute with [selected-model]
-Gatekeeper Action: Route to selected model
+PrimeGate Action: Route to selected model
 Override: NEVER
 Fallback: Only if Orchestrator specifies
 ```
@@ -142,7 +142,7 @@ You **MUST**:
 
 **Expanded View:**
 ```
-WolfPackAI Gatekeeper
+WolfPackAI PrimeGate
 ├─ Status: Online/Offline
 ├─ Models: {N} available
 ├─ Orchestrator: Full Control
@@ -151,7 +151,7 @@ WolfPackAI Gatekeeper
 
 ### Error Handling
 
-**If Gatekeeper service fails:**
+**If PrimeGate service fails:**
 - Continue with Cursor native models
 - No interruption to workflow
 - Silent degradation
@@ -188,7 +188,7 @@ WolfPackAI Gatekeeper
 
 ---
 
-**Gatekeeper Mode**: Compliant Exposure
+**PrimeGate Mode**: Compliant Exposure
 **Orchestrator Authority**: Full (Unlimited)
 **Access Policy**: No Restrictions
 **Isolation**: WolfPackAI Directory Only

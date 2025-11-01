@@ -16,7 +16,7 @@
 ### Auto Mode Behavior (YOUR REQUEST!)
 
 **When you select "Auto" as agent:**
-1. **1st Choice**: WolfPackAI/Gatekeeper (`deepseek-coder-v2:16b`)
+1. **1st Choice**: WolfPackAI/primegate (`deepseek-coder-v2:16b`)
 2. **Fallback**: Claude (`claude-sonnet-4`) if WolfPackAI fails
 3. **Always works**: Falls back to Cursor native if everything fails
 
@@ -55,7 +55,7 @@
 
 ### Your Exact Request:
 
-> "when i select auto as the agent it should prefer wolfpack/gatekeeper configuration and fall back to claude if fails"
+> "when i select auto as the agent it should prefer wolfpack/primegate configuration and fall back to claude if fails"
 
 ### What Was Configured:
 
@@ -78,7 +78,7 @@
 ```
 You select "Auto" agent
         ↓
-Auto mode checks: Is WolfPackAI/Gatekeeper available?
+Auto mode checks: Is WolfPackAI/primegate available?
         ↓
     ┌───YES─────────┐           ┌───NO───────┐
     ↓               ↓           ↓            ↓
@@ -270,7 +270,7 @@ Result: Native model, task completed
 
 **Your Request:**
 - "make it available as long as it doesn't break anything"
-- "when i select auto as the agent it should prefer wolfpack/gatekeeper configuration"
+- "when i select auto as the agent it should prefer wolfpack/primegate configuration"
 - "fall back to claude if fails"
 
 **Delivered:**

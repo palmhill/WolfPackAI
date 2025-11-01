@@ -1,6 +1,6 @@
-# 🚀 WolfPackAI Gatekeeper - Complete Deployment Checklist
+# 🚀 WolfPackAI primegate - Complete Deployment Checklist
 
-**Branch**: `feature/cursor-gatekeeper-integration`
+**Branch**: `feature/cursor-primegate-integration`
 **Status**: Ready for Testing
 **Contributor**: SC Prime
 
@@ -27,7 +27,7 @@
 ## 📦 What Was Delivered
 
 ### Core Components
-1. **WolfPackAI.Gatekeeper** - Complete .NET service
+1. **WolfPackAI.primegate** - Complete .NET service
    - Auto-discovery of LLMs
    - RESTful API (port 7000)
    - Swagger documentation
@@ -46,11 +46,11 @@
    - Success indicators
 
 ### Documentation (5 Files)
-1. **GATEKEEPER_QUICKSTART.md** - Get started in 2 minutes
-2. **GATEKEEPER_ISOLATION.md** - Isolation guarantees
-3. **GATEKEEPER_OTHER_PROJECTS.md** - Install in PaiiD, PaπD 2mx
+1. **primegate_QUICKSTART.md** - Get started in 2 minutes
+2. **primegate_ISOLATION.md** - Isolation guarantees
+3. **primegate_OTHER_PROJECTS.md** - Install in PaiiD, PaπD 2mx
 4. **CURSOR_CHAT_INTEGRATION.md** - Chat & Agent integration
-5. **GATEKEEPER_SUMMARY.md** - Complete overview
+5. **primegate_SUMMARY.md** - Complete overview
 
 ---
 
@@ -66,9 +66,9 @@ cd C:\Users\SSaint-Cyr\Documents\GitHub\WolfPackAI
 # Terminal 1:
 dotnet run --project WolfPackAI.AppHost
 
-# 3. Start Gatekeeper
+# 3. Start primegate
 # Terminal 2:
-dotnet run --project WolfPackAI.Gatekeeper
+dotnet run --project WolfPackAI.primegate
 
 # 4. Test API endpoints
 curl http://localhost:7000/api/status   # Should return "online"
@@ -81,7 +81,7 @@ curl http://localhost:7000/api/policy   # Should show unlimited access
 
 **Expected Results:**
 ```
-✅ Gatekeeper starts on port 7000
+✅ primegate starts on port 7000
 ✅ /api/status returns "online"
 ✅ /api/llms returns 10-15 models
 ✅ /api/policy shows unlimited access
@@ -145,16 +145,16 @@ cursor .
 
 **Expected Results:**
 ```
-✅ PaiiD: No gatekeeper indicator (isolated)
-✅ PaπD 2mx: No gatekeeper indicator (isolated)
-✅ WolfPackAI: Gatekeeper indicator present
+✅ PaiiD: No primegate indicator (isolated)
+✅ PaπD 2mx: No primegate indicator (isolated)
+✅ WolfPackAI: primegate indicator present
 ✅ Isolation working perfectly
 ```
 
 ### Phase 4: Graceful Degradation Testing (5 minutes)
 
 ```powershell
-# 1. Stop gatekeeper service (Ctrl+C in Terminal 2)
+# 1. Stop primegate service (Ctrl+C in Terminal 2)
 
 # 2. Open Cursor in WolfPackAI
 cursor .
@@ -166,8 +166,8 @@ cursor .
 # 4. Try Cursor Chat
 # Should work with cursor-fast/cursor-smart
 
-# 5. Restart gatekeeper
-dotnet run --project WolfPackAI.Gatekeeper
+# 5. Restart primegate
+dotnet run --project WolfPackAI.primegate
 
 # 6. Reload Cursor window
 # Should see [🐺 N LLMs] again
@@ -175,11 +175,11 @@ dotnet run --project WolfPackAI.Gatekeeper
 
 **Expected Results:**
 ```
-✅ Cursor works with gatekeeper offline
+✅ Cursor works with primegate offline
 ✅ No error messages displayed
 ✅ Falls back to native models
 ✅ Graceful degradation confirmed
-✅ Reconnects when gatekeeper restarts
+✅ Reconnects when primegate restarts
 ```
 
 ---
@@ -187,7 +187,7 @@ dotnet run --project WolfPackAI.Gatekeeper
 ## 🎯 Deployment Steps
 
 ### Step 1: Review & Test (This Session)
-- [ ] Read **GATEKEEPER_QUICKSTART.md**
+- [ ] Read **primegate_QUICKSTART.md**
 - [ ] Run terminal tests (Phase 1 above)
 - [ ] Run Cursor tests (Phase 2 above)
 - [ ] Run isolation tests (Phase 3 above)
@@ -197,7 +197,7 @@ dotnet run --project WolfPackAI.Gatekeeper
 ### Step 2: Install in WolfPackAI (Permanent)
 ```powershell
 # Already done if tests passed!
-# Gatekeeper is installed and working
+# primegate is installed and working
 ```
 
 ### Step 3: Optional - Install in Other Projects
@@ -206,21 +206,21 @@ dotnet run --project WolfPackAI.Gatekeeper
 ```powershell
 # For PaiiD:
 cd C:\Users\SSaint-Cyr\Documents\GitHub\PaiiD
-# Follow: GATEKEEPER_OTHER_PROJECTS.md
+# Follow: primegate_OTHER_PROJECTS.md
 
 # For PaπD 2mx:
 cd "C:\Users\SSaint-Cyr\Documents\GitHub\PaπD 2mx"
-# Follow: GATEKEEPER_OTHER_PROJECTS.md
+# Follow: primegate_OTHER_PROJECTS.md
 ```
 
 ### Step 4: Set Up Auto-Start (Optional)
 **Create**: `start-wolfpackai-full.bat`
 ```batch
 @echo off
-echo Starting WolfPackAI + Gatekeeper...
+echo Starting WolfPackAI + primegate...
 start "WolfPackAI" dotnet run --project WolfPackAI.AppHost
 timeout /t 15
-start "Gatekeeper" dotnet run --project WolfPackAI.Gatekeeper
+start "primegate" dotnet run --project WolfPackAI.primegate
 echo.
 echo ✅ Services started!
 pause
@@ -239,7 +239,7 @@ pause
 git remote add scprime https://github.com/scprime/wolfpackai-cursor-integration.git
 
 # 3. Push this branch
-git push scprime feature/cursor-gatekeeper-integration
+git push scprime feature/cursor-primegate-integration
 
 # 4. Update README with SC Prime credit
 # (Already in commit message as Co-Authored-By)
@@ -250,7 +250,7 @@ git push scprime feature/cursor-gatekeeper-integration
 ## 📋 Post-Deployment Checklist
 
 ### Immediate Verification
-- [ ] Gatekeeper service runs without errors
+- [ ] primegate service runs without errors
 - [ ] All API endpoints respond correctly
 - [ ] Cursor shows WolfPackAI models
 - [ ] Can use models in Chat and Composer
@@ -261,12 +261,12 @@ git push scprime feature/cursor-gatekeeper-integration
 - [ ] Used at least 3 different WolfPackAI models
 - [ ] Tested in Cursor Chat (Ctrl+L)
 - [ ] Tested in Cursor Composer (Ctrl+I)
-- [ ] Tried Auto mode with gatekeeper
+- [ ] Tried Auto mode with primegate
 - [ ] Compared model responses
 - [ ] Identified favorite models for different tasks
 
 ### Documentation Review
-- [ ] Read all 5 gatekeeper guides
+- [ ] Read all 5 primegate guides
 - [ ] Understood isolation guarantees
 - [ ] Know how to install in other projects
 - [ ] Know how to uninstall if needed
@@ -277,7 +277,7 @@ git push scprime feature/cursor-gatekeeper-integration
 ## 🎓 Knowledge Transfer
 
 ### What You Should Know
-1. **How to start gatekeeper** (2 terminal commands)
+1. **How to start primegate** (2 terminal commands)
 2. **How to verify it's working** (curl commands)
 3. **How to use in Cursor** (status bar indicator)
 4. **How isolation works** (directory-based)
@@ -288,14 +288,14 @@ git push scprime feature/cursor-gatekeeper-integration
 ```powershell
 # Start services
 dotnet run --project WolfPackAI.AppHost
-dotnet run --project WolfPackAI.Gatekeeper
+dotnet run --project WolfPackAI.primegate
 
-# Test gatekeeper
+# Test primegate
 curl http://localhost:7000/api/status
 curl http://localhost:7000/api/llms
 
-# Install gatekeeper
-.\scripts\inject-gatekeeper.ps1
+# Install primegate
+.\scripts\inject-primegate.ps1
 
 # View API docs
 # http://localhost:7000/swagger
@@ -307,18 +307,18 @@ curl http://localhost:7000/api/llms
 
 | Issue | Check | Solution |
 |-------|-------|----------|
-| No [🐺] in Cursor | Gatekeeper running? | Start: `dotnet run --project WolfPackAI.Gatekeeper` |
+| No [🐺] in Cursor | primegate running? | Start: `dotnet run --project WolfPackAI.primegate` |
 | Port 7000 in use | Check port | `netstat -ano \| findstr :7000` then kill process |
 | 0 models returned | Services running? | Start WolfPackAI: `dotnet run --project WolfPackAI.AppHost` |
 | Wrong directory | Check location | `Get-Location` should show ...\WolfPackAI |
 | PaiiD affected | Isolation broken? | Verify: No .cursorrules in PaiiD directory |
-| Can't uninstall | Need clean removal | Delete: `WolfPackAI.Gatekeeper/`, `.cursor/`, `.cursorrules` |
+| Can't uninstall | Need clean removal | Delete: `WolfPackAI.primegate/`, `.cursor/`, `.cursorrules` |
 
 ---
 
 ## 📊 Success Metrics
 
-**Gatekeeper is successful if:**
+**primegate is successful if:**
 - ✅ Adds 13+ new AI models to Cursor (vs 2 native)
 - ✅ Works in Chat, Composer, and Agent modes
 - ✅ Doesn't affect other projects (isolation works)
@@ -337,7 +337,7 @@ curl http://localhost:7000/api/llms
 ## 🎉 Completion Criteria
 
 ### Minimum Viable (Day 1)
-- [ ] Gatekeeper running in WolfPackAI
+- [ ] primegate running in WolfPackAI
 - [ ] Tested in terminal (curl)
 - [ ] Tested in Cursor (see models)
 - [ ] Used at least one WolfPackAI model
@@ -385,11 +385,11 @@ curl http://localhost:7000/api/llms
 
 **Deployed By**: SC Prime
 **Deployment Date**: October 31, 2025
-**Branch**: feature/cursor-gatekeeper-integration
+**Branch**: feature/cursor-primegate-integration
 **Status**: ✅ READY FOR PRODUCTION USE
 
 ---
 
 **You're ready to supercharge Cursor with 15+ AI models!** 🚀
 
-**Start here**: `.\scripts\inject-gatekeeper.ps1` → See **GATEKEEPER_QUICKSTART.md**
+**Start here**: `.\scripts\inject-primegate.ps1` → See **primegate_QUICKSTART.md**
